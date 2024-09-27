@@ -4,6 +4,7 @@ import com.bankingsystem.models.CurrencyCode;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 public class CurrencyConversion {
     private Date lastUpdated;
@@ -14,7 +15,6 @@ public class CurrencyConversion {
         this.lastUpdated = new Date();
     }
 
-    // Get the exchange rate between two currencies
     public double getExchangeRate(CurrencyCode fromCurrency, CurrencyCode toCurrency) {
         if (fromCurrency == toCurrency) {
             return 1.0;
@@ -30,19 +30,24 @@ public class CurrencyConversion {
         return toRate / fromRate;
     }
 
-    // Convert a given amount from one currency to another
     public double convertAmount(double amount, CurrencyCode fromCurrency, CurrencyCode toCurrency) {
         double rate = getExchangeRate(fromCurrency, toCurrency);
         return amount * rate;
     }
 
-    // Update the exchange rates with new values and update the timestamp
     public void updateExchangeRates(Map<CurrencyCode, Double> newRates) {
         this.exchangeRates = newRates;
         this.lastUpdated = new Date();
     }
 
-    // Get the date when exchange rates were last updated
+    public Set<CurrencyCode> getSupportedCurrencies() {
+        return exchangeRates.keySet();
+    }
+
+    public boolean isCurrencySupported(CurrencyCode currency) {
+        return (exchangeRates.get(currency) != null);
+    }
+
     public Date getLastUpdated() {
         return lastUpdated;
     }
