@@ -4,13 +4,13 @@ import java.util.List;
 
 public class User {
     private String userId;
-    private UserType userType; // TODO change this to a class with a set of user roles
+    private UserRole userRole;
     private Person person;
     private List<Account> accounts;
 
-    public User(String userId, UserType userType, Person person) {
+    public User(String userId, UserRole userRole, Person person) {
         this.userId = userId;
-        this.userType = userType;
+        this.userRole = userRole;
         this.person = person;
     }
 
@@ -22,12 +22,12 @@ public class User {
         this.userId = userId;
     }
 
-    public UserType getUserType() {
-        return this.userType;
+    public UserRole getUserRole() {
+        return this.userRole;
     }
 
-    public void setUserType(String newUserType) {
-        this.userId = newUserType;
+    public void setUserRole(UserRole newUserRole) {
+        this.userRole = newUserRole;
     }
 
     public Person getPerson() {
