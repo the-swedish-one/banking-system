@@ -6,19 +6,17 @@ import java.util.List;
 
 public class Account {
     protected int accountId;
-    protected String IBAN;
+    protected String iban;
     protected String accountName;
-    protected User owner1;
-    protected User owner2;
+    protected User owner;
     protected double balance;
     protected CurrencyCode currency;
     protected List<Transaction> transactionHistory;
 
-    public Account(int accountId, String IBAN, User owner1, User owner2, double balance, CurrencyCode currency) {
+    public Account(int accountId, String iban, User owner, double balance, CurrencyCode currency) {
         this.accountId = accountId;
-        this.IBAN = IBAN;
-        this.owner1 = owner1;
-        this.owner2 = owner2;
+        this.iban = iban;
+        this.owner = owner;
         this.balance = balance;
         this.currency = currency;
     }
@@ -43,12 +41,12 @@ public class Account {
         this.accountId = newAccountId;
     }
 
-    public String getIBAN() {
-        return this.IBAN;
+    public String getIban() {
+        return this.iban;
     }
 
-    public void setIBAN(String newIBAN) {
-        this.IBAN = newIBAN;
+    public void setIban(String newIBAN) {
+        this.iban = newIBAN;
     }
 
     public String getAccountName() {
@@ -60,19 +58,11 @@ public class Account {
     }
 
     public User getOwner1() {
-        return this.owner1;
+        return this.owner;
     }
 
-    public void setOwner1(User newOwner1) {
-        this.owner1 = newOwner1;
-    }
-
-    public User getOwner2() {
-        return this.owner2;
-    }
-
-    public void setOwner2(User newOwner2) {
-        this.owner2 = newOwner2;
+    public void setOwner1(User newOwner) {
+        this.owner = newOwner;
     }
 
     public double getBalance() {

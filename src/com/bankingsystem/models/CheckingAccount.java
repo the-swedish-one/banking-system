@@ -3,8 +3,8 @@ package com.bankingsystem.models;
 public class CheckingAccount extends Account {
     private double overdraftLimit;
 
-    public CheckingAccount(int accountId, String IBAN, User owner1, User owner2, double balance, CurrencyCode currency, double overdraftLimit) {
-        super(accountId, IBAN, owner1, owner2, balance, currency);
+    public CheckingAccount(int accountId, String IBAN, User owner, double balance, CurrencyCode currency, double overdraftLimit) {
+        super(accountId, IBAN, owner, balance, currency);
         this.overdraftLimit = overdraftLimit;
     }
 

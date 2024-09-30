@@ -3,8 +3,8 @@ package com.bankingsystem.models;
 public class SavingsAccount extends Account {
     private double interestRate;
 
-    public SavingsAccount(int accountId, String IBAN, User owner1, User owner2, double balance, CurrencyCode currency, double interestRate) {
-        super(accountId, IBAN, owner1, owner2, balance, currency);
+    public SavingsAccount(int accountId, String IBAN, User owner, double balance, CurrencyCode currency, double interestRate) {
+        super(accountId, IBAN, owner, balance, currency);
         this.interestRate = interestRate;
     }
 
