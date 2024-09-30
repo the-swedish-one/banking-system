@@ -1,10 +1,10 @@
 package com.bankingsystem.models;
 
-public class JointAccount extends Account {
+public class JointCheckingAccount extends CheckingAccount {
     private User secondOwner;
 
-    public JointAccount(int accountId, String IBAN, User owner, User secondOwner, double balance, CurrencyCode currency) {
-        super(accountId, IBAN, owner, balance, currency);
+    public JointCheckingAccount(int accountId, String IBAN, User owner, User secondOwner, double balance, CurrencyCode currency, double overdraftLimit) {
+        super(accountId, IBAN, owner, balance, currency, overdraftLimit);
         this.secondOwner = secondOwner;
     }
 

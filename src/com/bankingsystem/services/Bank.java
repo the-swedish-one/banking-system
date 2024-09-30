@@ -4,24 +4,42 @@ import com.bankingsystem.models.*;
 import java.util.List;
 
 public class Bank {
-    private String BIC;
+    private String bic;
+    private List<Person> persons;
     private List<User> users;
     private List<Account> accounts;
 
-    public Bank(String BIC) {
-        this.BIC = BIC;
+    public Bank(String bic) {
+        this.bic = bic;
     }
 
-    public void createUser(String userId, UserType userType, String name, String email, String addressLine1, String addressLine2, String city, String country) {
-        User user = new User(userId, userType, name, email, addressLine1, addressLine2, city, country);
+    public void createPerson(String name, String email, String addressLine1, String addressLine2, String city, String country) {
+        Person person = new Person(name, email, addressLine1, addressLine2, city, country);
+        this.persons.add(person);
+    }
+
+    public void createUser(String userId, UserRole userRole, Person person) {
+        User user = new User(userId, userRole, person);
         this.users.add(user);
     }
 
-    public void createAccount(int accountId, String IBAN, User owner1, User owner2, double balance, CurrencyCode currency) {
-        Account account = new Account(accountId, IBAN, owner1, owner2, balance, currency);
-        this.accounts.add(account);
-        owner1.getAccounts().add(account);
-        if (owner2 != null) owner2.getAccounts().add(account);
+    public void createCheckingAccount(int accountId, String IBAN, User owner, double balance, CurrencyCode currency, double overdraftLimit) {
+        CheckingAccount checkingAccount = new CheckingAccount(accountId, IBAN, owner, balance, currency, overdraftLimit);
+        this.accounts.add(checkingAccount);
+        owner.getAccounts().add(checkingAccount);
+    }
+
+    public void createSavingsAccount(int accountId, String IBAN, User owner, double balance, CurrencyCode currency, double interestRate) {
+        SavingsAccount savingsAccount = new SavingsAccount(accountId, IBAN, owner, balance, currency, interestRate);
+        this.accounts.add(savingsAccount);
+        owner.getAccounts().add(savingsAccount);
+    }
+
+    public void createJointCheckingAccount(int accountId, String IBAN, User owner, User secondOwner, double balance, CurrencyCode currency, double overdraftLimit) {
+        JointCheckingAccount jointCheckingAccount = new JointCheckingAccount(accountId, IBAN, owner, secondOwner, balance, currency, overdraftLimit);
+        this.accounts.add(jointCheckingAccount);
+        owner.getAccounts().add(jointCheckingAccount);
+        secondOwner.getAccounts().add(jointCheckingAccount);
     }
 
     public Account findAccount(int accountId) {
