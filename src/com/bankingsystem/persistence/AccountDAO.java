@@ -15,11 +15,19 @@ public class AccountDAO {
 
     // Get one account by ID
     public Account getAccountById(int accountId) {
-        return accounts.stream()
-                .filter(account -> account.getAccountId() == accountId)
-                .findFirst()
-                .orElse(null);
+        for (Account account : accounts) {
+            if (account.getAccountId() == accountId) {
+                return account;
+            }
+        }
+        return null;
     }
+//    public Account getAccountById(int accountId) {
+//        return accounts.stream()
+//                .filter(account -> account.getAccountId() == accountId)
+//                .findFirst()
+//                .orElse(null);
+//    }
 
     // Get all accounts
     public List<Account> getAllAccounts() {
@@ -27,7 +35,6 @@ public class AccountDAO {
     }
 
     // Update account
-    // TODO - update account in database
     public void updateAccount(Account account) {
         for (int i = 0; i < accounts.size(); i++) {
             if (accounts.get(i).getAccountId() == account.getAccountId()) {

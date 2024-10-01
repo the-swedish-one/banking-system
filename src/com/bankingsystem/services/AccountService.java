@@ -22,13 +22,30 @@ public class AccountService {
 
     // Withdraw
     public void withdraw(Account account, double amount) throws Exception {
-        if (account.getBalance() >= amount) {
-            double newBalance = account.getBalance() - amount;
-            account.setBalance(newBalance);
-            accountDAO.updateAccount(account);
+        if (account instanceof CheckingAccount) {
+            CheckingAccount checkingAccount = (CheckingAccount) account;
+            if (checkingAccount.getBalance() + checkingAccount.getOverdraftLimit() >= amount) {
+                checkingAccount.setBalance(checkingAccount.getBalance() - amount);
+            } else {
+                throw new Exception("Overdraft limit exceeded");
+            }
         } else {
-            throw new Exception("Insufficient funds");
+            if (account.getBalance() >= amount) {
+                account.setBalance(account.getBalance() - amount);
+            } else {
+                throw new Exception("Insufficient funds");
+            }
         }
+
+        accountDAO.updateAccount(account);
+    }
+
+    // Savings Account: Apply interest
+    public void addInterest(SavingsAccount savingsAccount) {
+        double interest = savingsAccount.getBalance() * savingsAccount.getInterestRate();
+        double newBalance = savingsAccount.getBalance() + interest;
+        savingsAccount.setBalance(newBalance);
+        accountDAO.updateAccount(savingsAccount);
     }
 
     // Create Checking Account
@@ -62,6 +79,8 @@ public class AccountService {
         return accountDAO.getAccountById(accountId);
     }
 
-
-
+    // Delete account by ID
+    public boolean deleteAccount(int accountId) {
+        return accountDAO.deleteAccount(accountId);
+    }
 }
