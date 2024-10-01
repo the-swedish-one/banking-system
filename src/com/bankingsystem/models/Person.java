@@ -1,15 +1,17 @@
 package com.bankingsystem.models;
 
 public class Person {
-    private String name;
+    private String firstName;
+    private String lastName;
     private String email;
     private String addressLine1;
     private String addressLine2;
     private String city;
     private String country;
 
-    public Person(String name, String email, String addressLine1, String addressLine2, String city, String country) {
-        this.name = name;
+    public Person(String firstName, String lastName, String email, String addressLine1, String addressLine2, String city, String country) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.addressLine1 = addressLine1;
         this.addressLine2 = addressLine2;
@@ -17,12 +19,20 @@ public class Person {
         this.country = country;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String newName) {
-        this.name = newName;
+    public void setFirstName(String newFirstName) {
+        this.firstName = newFirstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String newLastName) {
+        this.lastName = newLastName;
     }
 
     public String getEmail() {

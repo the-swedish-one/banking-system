@@ -1,7 +1,5 @@
 package com.bankingsystem.models;
 
-import com.bankingsystem.services.*;
-
 import java.util.List;
 
 public class Account {
@@ -19,18 +17,6 @@ public class Account {
         this.owner = owner;
         this.balance = balance;
         this.currency = currency;
-    }
-
-    public void deposit(double amount) {
-        balance += amount;
-    }
-
-    public void withdraw(double amount) throws Exception {
-        if (balance >= amount) {
-            balance -= amount;
-        } else {
-            throw new Exception("Insufficient funds");
-        }
     }
 
     public int getAccountId() {
@@ -57,11 +43,11 @@ public class Account {
         this.accountName = newAccountName;
     }
 
-    public User getOwner1() {
+    public User getOwner() {
         return this.owner;
     }
 
-    public void setOwner1(User newOwner) {
+    public void setOwner(User newOwner) {
         this.owner = newOwner;
     }
 
