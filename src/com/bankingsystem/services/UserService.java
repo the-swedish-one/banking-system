@@ -3,30 +3,35 @@ package com.bankingsystem.services;
 import com.bankingsystem.models.Person;
 import com.bankingsystem.models.User;
 import com.bankingsystem.models.UserRole;
-import com.bankingsystem.persistence.UserDAO;
+import com.bankingsystem.persistence.UserPersistenceService;
+
 import java.util.List;
 
 public class UserService {
-    private UserDAO userDAO = new UserDAO();
+    private final UserPersistenceService userPersistenceService;
+
+    public UserService(UserPersistenceService userPersistenceService) {
+        this.userPersistenceService = userPersistenceService;
+    }
 
     // Create new user
     public void createUser(String userId, UserRole userRole, Person person) {
         User user = new User(userId, userRole, person);
-        userDAO.createUser(user);
+        userPersistenceService.createUser(user);
     }
 
     // Get user by ID
     public User getUserById(String userId) {
-        return userDAO.getUserById(userId);
+        return userPersistenceService.getUserById(userId);
     }
 
     // Get all users
     public List<User> getAllUsers() {
-        return userDAO.getAllUsers();
+        return userPersistenceService.getAllUsers();
     }
 
     // Delete user by ID
     public boolean deleteUser(String userId) {
-        return userDAO.deleteUser(userId);
+        return userPersistenceService.deleteUser(userId);
     }
 }

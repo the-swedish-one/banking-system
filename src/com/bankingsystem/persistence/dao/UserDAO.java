@@ -1,20 +1,24 @@
-package com.bankingsystem.persistence;
+package com.bankingsystem.persistence.dao;
 
-import com.bankingsystem.models.Account;
 import com.bankingsystem.models.User;
+import com.bankingsystem.persistence.UserPersistenceService;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDAO {
+public class UserDAO implements UserPersistenceService {
 
     private List<User> users = new ArrayList<>();
 
     // Create a new user
+    // TODO - generate unique userID
+    @Override
     public void createUser(User user) {
         users.add(user);
     }
 
     // Get a user by ID
+    @Override
     public User getUserById(String userId) {
         return users.stream()
                 .filter(user -> user.getUserId().equals(userId))
@@ -23,12 +27,13 @@ public class UserDAO {
     }
 
     // Get all users
+    @Override
     public List<User> getAllUsers() {
         return new ArrayList<>(users);
     }
 
     // Update user
-    // TODO - update user to database
+    @Override
     public void updateUser(User user) {
         for (int i = 0; i < users.size(); i++) {
             if (users.get(i).getUserId() == user.getUserId()) {
@@ -39,6 +44,7 @@ public class UserDAO {
     }
 
     // Delete a user by ID
+    @Override
     public boolean deleteUser(String userId) {
         return users.removeIf(user -> user.getUserId().equals(userId));
     }
