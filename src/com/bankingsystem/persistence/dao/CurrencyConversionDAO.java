@@ -1,13 +1,19 @@
 package com.bankingsystem.persistence.dao;
 
-import com.bankingsystem.models.CurrencyCode;
+import com.bankingsystem.models.CurrencyConversion;
+import com.bankingsystem.persistence.CurrencyConversionPersistenceService;
 
-import java.util.Map;
+public class CurrencyConversionDAO implements CurrencyConversionPersistenceService {
 
-public class CurrencyConversionDAO {
+    private CurrencyConversion currentConversion;
 
-    private Map<CurrencyCode, Double> exchangeRates; // TODO - should this live here or in the model class?
+    @Override
+    public CurrencyConversion getLatestConversion() {
+        return currentConversion;
+    }
 
-    //
-
+    @Override
+    public void updateConversion(CurrencyConversion conversion) {
+        this.currentConversion = conversion;
+    }
 }

@@ -1,16 +1,42 @@
 package com.bankingsystem.services;
 
+import com.bankingsystem.models.CurrencyCode;
+import com.bankingsystem.models.CurrencyConversion;
 import com.bankingsystem.persistence.dao.CurrencyConversionDAO;
+
+import java.util.Map;
 
 public class CurrencyConversionService {
 
-    private CurrencyConversionDAO currencyConversionDAO = new CurrencyConversionDAO();
+    private final CurrencyConversionDAO currencyConversionDAO;
 
-//    public Set<CurrencyCode> getSupportedCurrencies() {
-//        return currencyConversionDAO.exchangeRates.keySet();
-//    }
-//
-//    public boolean isCurrencySupported(CurrencyCode currency) {
-//        return (exchangeRates.get(currency) != null);
-//    }
+    public CurrencyConversionService(CurrencyConversionDAO currencyConversionDAO) {
+        this.currencyConversionDAO = currencyConversionDAO;
+    }
+
+    public double convertAmount(double amount, CurrencyCode fromCurrency, CurrencyCode toCurrency) {
+        CurrencyConversion conversion = currencyConversionDAO.getLatestConversion();
+        double rate = getExchangeRate(conversion, fromCurrency, toCurrency);
+        return amount * rate;
+    }
+
+    private double getExchangeRate(CurrencyConversion conversion, CurrencyCode fromCurrency, CurrencyCode toCurrency) {
+        if (fromCurrency == toCurrency) {
+            return 1.0;
+        }
+        Double fromRate = conversion.getExchangeRates().get(fromCurrency);
+        Double toRate = conversion.getExchangeRates().get(toCurrency);
+
+        if (fromRate == null || toRate == null) {
+            throw new IllegalArgumentException("Unsupported currency conversion");
+        }
+
+        return toRate / fromRate;
+    }
+
+    public void updateExchangeRates(Map<CurrencyCode, Double> newRates) {
+        CurrencyConversion conversion = new CurrencyConversion(newRates);
+        conversion.setLastUpdated(new java.util.Date());
+        currencyConversionDAO.updateConversion(conversion);
+    }
 }
