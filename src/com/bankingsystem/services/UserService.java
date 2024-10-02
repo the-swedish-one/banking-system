@@ -16,7 +16,7 @@ public class UserService {
 
     // Create new user
     public void createUser(String userId, UserRole userRole, Person person) {
-        User user = new User(userId, userRole, person);
+        User user = new User(userRole, person);
         userPersistenceService.createUser(user);
     }
 

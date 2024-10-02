@@ -1,6 +1,7 @@
 package com.bankingsystem.models;
 
 import java.util.List;
+import java.util.UUID;
 
 public class User {
     private String userId;
@@ -8,18 +9,14 @@ public class User {
     private Person person;
     private List<Account> accounts;
 
-    public User(String userId, UserRole userRole, Person person) {
-        this.userId = userId;
+    public User(UserRole userRole, Person person) {
+        this.userId = UUID.randomUUID().toString();
         this.userRole = userRole;
         this.person = person;
     }
 
     public String getUserId() {
         return userId;
-    }
-
-    public void setUserId(String newUserId) {
-        this.userId = userId;
     }
 
     public UserRole getUserRole() {
