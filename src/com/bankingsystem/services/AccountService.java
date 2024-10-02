@@ -1,27 +1,29 @@
 package com.bankingsystem.services;
 
 import com.bankingsystem.models.*;
-import com.bankingsystem.persistence.dao.AccountDAO;
-import com.bankingsystem.persistence.dao.UserDAO;
+import com.bankingsystem.persistence.AccountPersistenceService;
+import com.bankingsystem.persistence.UserPersistenceService;
 
 public class AccountService {
-    private AccountDAO accountDAO = new AccountDAO();
-    private UserDAO userDAO = new UserDAO();
+    private final AccountPersistenceService accountPersistenceService;
+    private final UserPersistenceService userPersistenceService;
 
-    public AccountService(AccountDAO accountDAO, UserDAO userDAO) {
-        this.accountDAO = accountDAO;
-        this.userDAO = userDAO;
+    public AccountService(AccountPersistenceService accountPersistenceService, UserPersistenceService userPersistenceService) {
+        this.accountPersistenceService = accountPersistenceService;
+        this.userPersistenceService = userPersistenceService;
     }
 
     // Deposit
     public void deposit(Account account, double amount) {
         double newBalance = account.getBalance() + amount;
         account.setBalance(newBalance);
-        accountDAO.updateAccount(account);
+        accountPersistenceService.updateAccount(account);
     }
 
     // Withdraw
     public void withdraw(Account account, double amount) throws Exception {
+        account.withdraw(amount);
+        accountPersistenceService.updateAccount(account);
 //        if (account instanceof CheckingAccount) {
 //            CheckingAccount checkingAccount = (CheckingAccount) account;
 //            if (checkingAccount.getBalance() + checkingAccount.getOverdraftLimit() >= amount) {
@@ -36,8 +38,6 @@ public class AccountService {
 //                throw new Exception("Insufficient funds");
 //            }
 //        }
-        account.withdraw(amount);
-        accountDAO.updateAccount(account);
     }
 
     // Savings Account: Apply interest
@@ -45,42 +45,42 @@ public class AccountService {
         double interest = savingsAccount.getBalance() * savingsAccount.getInterestRate();
         double newBalance = savingsAccount.getBalance() + interest;
         savingsAccount.setBalance(newBalance);
-        accountDAO.updateAccount(savingsAccount);
+        accountPersistenceService.updateAccount(savingsAccount);
     }
 
     // Create Checking Account
     public void createCheckingAccount(int accountId, String IBAN, User owner, double balance, CurrencyCode currency, double overdraftLimit) {
         CheckingAccount checkingAccount = new CheckingAccount(accountId, IBAN, owner, balance, currency, overdraftLimit);
-        accountDAO.createAccount(checkingAccount);
+        accountPersistenceService.createAccount(checkingAccount);
         owner.getAccounts().add(checkingAccount);
-        userDAO.updateUser(owner);
+        userPersistenceService.updateUser(owner);
     }
 
     // Create Savings Account
     public void createSavingsAccount(int accountId, String IBAN, User owner, double balance, CurrencyCode currency, double interestRate) {
         SavingsAccount savingsAccount = new SavingsAccount(accountId, IBAN, owner, balance, currency, interestRate);
-        accountDAO.createAccount(savingsAccount);
+        accountPersistenceService.createAccount(savingsAccount);
         owner.getAccounts().add(savingsAccount);
-        userDAO.updateUser(owner);
+        userPersistenceService.updateUser(owner);
     }
 
     // Create Joint Checking Account
     public void createJointCheckingAccount(int accountId, String IBAN, User owner, User secondOwner, double balance, CurrencyCode currency, double overdraftLimit) {
         JointCheckingAccount jointCheckingAccount = new JointCheckingAccount(accountId, IBAN, owner, secondOwner, balance, currency, overdraftLimit);
-        accountDAO.createAccount(jointCheckingAccount);
+        accountPersistenceService.createAccount(jointCheckingAccount);
         owner.getAccounts().add(jointCheckingAccount);
         secondOwner.getAccounts().add(jointCheckingAccount);
-        userDAO.updateUser(owner);
-        userDAO.updateUser(secondOwner);
+        userPersistenceService.updateUser(owner);
+        userPersistenceService.updateUser(secondOwner);
     }
 
     // Get account by ID
     public Account getAccountById(int accountId) {
-        return accountDAO.getAccountById(accountId);
+        return accountPersistenceService.getAccountById(accountId);
     }
 
     // Delete account by ID
     public boolean deleteAccount(int accountId) {
-        return accountDAO.deleteAccount(accountId);
+        return accountPersistenceService.deleteAccount(accountId);
     }
 }

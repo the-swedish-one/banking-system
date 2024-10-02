@@ -1,10 +1,12 @@
 package com.bankingsystem.persistence.dao;
 
 import com.bankingsystem.models.Account;
+import com.bankingsystem.persistence.AccountPersistenceService;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountDAO {
+public class AccountDAO implements AccountPersistenceService {
 
     private List<Account> accounts = new ArrayList<>();
 
