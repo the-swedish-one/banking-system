@@ -1,6 +1,4 @@
-package com.bankingsystem.services;
-
-import com.bankingsystem.models.Account;
+package com.bankingsystem.models;
 
 public class TransferTransaction extends Transaction {
     private Account fromAccount;

@@ -1,4 +1,4 @@
-package com.bankingsystem.services;
+package com.bankingsystem.models;
 
 import java.time.LocalDateTime;
 

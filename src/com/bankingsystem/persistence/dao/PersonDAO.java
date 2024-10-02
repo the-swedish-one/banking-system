@@ -1,4 +1,4 @@
-package com.bankingsystem.persistence;
+package com.bankingsystem.persistence.dao;
 
 import com.bankingsystem.models.Person;
 

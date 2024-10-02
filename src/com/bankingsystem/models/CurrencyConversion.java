@@ -1,6 +1,4 @@
-package com.bankingsystem.services;
-
-import com.bankingsystem.models.CurrencyCode;
+package com.bankingsystem.models;
 
 import java.util.Date;
 import java.util.Map;
@@ -19,14 +17,11 @@ public class CurrencyConversion {
         if (fromCurrency == toCurrency) {
             return 1.0;
         }
-
         Double fromRate = exchangeRates.get(fromCurrency);
         Double toRate = exchangeRates.get(toCurrency);
-
         if (fromRate == null || toRate == null) {
             throw new IllegalArgumentException("Unsupported currency conversion");
         }
-
         return toRate / fromRate;
     }
 
@@ -40,15 +35,13 @@ public class CurrencyConversion {
         this.lastUpdated = new Date();
     }
 
-    public Set<CurrencyCode> getSupportedCurrencies() {
-        return exchangeRates.keySet();
-    }
 
-    public boolean isCurrencySupported(CurrencyCode currency) {
-        return (exchangeRates.get(currency) != null);
-    }
 
     public Date getLastUpdated() {
         return lastUpdated;
+    }
+
+    public void setLastUpdated() {
+        this.lastUpdated = new Date();
     }
 }

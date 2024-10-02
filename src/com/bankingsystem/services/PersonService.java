@@ -1,7 +1,7 @@
 package com.bankingsystem.services;
 
 import com.bankingsystem.models.Person;
-import com.bankingsystem.persistence.PersonDAO;
+import com.bankingsystem.persistence.dao.PersonDAO;
 
 public class PersonService {
 
