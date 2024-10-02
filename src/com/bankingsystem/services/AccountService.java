@@ -1,8 +1,8 @@
 package com.bankingsystem.services;
 
 import com.bankingsystem.models.*;
-import com.bankingsystem.persistence.AccountDAO;
-import com.bankingsystem.persistence.UserDAO;
+import com.bankingsystem.persistence.dao.AccountDAO;
+import com.bankingsystem.persistence.dao.UserDAO;
 
 public class AccountService {
     private AccountDAO accountDAO = new AccountDAO();
@@ -22,21 +22,21 @@ public class AccountService {
 
     // Withdraw
     public void withdraw(Account account, double amount) throws Exception {
-        if (account instanceof CheckingAccount) {
-            CheckingAccount checkingAccount = (CheckingAccount) account;
-            if (checkingAccount.getBalance() + checkingAccount.getOverdraftLimit() >= amount) {
-                checkingAccount.setBalance(checkingAccount.getBalance() - amount);
-            } else {
-                throw new Exception("Overdraft limit exceeded");
-            }
-        } else {
-            if (account.getBalance() >= amount) {
-                account.setBalance(account.getBalance() - amount);
-            } else {
-                throw new Exception("Insufficient funds");
-            }
-        }
-
+//        if (account instanceof CheckingAccount) {
+//            CheckingAccount checkingAccount = (CheckingAccount) account;
+//            if (checkingAccount.getBalance() + checkingAccount.getOverdraftLimit() >= amount) {
+//                checkingAccount.setBalance(checkingAccount.getBalance() - amount);
+//            } else {
+//                throw new Exception("Overdraft limit exceeded");
+//            }
+//        } else {
+//            if (account.getBalance() >= amount) {
+//                account.setBalance(account.getBalance() - amount);
+//            } else {
+//                throw new Exception("Insufficient funds");
+//            }
+//        }
+        account.withdraw(amount);
         accountDAO.updateAccount(account);
     }
 

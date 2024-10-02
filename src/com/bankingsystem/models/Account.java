@@ -2,7 +2,7 @@ package com.bankingsystem.models;
 
 import java.util.List;
 
-public class Account {
+public abstract class Account implements Withdrawable {
     protected int accountId;
     protected String iban;
     protected String accountName;
@@ -18,6 +18,8 @@ public class Account {
         this.balance = balance;
         this.currency = currency;
     }
+
+    public abstract void withdraw(double amount) throws Exception;
 
     public int getAccountId() {
         return this.accountId;

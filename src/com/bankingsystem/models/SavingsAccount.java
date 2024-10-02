@@ -8,6 +8,15 @@ public class SavingsAccount extends Account {
         this.interestRate = interestRate;
     }
 
+    @Override
+    public void withdraw(double amount) throws Exception {
+        if (balance >= amount) {
+            balance -= amount;
+        } else {
+            throw new Exception("Insufficient funds");
+        }
+    }
+
     public double getInterestRate() {
         return this.interestRate;
     }
@@ -15,6 +24,5 @@ public class SavingsAccount extends Account {
     public void setInterestRate(double newInterestRate) {
         this.interestRate = newInterestRate;
     }
-
 }
 

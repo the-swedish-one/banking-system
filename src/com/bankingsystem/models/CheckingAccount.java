@@ -8,14 +8,14 @@ public class CheckingAccount extends Account {
         this.overdraftLimit = overdraftLimit;
     }
 
-//    @Override
-//    public void withdraw(double amount) throws Exception {
-//        if (balance + overdraftLimit >= amount) {
-//            balance -= amount;
-//        } else {
-//            throw new Exception("Overdraft limit exceeded");
-//        }
-//    }
+    @Override
+    public void withdraw(double amount) throws Exception {
+        if (balance + overdraftLimit >= amount) {
+            balance -= amount;
+        } else {
+            throw new Exception("Overdraft limit exceeded");
+        }
+    }
 
     public double getOverdraftLimit() {
         return this.overdraftLimit;
