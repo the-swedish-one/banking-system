@@ -12,6 +12,10 @@ public class Bank {
         this.bic = bic;
     }
 
+    public String getBic() {
+        return this.bic;
+    }
+
 //    public List<Account> getAllAccounts() {
 //        return accounts;
 //    }

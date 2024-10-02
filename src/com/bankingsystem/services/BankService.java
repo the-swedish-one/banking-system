@@ -1,14 +1,19 @@
 package com.bankingsystem.services;
 
 import com.bankingsystem.models.Bank;
+import com.bankingsystem.persistence.BankPersistenceService;
 import com.bankingsystem.persistence.dao.BankDAO;
 
 public class BankService {
 
-    private BankDAO bankDAO = new BankDAO();
+    private final BankPersistenceService bankPersistenceService;
+
+    public BankService(BankPersistenceService bankPersistenceService) {
+        this.bankPersistenceService = bankPersistenceService;
+    }
 
     public void createBank(String bic) {
         Bank bank = new Bank(bic);
-        bankDAO.createBank(bank);
+        bankPersistenceService.createBank(bank);
     }
 }
