@@ -1,6 +1,9 @@
 package com.bankingsystem.models;
 
+import java.util.UUID;
+
 public class Person {
+    private String personId;
     private String firstName;
     private String lastName;
     private String email;
@@ -10,6 +13,7 @@ public class Person {
     private String country;
 
     public Person(String firstName, String lastName, String email, String addressLine1, String addressLine2, String city, String country) {
+        this.personId = UUID.randomUUID().toString();
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -19,8 +23,12 @@ public class Person {
         this.country = country;
     }
 
+    public String getPersonId() {
+        return this.personId;
+    }
+
     public String getFirstName() {
-        return firstName;
+        return this.firstName;
     }
 
     public void setFirstName(String newFirstName) {
