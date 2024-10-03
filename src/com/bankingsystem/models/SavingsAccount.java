@@ -1,5 +1,7 @@
 package com.bankingsystem.models;
 
+import com.bankingsystem.models.exceptions.InsufficientFundsException;
+
 public class SavingsAccount extends Account {
     private double interestRate;
 
@@ -9,11 +11,11 @@ public class SavingsAccount extends Account {
     }
 
     @Override
-    public void withdraw(double amount) throws Exception {
+    public void withdraw(double amount) {
         if (balance >= amount) {
             balance -= amount;
         } else {
-            throw new Exception("Insufficient funds"); // TODO - create custom unchecked exception
+            throw new InsufficientFundsException("Insufficient funds");
         }
     }
 

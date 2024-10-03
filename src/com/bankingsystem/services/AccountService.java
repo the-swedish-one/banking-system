@@ -1,6 +1,7 @@
 package com.bankingsystem.services;
 
 import com.bankingsystem.models.*;
+import com.bankingsystem.models.exceptions.*;
 import com.bankingsystem.persistence.AccountPersistenceService;
 import com.bankingsystem.persistence.UserPersistenceService;
 
@@ -15,18 +16,31 @@ public class AccountService {
 
     // Deposit
     public void deposit(String accountId, double amount) {
-        Account account = getAccountById(accountId);
-        account.deposit(amount);
-        DepositTransaction transaction = new DepositTransaction(amount);
-        account.getTransactionHistory().add(transaction);
-        accountPersistenceService.updateAccount(account);
+        try {
+            Account account = getAccountById(accountId);
+            account.deposit(amount);
+            DepositTransaction transaction = new DepositTransaction(amount);
+            account.getTransactionHistory().add(transaction);
+            accountPersistenceService.updateAccount(account);
+        } catch (RuntimeException e) {
+            System.out.println("Deposit failed: " + e.getMessage());
+        }
     }
 
     // Withdraw
-    public void withdraw(String accountId, double amount) throws Exception {
-        Account account = getAccountById(accountId);
-        account.withdraw(amount);
-        accountPersistenceService.updateAccount(account);
+    public void withdraw(String accountId, double amount) {
+        try {
+            Account account = getAccountById(accountId);
+            account.withdraw(amount);
+            accountPersistenceService.updateAccount(account);
+        } catch (InsufficientFundsException e) {
+            System.out.println("Withdraw failed due to insufficient funds: " + e.getMessage());
+        } catch (OverdraftLimitExceededException e) {
+            System.out.println("Withdraw failed due to overdraft limit exceeded: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Withdraw failed: " + e.getMessage());
+        }
+
 //        if (account instanceof CheckingAccount) {
 //            CheckingAccount checkingAccount = (CheckingAccount) account;
 //            if (checkingAccount.getBalance() + checkingAccount.getOverdraftLimit() >= amount) {
@@ -54,8 +68,12 @@ public class AccountService {
             TransferTransaction transaction = new TransferTransaction(amount, fromAccountId, toAccountId);
             fromAccount.getTransactionHistory().add(transaction);
             toAccount.getTransactionHistory().add(transaction);
+        } catch (InsufficientFundsException e) {
+            System.out.println("Transfer failed due to insufficient funds in sender account: " + e.getMessage());
+        } catch (OverdraftLimitExceededException e) {
+            System.out.println("Transfer failed due to overdraft limit exceeded in sender account: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("Transfer failed: " + e.getMessage()); // TODO - create custom unchecked exception
+            System.out.println("Transfer failed: " + e.getMessage());
         }
     }
 

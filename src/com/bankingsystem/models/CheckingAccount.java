@@ -1,5 +1,7 @@
 package com.bankingsystem.models;
 
+import com.bankingsystem.models.exceptions.OverdraftLimitExceededException;
+
 public class CheckingAccount extends Account {
     private double overdraftLimit;
 
@@ -9,11 +11,11 @@ public class CheckingAccount extends Account {
     }
 
     @Override
-    public void withdraw(double amount) throws Exception {
+    public void withdraw(double amount) {
         if (this.balance + this.overdraftLimit >= amount) {
             this.balance -= amount;
         } else {
-            throw new Exception("Overdraft limit exceeded"); // TODO - create custom unchecked exception
+            throw new OverdraftLimitExceededException("Overdraft limit exceeded");
         }
     }
 
