@@ -3,8 +3,8 @@ package com.bankingsystem.models;
 public class JointCheckingAccount extends CheckingAccount {
     private User secondOwner;
 
-    public JointCheckingAccount(String iban, User owner, User secondOwner, double balance, CurrencyCode currency, double overdraftLimit) {
-        super(iban, owner, balance, currency, overdraftLimit);
+    public JointCheckingAccount(User owner, User secondOwner, double balance, CurrencyCode currency, double overdraftLimit) {
+        super(owner, balance, currency, overdraftLimit);
         this.secondOwner = secondOwner;
     }
 

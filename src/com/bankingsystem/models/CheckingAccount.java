@@ -5,8 +5,8 @@ import com.bankingsystem.models.exceptions.OverdraftLimitExceededException;
 public class CheckingAccount extends Account {
     private double overdraftLimit;
 
-    public CheckingAccount(String iban, User owner, double balance, CurrencyCode currency, double overdraftLimit) {
-        super(iban, owner, balance, currency);
+    public CheckingAccount(User owner, double balance, CurrencyCode currency, double overdraftLimit) {
+        super(owner, balance, currency);
         this.overdraftLimit = overdraftLimit;
     }
 

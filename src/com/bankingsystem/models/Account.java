@@ -1,6 +1,7 @@
 package com.bankingsystem.models;
 
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 public abstract class Account implements Withdrawable, Depositable {
@@ -12,12 +13,25 @@ public abstract class Account implements Withdrawable, Depositable {
     protected CurrencyCode currency;
     protected List<Transaction> transactionHistory;
 
-    public Account(String iban, User owner, double balance, CurrencyCode currency) {
+    public Account(User owner, double balance, CurrencyCode currency) {
         this.accountId = "account-" + UUID.randomUUID();
-        this.iban = iban;
+        this.iban = generateIBAN(owner.getPerson().getCountry());;
         this.owner = owner;
         this.balance = balance;
         this.currency = currency;
+    }
+
+    private String generateIBAN(String country) {
+        // Get the first two letters of the country code
+        String countryCode = country.substring(0, 2).toUpperCase();
+        StringBuilder ibanBuilder = new StringBuilder(countryCode);
+
+        // Generate 14 random digits
+        Random random = new Random();
+        for (int i = 0; i < 14; i++) {
+            ibanBuilder.append(random.nextInt(10));
+        }
+        return ibanBuilder.toString();
     }
 
     @Override

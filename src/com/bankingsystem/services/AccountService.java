@@ -86,8 +86,8 @@ public class AccountService {
     }
 
     // Create Checking Account
-    public CheckingAccount createCheckingAccount(int accountId, String iban, User owner, double balance, CurrencyCode currency, double overdraftLimit) {
-        CheckingAccount checkingAccount = new CheckingAccount(iban, owner, balance, currency, overdraftLimit);
+    public CheckingAccount createCheckingAccount(User owner, double balance, CurrencyCode currency, double overdraftLimit) {
+        CheckingAccount checkingAccount = new CheckingAccount(owner, balance, currency, overdraftLimit);
         accountPersistenceService.createAccount(checkingAccount);
         owner.getAccounts().add(checkingAccount);
         userPersistenceService.updateUser(owner);
@@ -95,8 +95,8 @@ public class AccountService {
     }
 
     // Create Savings Account
-    public SavingsAccount createSavingsAccount(int accountId, String iban, User owner, double balance, CurrencyCode currency, double interestRate) {
-        SavingsAccount savingsAccount = new SavingsAccount(iban, owner, balance, currency, interestRate);
+    public SavingsAccount createSavingsAccount(User owner, double balance, CurrencyCode currency, double interestRate) {
+        SavingsAccount savingsAccount = new SavingsAccount(owner, balance, currency, interestRate);
         accountPersistenceService.createAccount(savingsAccount);
         owner.getAccounts().add(savingsAccount);
         userPersistenceService.updateUser(owner);
@@ -104,8 +104,8 @@ public class AccountService {
     }
 
     // Create Joint Checking Account
-    public JointCheckingAccount createJointCheckingAccount(int accountId, String iban, User owner, User secondOwner, double balance, CurrencyCode currency, double overdraftLimit) {
-        JointCheckingAccount jointCheckingAccount = new JointCheckingAccount(iban, owner, secondOwner, balance, currency, overdraftLimit);
+    public JointCheckingAccount createJointCheckingAccount(User owner, User secondOwner, double balance, CurrencyCode currency, double overdraftLimit) {
+        JointCheckingAccount jointCheckingAccount = new JointCheckingAccount(owner, secondOwner, balance, currency, overdraftLimit);
         accountPersistenceService.createAccount(jointCheckingAccount);
         owner.getAccounts().add(jointCheckingAccount);
         secondOwner.getAccounts().add(jointCheckingAccount);

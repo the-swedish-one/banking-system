@@ -5,8 +5,8 @@ import com.bankingsystem.models.exceptions.InsufficientFundsException;
 public class SavingsAccount extends Account {
     private double interestRate;
 
-    public SavingsAccount(String iban, User owner, double balance, CurrencyCode currency, double interestRate) {
-        super(iban, owner, balance, currency);
+    public SavingsAccount(User owner, double balance, CurrencyCode currency, double interestRate) {
+        super(owner, balance, currency);
         this.interestRate = interestRate;
     }
 
