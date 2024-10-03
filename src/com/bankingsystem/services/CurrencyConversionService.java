@@ -14,12 +14,14 @@ public class CurrencyConversionService {
         this.currencyConversionDAO = currencyConversionDAO;
     }
 
+    // Convert an amount from one currency to another
     public double convertAmount(double amount, CurrencyCode fromCurrency, CurrencyCode toCurrency) {
         CurrencyConversion conversion = currencyConversionDAO.getLatestConversion();
         double rate = getExchangeRate(conversion, fromCurrency, toCurrency);
         return amount * rate;
     }
 
+    // Get rate for exchanging one currency to another
     private double getExchangeRate(CurrencyConversion conversion, CurrencyCode fromCurrency, CurrencyCode toCurrency) {
         if (fromCurrency == toCurrency) {
             return 1.0;
@@ -34,6 +36,7 @@ public class CurrencyConversionService {
         return toRate / fromRate;
     }
 
+    // Update all exchange rates
     public void updateExchangeRates(Map<CurrencyCode, Double> newRates) {
         CurrencyConversion conversion = new CurrencyConversion(newRates);
         conversion.setLastUpdated(new java.util.Date());
