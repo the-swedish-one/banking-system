@@ -9,7 +9,7 @@ public class User {
     private List<Account> accounts;
 
     public User(Person person) {
-        this.userId = UUID.randomUUID().toString();
+        this.userId = "user-" + UUID.randomUUID();
         this.person = person;
     }
 
