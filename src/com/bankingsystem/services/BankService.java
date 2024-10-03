@@ -12,8 +12,9 @@ public class BankService {
         this.bankPersistenceService = bankPersistenceService;
     }
 
-    public void createBank(String bic) {
+    public Bank createBank(String bic) {
         Bank bank = new Bank(bic);
         bankPersistenceService.createBank(bank);
+        return bank;
     }
 }

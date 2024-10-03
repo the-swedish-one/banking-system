@@ -16,9 +16,10 @@ public class PersonService {
     }
 
     // Create new person
-    public void createPerson(String firstName, String lastName, String email, String addressLine1, String addressLine2, String city, String country) {
+    public Person createPerson(String firstName, String lastName, String email, String addressLine1, String addressLine2, String city, String country) {
         Person person = new Person(firstName, lastName, email, addressLine1, addressLine2, city, country);
         personPersistenceService.createPerson(person);
+        return person;
     }
 
     // Get person by ID

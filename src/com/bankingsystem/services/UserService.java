@@ -14,9 +14,10 @@ public class UserService {
     }
 
     // Create new user
-    public void createUser(Person person) {
+    public User createUser(Person person) {
         User user = new User(person);
         userPersistenceService.createUser(user);
+        return user;
     }
 
     // Get user by ID

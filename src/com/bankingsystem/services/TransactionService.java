@@ -15,21 +15,24 @@ public class TransactionService {
     }
 
     // Create new deposit transaction
-    public void createDepositTransaction(double amount) {
+    public DepositTransaction createDepositTransaction(double amount) {
         DepositTransaction transaction = new DepositTransaction(amount);
         transactionPersistenceService.createTransaction(transaction);
+        return transaction;
     }
 
     // Create new withdraw transaction
-    public void createWithdrawTransaction(double amount) {
+    public WithdrawTransaction createWithdrawTransaction(double amount) {
         WithdrawTransaction transaction = new WithdrawTransaction(amount);
         transactionPersistenceService.createTransaction(transaction);
+        return transaction;
     }
 
     // Create new transfer transaction
-    public void createTransferTransaction(double amount, String fromAccountId, String toAccountId) {
+    public TransferTransaction createTransferTransaction(double amount, String fromAccountId, String toAccountId) {
         TransferTransaction transaction = new TransferTransaction(amount, fromAccountId, toAccountId);
         transactionPersistenceService.createTransaction(transaction);
+        return transaction;
     }
 
     // Get transaction by ID
