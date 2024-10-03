@@ -13,7 +13,7 @@ public class Person {
     private String country;
 
     public Person(String firstName, String lastName, String email, String addressLine1, String addressLine2, String city, String country) {
-        this.personId = UUID.randomUUID().toString();
+        this.personId = "person-"+ UUID.randomUUID();
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
