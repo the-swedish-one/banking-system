@@ -1,25 +1,11 @@
 package com.bankingsystem.models;
 
+import java.util.UUID;
+
 public class DepositTransaction extends Transaction {
-    private Account account;
 
-    public DepositTransaction(String transactionId, double amount, Account account) {
-        super(transactionId, amount);
-        this.account = account;
-    }
-
-    @Override
-    public void execute() {
-        try {
-            account.deposit(amount);
-            account.getTransactionHistory().add(this);
-            System.out.println("Success! Amount deposited: " + amount);
-        } catch (Exception e) {
-            System.out.println("Deposit failed: " + e.getMessage());
-        }
-    }
-
-    public Account getAccount() {
-        return account;
+    public DepositTransaction(double amount) {
+        super(amount);
+        this.transactionId = "deposit-" + UUID.randomUUID();
     }
 }

@@ -1,32 +1,24 @@
 package com.bankingsystem.models;
 
+import java.util.UUID;
+
 public class TransferTransaction extends Transaction {
-    private Account fromAccount;
-    private Account toAccount;
 
-    public TransferTransaction(String transactionId, double amount, Account fromAccount, Account toAccount) {
-        super(transactionId, amount);
-        this.fromAccount = fromAccount;
-        this.toAccount = toAccount;
+    private String fromAccountId;
+    private String toAccountId;
+
+    public TransferTransaction(double amount, String fromAccountId, String toAccountId) {
+        super(amount);
+        this.transactionId = "transfer-" + UUID.randomUUID();
+        this.fromAccountId = fromAccountId;
+        this.toAccountId = toAccountId;
     }
 
-    @Override
-    public void execute() {
-        try {
-            fromAccount.withdraw(amount);
-            toAccount.deposit(amount);
-            fromAccount.getTransactionHistory().add(this);
-            toAccount.getTransactionHistory().add(this);
-        } catch (Exception e) {
-            System.out.println("Transfer failed: " + e.getMessage());
-        }
+    public String getFromAccountId() {
+        return this.fromAccountId;
     }
 
-    public Account getFromAccount() {
-        return this.fromAccount;
-    }
-
-    public Account getToAccount() {
-        return this.toAccount;
+    public String getToAccountId() {
+        return this.toAccountId;
     }
 }

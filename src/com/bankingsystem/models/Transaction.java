@@ -7,15 +7,11 @@ public abstract class Transaction {
     protected double amount;
     protected LocalDateTime timestamp;
 
-    public Transaction(String transactionId, double amount) {
-        this.transactionId = transactionId;
+    public Transaction(double amount) {
         this.amount = amount;
         this.timestamp = LocalDateTime.now();
     }
 
-    public abstract void execute();
-
-    // Getters
     public String getTransactionId() {
         return transactionId;
     }
