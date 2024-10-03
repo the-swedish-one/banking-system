@@ -1,5 +1,6 @@
 package com.bankingsystem.models;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,6 +12,7 @@ public class User {
     public User(Person person) {
         this.userId = "user-" + UUID.randomUUID();
         this.person = person;
+        this.accounts = new ArrayList<>();
     }
 
     public String getUserId() {
@@ -27,10 +29,6 @@ public class User {
 
     public List<Account> getAccounts() {
         return accounts;
-    }
-
-    public void setAccounts(List<Account> newAccounts) {
-        this.accounts = newAccounts;
     }
 }
 
