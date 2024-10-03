@@ -10,7 +10,7 @@ public interface AccountPersistenceService {
     void createAccount(Account account);
 
     // Get one account by ID
-    Account getAccountById(int accountId);
+    Account getAccountById(String accountId);
 
     // Get all accounts
     List<Account> getAllAccounts();
@@ -19,5 +19,5 @@ public interface AccountPersistenceService {
     void updateAccount(Account account);
 
     // Delete an account
-    boolean deleteAccount(int accountId);
+    boolean deleteAccount(String accountId);
 }

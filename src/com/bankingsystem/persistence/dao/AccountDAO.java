@@ -5,6 +5,7 @@ import com.bankingsystem.persistence.AccountPersistenceService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class AccountDAO implements AccountPersistenceService {
 
@@ -18,9 +19,9 @@ public class AccountDAO implements AccountPersistenceService {
 
     // Get one account by ID
     @Override
-    public Account getAccountById(int accountId) {
+    public Account getAccountById(String accountId) {
         for (Account account : accounts) {
-            if (account.getAccountId() == accountId) {
+            if (Objects.equals(account.getAccountId(), accountId)) {
                 return account;
             }
         }
@@ -52,7 +53,7 @@ public class AccountDAO implements AccountPersistenceService {
 
     // Delete an account
     @Override
-    public boolean deleteAccount(int accountId) {
-        return accounts.removeIf(account -> account.getAccountId() == accountId);
+    public boolean deleteAccount(String accountId) {
+        return accounts.removeIf(account -> Objects.equals(account.getAccountId(), accountId));
     }
 }

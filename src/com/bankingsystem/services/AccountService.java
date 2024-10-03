@@ -14,14 +14,17 @@ public class AccountService {
     }
 
     // Deposit
-    public void deposit(Account account, double amount) {
-        double newBalance = account.getBalance() + amount;
-        account.setBalance(newBalance);
+    public void deposit(String accountId, double amount) {
+        Account account = getAccountById(accountId);
+        account.deposit(amount);
+        DepositTransaction transaction = new DepositTransaction(amount);
+        account.getTransactionHistory().add(transaction);
         accountPersistenceService.updateAccount(account);
     }
 
     // Withdraw
-    public void withdraw(Account account, double amount) throws Exception {
+    public void withdraw(String accountId, double amount) throws Exception {
+        Account account = getAccountById(accountId);
         account.withdraw(amount);
         accountPersistenceService.updateAccount(account);
 //        if (account instanceof CheckingAccount) {
@@ -40,6 +43,22 @@ public class AccountService {
 //        }
     }
 
+    // Transfer
+    public void transfer(double amount, String fromAccountId, String toAccountId) {
+        Account fromAccount = getAccountById(fromAccountId);
+        Account toAccount = getAccountById(toAccountId);
+        try {
+            fromAccount.withdraw(amount);
+            toAccount.deposit(amount);
+
+            TransferTransaction transaction = new TransferTransaction(amount, fromAccountId, toAccountId);
+            fromAccount.getTransactionHistory().add(transaction);
+            toAccount.getTransactionHistory().add(transaction);
+        } catch (Exception e) {
+            System.out.println("Transfer failed: " + e.getMessage()); // TODO - create custom unchecked exception
+        }
+    }
+
     // Savings Account: Apply interest
     public void addInterest(SavingsAccount savingsAccount) {
         double interest = savingsAccount.getBalance() * savingsAccount.getInterestRate();
@@ -49,24 +68,24 @@ public class AccountService {
     }
 
     // Create Checking Account
-    public void createCheckingAccount(int accountId, String IBAN, User owner, double balance, CurrencyCode currency, double overdraftLimit) {
-        CheckingAccount checkingAccount = new CheckingAccount(accountId, IBAN, owner, balance, currency, overdraftLimit);
+    public void createCheckingAccount(int accountId, String iban, User owner, double balance, CurrencyCode currency, double overdraftLimit) {
+        CheckingAccount checkingAccount = new CheckingAccount(iban, owner, balance, currency, overdraftLimit);
         accountPersistenceService.createAccount(checkingAccount);
         owner.getAccounts().add(checkingAccount);
         userPersistenceService.updateUser(owner);
     }
 
     // Create Savings Account
-    public void createSavingsAccount(int accountId, String IBAN, User owner, double balance, CurrencyCode currency, double interestRate) {
-        SavingsAccount savingsAccount = new SavingsAccount(accountId, IBAN, owner, balance, currency, interestRate);
+    public void createSavingsAccount(int accountId, String iban, User owner, double balance, CurrencyCode currency, double interestRate) {
+        SavingsAccount savingsAccount = new SavingsAccount(iban, owner, balance, currency, interestRate);
         accountPersistenceService.createAccount(savingsAccount);
         owner.getAccounts().add(savingsAccount);
         userPersistenceService.updateUser(owner);
     }
 
     // Create Joint Checking Account
-    public void createJointCheckingAccount(int accountId, String IBAN, User owner, User secondOwner, double balance, CurrencyCode currency, double overdraftLimit) {
-        JointCheckingAccount jointCheckingAccount = new JointCheckingAccount(accountId, IBAN, owner, secondOwner, balance, currency, overdraftLimit);
+    public void createJointCheckingAccount(int accountId, String iban, User owner, User secondOwner, double balance, CurrencyCode currency, double overdraftLimit) {
+        JointCheckingAccount jointCheckingAccount = new JointCheckingAccount(iban, owner, secondOwner, balance, currency, overdraftLimit);
         accountPersistenceService.createAccount(jointCheckingAccount);
         owner.getAccounts().add(jointCheckingAccount);
         secondOwner.getAccounts().add(jointCheckingAccount);
@@ -75,12 +94,12 @@ public class AccountService {
     }
 
     // Get account by ID
-    public Account getAccountById(int accountId) {
+    public Account getAccountById(String accountId) {
         return accountPersistenceService.getAccountById(accountId);
     }
 
     // Delete account by ID
-    public boolean deleteAccount(int accountId) {
+    public boolean deleteAccount(String accountId) {
         return accountPersistenceService.deleteAccount(accountId);
     }
 }

@@ -3,8 +3,8 @@ package com.bankingsystem.models;
 public class SavingsAccount extends Account {
     private double interestRate;
 
-    public SavingsAccount(int accountId, String IBAN, User owner, double balance, CurrencyCode currency, double interestRate) {
-        super(accountId, IBAN, owner, balance, currency);
+    public SavingsAccount(String iban, User owner, double balance, CurrencyCode currency, double interestRate) {
+        super(iban, owner, balance, currency);
         this.interestRate = interestRate;
     }
 
@@ -13,7 +13,7 @@ public class SavingsAccount extends Account {
         if (balance >= amount) {
             balance -= amount;
         } else {
-            throw new Exception("Insufficient funds");
+            throw new Exception("Insufficient funds"); // TODO - create custom unchecked exception
         }
     }
 

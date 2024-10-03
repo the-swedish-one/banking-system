@@ -1,9 +1,10 @@
 package com.bankingsystem.models;
 
 import java.util.List;
+import java.util.UUID;
 
-public abstract class Account implements Withdrawable {
-    protected int accountId;
+public abstract class Account implements Withdrawable, Depositable {
+    protected String accountId;
     protected String iban;
     protected String accountName;
     protected User owner;
@@ -11,21 +12,24 @@ public abstract class Account implements Withdrawable {
     protected CurrencyCode currency;
     protected List<Transaction> transactionHistory;
 
-    public Account(int accountId, String iban, User owner, double balance, CurrencyCode currency) {
-        this.accountId = accountId;
+    public Account(String iban, User owner, double balance, CurrencyCode currency) {
+        this.accountId = "account-" + UUID.randomUUID();
         this.iban = iban;
         this.owner = owner;
         this.balance = balance;
         this.currency = currency;
     }
 
-    public abstract void withdraw(double amount) throws Exception;
+    @Override
+    public void deposit(double amount) {
+        this.balance = this.balance + amount;
+    }
 
-    public int getAccountId() {
+    public String getAccountId() {
         return this.accountId;
     }
 
-    public void setAccountId(int newAccountId) {
+    public void setAccountId(String newAccountId) {
         this.accountId = newAccountId;
     }
 
