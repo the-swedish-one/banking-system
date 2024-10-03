@@ -14,6 +14,7 @@ public class UserService {
     }
 
     // Create new user
+    // TODO - add user to banks list of users
     public User createUser(Person person) {
         User user = new User(person);
         userPersistenceService.createUser(user);

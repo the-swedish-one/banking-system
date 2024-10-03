@@ -86,6 +86,7 @@ public class AccountService {
     }
 
     // Create Checking Account
+    // TODO - add account to banks list of accounts
     public CheckingAccount createCheckingAccount(User owner, double balance, CurrencyCode currency, double overdraftLimit) {
         CheckingAccount checkingAccount = new CheckingAccount(owner, balance, currency, overdraftLimit);
         accountPersistenceService.createAccount(checkingAccount);
@@ -95,6 +96,7 @@ public class AccountService {
     }
 
     // Create Savings Account
+    // TODO - add account to banks list of accounts
     public SavingsAccount createSavingsAccount(User owner, double balance, CurrencyCode currency, double interestRate) {
         SavingsAccount savingsAccount = new SavingsAccount(owner, balance, currency, interestRate);
         accountPersistenceService.createAccount(savingsAccount);
@@ -104,6 +106,7 @@ public class AccountService {
     }
 
     // Create Joint Checking Account
+    // TODO - add account to banks list of accounts
     public JointCheckingAccount createJointCheckingAccount(User owner, User secondOwner, double balance, CurrencyCode currency, double overdraftLimit) {
         JointCheckingAccount jointCheckingAccount = new JointCheckingAccount(owner, secondOwner, balance, currency, overdraftLimit);
         accountPersistenceService.createAccount(jointCheckingAccount);
