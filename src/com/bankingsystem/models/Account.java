@@ -1,5 +1,6 @@
 package com.bankingsystem.models;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -19,6 +20,7 @@ public abstract class Account implements Withdrawable, Depositable {
         this.owner = owner;
         this.balance = balance;
         this.currency = currency;
+        this.transactionHistory = new ArrayList<>();
     }
 
     private String generateIBAN(String country) {
