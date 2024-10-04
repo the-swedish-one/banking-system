@@ -23,4 +23,13 @@ public abstract class Transaction {
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "transactionId=" + transactionId + '\'' +
+                "amount=" + amount + '\'' +
+                "timestamp=" + timestamp + '\'' +
+                '}';
+    }
 }

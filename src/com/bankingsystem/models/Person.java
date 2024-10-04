@@ -82,4 +82,13 @@ public class Person {
     public void setCountry(String newCountry) {
         this.country = newCountry;
     }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "firstName=" + firstName + '\'' +
+                "lastName=" + lastName + '\'' +
+                "email=" + email + '\'' +
+                '}';
+    }
 }

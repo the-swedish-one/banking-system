@@ -27,4 +27,12 @@ public class CurrencyConversion {
     public void setExchangeRates(Map<CurrencyCode, Double> exchangeRates) {
         this.exchangeRates = exchangeRates;
     }
+
+    @Override
+    public String toString() {
+        return "CurrencyConversion{" +
+                "lastUpdated=" + lastUpdated +
+                ", exchangeRates=" + exchangeRates +
+                '}';
+    }
 }
