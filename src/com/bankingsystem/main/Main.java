@@ -1,7 +1,6 @@
 package com.bankingsystem.main;
 
 import com.bankingsystem.models.*;
-import com.bankingsystem.persistence.*;
 import com.bankingsystem.persistence.dao.*;
 import com.bankingsystem.services.*;
 
@@ -21,31 +20,196 @@ public class Main {
         // Instantiate Services
         System.out.println("Instantiating Services");
         BankService bankService = new BankService(bankDAO);
-        AccountService accountService = new AccountService(accountDAO, userDAO);
-        TransactionService transactionService = new TransactionService(transactionDAO);
         CurrencyConversionService currencyConversionService = new CurrencyConversionService(currencyConversionDAO);
+        TransactionService transactionService = new TransactionService(transactionDAO);
+        AccountService accountService = new AccountService(accountDAO, userDAO, bankDAO, currencyConversionService, transactionService);
         PersonService personService = new PersonService(personDAO);
-        UserService userService = new UserService(userDAO);
+        UserService userService = new UserService(userDAO, bankDAO);
 
         // Create a bank
         System.out.println("Creating a bank called BestBank");
-        Bank bestBank = bankService.createBank("BestBank123");
+        Bank bestBank = bankService.createBank("Best Bank", "BESBA123");
 
-        // Create two persons
-        System.out.println("Creating a person called Alex");
-        Person alex = personService.createPerson("Alex", "Damgaard", "alex@gmail.com", "Cosy Cottage", "1 Alex Street", "Alexville", "Alexland");
+        // Create persons
+        System.out.println("Creating persons called Alex, Amee, Nicolas");
+        Person alex = personService.createPerson("Alex", "The Bestest", "alex@gmail.com", "Cosy Cottage", "1 Alex Street", "Alexville", "Alexland");
 
-        System.out.println("Creating a person called Amee");
-        Person amee = personService.createPerson("Amee", "Covarrubias", "amee@gmail.com", "Penthouse Suite", "1 Amee Boulevard", "Ameeville", "Ameeland");
+        Person amee = personService.createPerson("Amee", "The Greatest", "amee@gmail.com", "Penthouse Suite", "1 Amee Boulevard", "Ameeville", "Ameeland");
 
-        // Create two users
-        System.out.println("Alex is becoming a user");
-        User alexUser = userService.createUser(alex);
+        Person nicolas = personService.createPerson("Nicolas", "The Coolest", "nicolas@gmail.com", "Coolest House", "1 Nicolas Avenue", "Nicville", "Nicland");
 
-        System.out.println("Amee is becoming a user");
-        User ameeUser = userService.createUser(amee);
+        // Create users
+        System.out.println("Making Persons into Users");
+        User alexUser = userService.createUser(bestBank, alex);
+
+        User ameeUser = userService.createUser(bestBank, amee);
+
+        User nicolasUser = userService.createUser(bestBank, nicolas);
+
+        System.out.println("***************************");
+
+        // Create accounts
+        System.out.println("Creating Alex's checking and savings accounts");
+        CheckingAccount alexCheckingAccount = accountService.createCheckingAccount(bestBank, alexUser, 0, CurrencyCode.EUR, 1000.00);
+
+        SavingsAccount alexSavingsAccount = accountService.createSavingsAccount(bestBank, alexUser, 0, CurrencyCode.EUR, 1.5);
+
+        System.out.println("Creating Amee's checking and savings accounts");
+        CheckingAccount ameeCheckingAccount = accountService.createCheckingAccount(bestBank, ameeUser, 0, CurrencyCode.USD, 2000.00);
+
+        SavingsAccount ameeSavingsAccount = accountService.createSavingsAccount(bestBank, ameeUser, 0, CurrencyCode.USD, 2.0);
+
+        System.out.println("Creating Nicolas's checking account");
+        CheckingAccount nicolasCheckingAccount = accountService.createCheckingAccount(bestBank, nicolasUser, 0, CurrencyCode.EUR, 1000.00);
+
+        System.out.println("Creating a joint checking account for Alex and Amee");
+        JointCheckingAccount alexAmeeJointCheckingAccount = accountService.createJointCheckingAccount(bestBank, alexUser, ameeUser, 0, CurrencyCode.SEK, 3000.00);
+
+        System.out.println("***************************");
+
+        // Deposit money into Alex's accounts
+        System.out.println("Depositing 1000 EUR into Alex's checking account");
+        accountService.deposit(alexCheckingAccount.getAccountId(), 1000.00);
+
+        System.out.println("Depositing 2000 EUR into Alex's savings account");
+        accountService.deposit(alexSavingsAccount.getAccountId(), 2000.00);
+
+        // Withdraw money from Alex's checking account
+        System.out.println("Withdrawing 500 EUR from Alex's checking account");
+        accountService.withdraw(alexCheckingAccount.getAccountId(), 500.00);
+
+        // Check balance of Alex's checking account
+        double alexCheckingAccountBalance = accountService.getBalance(alexCheckingAccount.getAccountId());
+        CurrencyCode alexCheckingAccountCurrency = accountService.getAccountById(alexCheckingAccount.getAccountId()).getCurrency();
+        System.out.println("Alex's checking account balance is now: " + alexCheckingAccountBalance + " " + alexCheckingAccountCurrency);
+
+        // Check overdraft limit of Alex's checking account
+        double alexCheckingAccountOverdraftLimit = accountService.getOverdraftLimit(alexCheckingAccount.getAccountId());
+        System.out.println("Alex's Checking account overdraft limit: " + alexCheckingAccountOverdraftLimit);
+
+        // Demonstrate exception: Attempt to withdraw more money than is available Alex's checking account
+        System.out.println("Demonstrate exception: Attempting to withdraw 2000 EUR from Alex's checking account");
+        accountService.withdraw(alexCheckingAccount.getAccountId(), 2000.00);
+
+        // Check balance of Alex's savings account
+        double alexSavingsAccountBalance = accountService.getBalance(alexSavingsAccount.getAccountId());
+        CurrencyCode alexSavingsAccountCurrency = accountService.getAccountById(alexSavingsAccount.getAccountId()).getCurrency();
+        System.out.println("Alex's savings account balance: " + alexSavingsAccountBalance + " " + alexSavingsAccountCurrency);
+
+        // Demonstrate exception: Attempt to withdraw more money than is in Alex's savings account
+        System.out.println("Demonstrate exception: Attempting to withdraw 3000 EUR from Alex's savings account");
+        accountService.withdraw(alexSavingsAccount.getAccountId(), 3000.00);
+
+        System.out.println("***************************");
+
+        // Transfer money from Alex's checking account to Nicolas's checking account (same currencies)
+        System.out.println("Transferring 500 EUR from Alex's checking account to Nicolas's checking account");
+        accountService.transfer(500.00, alexCheckingAccount.getAccountId(), nicolasCheckingAccount.getAccountId());
+
+        // Confirm amounts in Alex's and Nicolas's checking accounts
+        alexCheckingAccountBalance = accountService.getBalance(alexCheckingAccount.getAccountId());
+        alexCheckingAccountCurrency = accountService.getAccountById(alexCheckingAccount.getAccountId()).getCurrency();
+        System.out.println("Alex's checking account balance after transfer: " + alexCheckingAccountBalance + " " + alexCheckingAccountCurrency);
+
+        double nicolasCheckingAccountBalance = accountService.getBalance(nicolasCheckingAccount.getAccountId());
+        CurrencyCode nicolasCheckingAccountCurrency = accountService.getAccountById(nicolasCheckingAccount.getAccountId()).getCurrency();
+        System.out.println("Nicolas's checking account balance after transfer: " + nicolasCheckingAccountBalance + " " + nicolasCheckingAccountCurrency);
+
+        // Transfer money from Alex's checking account to Nicolas's checking account (go into Alex's overdraft)
+        System.out.println("Transferring 500 EUR from Alex's checking account (overdraft) to Nicolas's checking account");
+        accountService.transfer(500.00, alexCheckingAccount.getAccountId(), nicolasCheckingAccount.getAccountId());
+
+        // Confirm amounts in Alex's checking account
+        alexCheckingAccountBalance = accountService.getBalance(alexCheckingAccount.getAccountId());
+        alexCheckingAccountCurrency = accountService.getAccountById(alexCheckingAccount.getAccountId()).getCurrency();
+        System.out.println("Alex's checking account balance after transfer: " + alexCheckingAccountBalance + " " + alexCheckingAccountCurrency);
+
+        System.out.println("***************************");
+
+        // Deposit money into Amee's accounts
+        System.out.println("Depositing 2000 USD into Amee's checking account");
+        accountService.deposit(ameeCheckingAccount.getAccountId(), 2000.00);
+
+        System.out.println("Depositing 3000 USD into Amee's savings account");
+        accountService.deposit(ameeSavingsAccount.getAccountId(), 3000.00);
+
+        // Transfer money from Amee's checking account to Amee's checking account
+        System.out.println("Transferring 1000 USD from Amee's checking account to Amee's savings account");
+        accountService.transfer(1000.00, ameeCheckingAccount.getAccountId(), ameeSavingsAccount.getAccountId());
+
+        // Confirm amounts in Amee's accounts
+        double ameeCheckingAccountBalance = accountService.getBalance(ameeCheckingAccount.getAccountId());
+        CurrencyCode ameeCheckingAccountCurrency = accountService.getAccountById(ameeCheckingAccount.getAccountId()).getCurrency();
+        System.out.println("Amee's checking account balance after transfer: " + ameeCheckingAccountBalance + " " + ameeCheckingAccountCurrency);
+
+        double ameeSavingsAccountBalance = accountService.getBalance(ameeSavingsAccount.getAccountId());
+        CurrencyCode ameeSavingsAccountCurrency = accountService.getAccountById(ameeSavingsAccount.getAccountId()).getCurrency();
+        System.out.println("Amee's savings account balance after balance: " + ameeSavingsAccountBalance + " " + ameeSavingsAccountCurrency);
+
+        // Demonstrate exception: Attempt to transfer more money than is in Amee's checking account
+        System.out.println("Demonstrate exception: Attempting to transfer 10000 USD from Amee's checking account to Amee's savings account");
+        accountService.transfer(10000.00, ameeCheckingAccount.getAccountId(), ameeSavingsAccount.getAccountId());
 
 
+        System.out.println("***************************");
 
+
+        // Get exchange rate for USD to SEK
+        double usdToSekRate = currencyConversionService.getExchangeRate(CurrencyCode.USD, CurrencyCode.SEK);
+        System.out.println("USD to SEK exchange rate: " + usdToSekRate);
+
+        // Perform currency conversion
+        double convertedAmount = currencyConversionService.convertAmount(500.00, CurrencyCode.USD, CurrencyCode.SEK);
+        System.out.println("500 USD exchanges to: " + convertedAmount + " SEK");
+
+        // Transfer money from Amee's checking account to Alex & Amee's joint checking account (different currencies) and demonstrate rounding
+        System.out.println("Transferring 500 USD from Amee's checking account to Alex and Amee's joint checking account (SEK)");
+        accountService.transfer(500.00, ameeCheckingAccount.getAccountId(), alexAmeeJointCheckingAccount.getAccountId());
+
+        // Confirm amounts in Amee's checking account
+        ameeCheckingAccountBalance = accountService.getBalance(ameeCheckingAccount.getAccountId());
+        ameeCheckingAccountCurrency = accountService.getAccountById(ameeCheckingAccount.getAccountId()).getCurrency();
+        System.out.println("Amee's checking account balance after transfer: " + ameeCheckingAccountBalance + " " + ameeCheckingAccountCurrency);
+
+        // Confirm amounts in Alex & Amee's joint checking account
+        double alexAmeeJointCheckingAccountBalance = accountService.getBalance(alexAmeeJointCheckingAccount.getAccountId());
+        CurrencyCode alexAmeeJointCheckingAccountCurrency = accountService.getAccountById(alexAmeeJointCheckingAccount.getAccountId()).getCurrency();
+        System.out.println("Alex and Amee's joint checking account balance after transfer: " + alexAmeeJointCheckingAccountBalance + " " + alexAmeeJointCheckingAccountCurrency);
+
+
+        System.out.println("***************************");
+
+        // Check balance of Amee's savings account
+        ameeSavingsAccountBalance = accountService.getBalance(ameeSavingsAccount.getAccountId());
+        ameeSavingsAccountCurrency = accountService.getAccountById(ameeSavingsAccount.getAccountId()).getCurrency();
+        System.out.println("Amee's savings account balance before interest: " + ameeSavingsAccountBalance + " " + ameeSavingsAccountCurrency);
+
+
+        // Apply interest to Amee's savings account
+        System.out.println("Applying interest to Amee's savings account");
+        accountService.addInterest(ameeSavingsAccount);
+
+        // Check balance of Amee's savings account
+        ameeSavingsAccountBalance = accountService.getBalance(ameeSavingsAccount.getAccountId());
+        ameeSavingsAccountCurrency = accountService.getAccountById(ameeSavingsAccount.getAccountId()).getCurrency();
+        System.out.println("Amee's savings account balance after interest: " + ameeSavingsAccountBalance + " " + ameeSavingsAccountCurrency);
+
+
+        System.out.println("***************************");
+
+        // Get Transaction History for Alex's checking account
+        System.out.println("Getting transaction history for Alex's checking account");
+        String alexCheckingAccountTransactionHistory = accountService.getTransactionHistory(alexCheckingAccount.getAccountId());
+        System.out.println(alexCheckingAccountTransactionHistory);
+
+        // Get list of Users of bank
+        System.out.println("Getting list of Users of Bank");
+        String bankUsers = bankService.getAllBankUsers("BESBA123");
+        System.out.println(bankUsers);
+
+        // Get list of Accounts of bank
+        System.out.println("Getting list of Accounts of Bank");
+        String bankAccounts = bankService.getAllBankAccounts("BESBA123");
+        System.out.println(bankAccounts);
     }
 }
