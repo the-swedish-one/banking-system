@@ -14,12 +14,14 @@ public class AccountService {
     private final UserPersistenceService userPersistenceService;
     private final BankPersistenceService bankPersistenceService;
     private final CurrencyConversionService currencyConversionService;
+    private final TransactionService transactionService;
 
-    public AccountService(AccountPersistenceService accountPersistenceService, UserPersistenceService userPersistenceService, BankPersistenceService bankPersistenceService, CurrencyConversionService currencyConversionService) {
+    public AccountService(AccountPersistenceService accountPersistenceService, UserPersistenceService userPersistenceService, BankPersistenceService bankPersistenceService, CurrencyConversionService currencyConversionService, TransactionService transactionService) {
         this.accountPersistenceService = accountPersistenceService;
         this.userPersistenceService = userPersistenceService;
         this.bankPersistenceService = bankPersistenceService;
         this.currencyConversionService = currencyConversionService;
+        this.transactionService = transactionService;
     }
 
     // Deposit
@@ -27,7 +29,7 @@ public class AccountService {
         try {
             Account account = getAccountById(accountId);
             account.deposit(amount);
-            DepositTransaction transaction = new DepositTransaction(amount);
+            DepositTransaction transaction = transactionService.createDepositTransaction(amount);
             account.getTransactionHistory().add(transaction);
             accountPersistenceService.updateAccount(account);
         } catch (RuntimeException e) {
@@ -40,6 +42,8 @@ public class AccountService {
         try {
             Account account = getAccountById(accountId);
             account.withdraw(amount);
+            WithdrawTransaction transaction = transactionService.createWithdrawTransaction(amount);
+            account.getTransactionHistory().add(transaction);
             accountPersistenceService.updateAccount(account);
         } catch (InsufficientFundsException | OverdraftLimitExceededException e) {
             System.out.println("Withdraw failed: " + e.getMessage());
@@ -60,11 +64,12 @@ public class AccountService {
                 fromAccount.withdraw(amount);
                 toAccount.deposit(roundedConvertedAmount);
 
-                TransferTransaction fromTransaction = new TransferTransaction(amount, fromAccountId, toAccountId);
-                TransferTransaction toTransaction = new TransferTransaction(roundedConvertedAmount, fromAccountId, toAccountId);
+                TransferTransaction fromTransaction = transactionService.createTransferTransaction(amount, fromAccountId, toAccountId);
+                TransferTransaction toTransaction = transactionService.createTransferTransaction(roundedConvertedAmount, fromAccountId, toAccountId);
                 fromAccount.getTransactionHistory().add(fromTransaction);
                 toAccount.getTransactionHistory().add(toTransaction);
-
+                accountPersistenceService.updateAccount(fromAccount);
+                accountPersistenceService.updateAccount(toAccount);
             } else {
                 fromAccount.withdraw(amount);
                 toAccount.deposit(amount);
@@ -72,6 +77,8 @@ public class AccountService {
                 TransferTransaction transaction = new TransferTransaction(amount, fromAccountId, toAccountId);
                 fromAccount.getTransactionHistory().add(transaction);
                 toAccount.getTransactionHistory().add(transaction);
+                accountPersistenceService.updateAccount(fromAccount);
+                accountPersistenceService.updateAccount(toAccount);
             }
 
         } catch (InsufficientFundsException | OverdraftLimitExceededException e) {
