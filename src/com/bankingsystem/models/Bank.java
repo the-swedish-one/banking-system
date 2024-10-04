@@ -4,14 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Bank {
+    private String bankName;
     private String bic;
     private List<User> users;
     private List<Account> accounts;
 
-    public Bank(String bic) {
+    public Bank(String bankName, String bic) {
+        this.bankName = bankName;
         this.bic = bic;
         this.users = new ArrayList<>();
         this.accounts = new ArrayList<>();
+    }
+
+    public String getBankName() {
+        return this.bankName;
     }
 
     public String getBic() {
