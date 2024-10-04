@@ -21,4 +21,14 @@ public class TransferTransaction extends Transaction {
     public String getToAccountId() {
         return this.toAccountId;
     }
+
+    @Override
+    public String toString() {
+        return "TransferTransaction{" +
+                "amount=" + amount +
+                ", fromAccountId='" + fromAccountId + '\'' +
+                ", toAccountId='" + toAccountId + '\'' +
+                ", timestamp=" + timestamp +
+                '}';
+    }
 }

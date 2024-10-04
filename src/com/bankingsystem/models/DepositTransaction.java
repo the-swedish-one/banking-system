@@ -8,4 +8,12 @@ public class DepositTransaction extends Transaction {
         super(amount);
         this.transactionId = "deposit-" + UUID.randomUUID();
     }
+
+    @Override
+    public String toString() {
+        return "DepositTransaction{" +
+                "amount=" + amount + '\'' +
+                ", timestamp=" + timestamp +
+                '}';
+    }
 }

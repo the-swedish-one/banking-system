@@ -8,4 +8,12 @@ public class WithdrawTransaction extends Transaction {
         super(amount);
         this.transactionId = "withdraw-" + UUID.randomUUID();
     }
+
+    @Override
+    public String toString() {
+        return "WithdrawTransaction{" +
+                "amount=" + amount + '\'' +
+                ", timestamp=" + timestamp +
+                '}';
+    }
 }
