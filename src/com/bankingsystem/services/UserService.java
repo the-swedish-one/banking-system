@@ -1,23 +1,28 @@
 package com.bankingsystem.services;
 
+import com.bankingsystem.models.Bank;
 import com.bankingsystem.models.Person;
 import com.bankingsystem.models.User;
+import com.bankingsystem.persistence.BankPersistenceService;
 import com.bankingsystem.persistence.UserPersistenceService;
 
 import java.util.List;
 
 public class UserService {
     private final UserPersistenceService userPersistenceService;
+    private final BankPersistenceService bankPersistenceService;
 
-    public UserService(UserPersistenceService userPersistenceService) {
+    public UserService(UserPersistenceService userPersistenceService, BankPersistenceService bankPersistenceService) {
         this.userPersistenceService = userPersistenceService;
+        this.bankPersistenceService = bankPersistenceService;
     }
 
     // Create new user
-    // TODO - add user to banks list of users
-    public User createUser(Person person) {
+    public User createUser(Bank bank, Person person) {
         User user = new User(person);
         userPersistenceService.createUser(user);
+        bank.getUsers().add(user);
+        bankPersistenceService.updateBank(bank);
         return user;
     }
 
