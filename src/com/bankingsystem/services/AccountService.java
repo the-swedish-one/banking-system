@@ -5,13 +5,18 @@ import com.bankingsystem.models.exceptions.*;
 import com.bankingsystem.persistence.AccountPersistenceService;
 import com.bankingsystem.persistence.UserPersistenceService;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class AccountService {
     private final AccountPersistenceService accountPersistenceService;
     private final UserPersistenceService userPersistenceService;
+    private final CurrencyConversionService currencyConversionService;
 
-    public AccountService(AccountPersistenceService accountPersistenceService, UserPersistenceService userPersistenceService) {
+    public AccountService(AccountPersistenceService accountPersistenceService, UserPersistenceService userPersistenceService, CurrencyConversionService currencyConversionService) {
         this.accountPersistenceService = accountPersistenceService;
         this.userPersistenceService = userPersistenceService;
+        this.currencyConversionService = currencyConversionService;
     }
 
     // Deposit
@@ -33,28 +38,11 @@ public class AccountService {
             Account account = getAccountById(accountId);
             account.withdraw(amount);
             accountPersistenceService.updateAccount(account);
-        } catch (InsufficientFundsException e) {
-            System.out.println("Withdraw failed due to insufficient funds: " + e.getMessage());
-        } catch (OverdraftLimitExceededException e) {
-            System.out.println("Withdraw failed due to overdraft limit exceeded: " + e.getMessage());
+        } catch (InsufficientFundsException | OverdraftLimitExceededException e) {
+            System.out.println("Withdraw failed: " + e.getMessage());
         } catch (Exception e) {
             System.out.println("Withdraw failed: " + e.getMessage());
         }
-
-//        if (account instanceof CheckingAccount) {
-//            CheckingAccount checkingAccount = (CheckingAccount) account;
-//            if (checkingAccount.getBalance() + checkingAccount.getOverdraftLimit() >= amount) {
-//                checkingAccount.setBalance(checkingAccount.getBalance() - amount);
-//            } else {
-//                throw new Exception("Overdraft limit exceeded");
-//            }
-//        } else {
-//            if (account.getBalance() >= amount) {
-//                account.setBalance(account.getBalance() - amount);
-//            } else {
-//                throw new Exception("Insufficient funds");
-//            }
-//        }
     }
 
     // Transfer
@@ -62,16 +50,29 @@ public class AccountService {
         Account fromAccount = getAccountById(fromAccountId);
         Account toAccount = getAccountById(toAccountId);
         try {
-            fromAccount.withdraw(amount);
-            toAccount.deposit(amount);
+            if (fromAccount.getCurrency() != toAccount.getCurrency()) {
+                double convertedAmount = currencyConversionService.convertAmount(amount, fromAccount.getCurrency(), toAccount.getCurrency());
+                BigDecimal bd = new BigDecimal(convertedAmount).setScale(2, RoundingMode.HALF_UP);
+                double roundedConvertedAmount = bd.doubleValue();
+                fromAccount.withdraw(amount);
+                toAccount.deposit(roundedConvertedAmount);
 
-            TransferTransaction transaction = new TransferTransaction(amount, fromAccountId, toAccountId);
-            fromAccount.getTransactionHistory().add(transaction);
-            toAccount.getTransactionHistory().add(transaction);
-        } catch (InsufficientFundsException e) {
-            System.out.println("Transfer failed due to insufficient funds in sender account: " + e.getMessage());
-        } catch (OverdraftLimitExceededException e) {
-            System.out.println("Transfer failed due to overdraft limit exceeded in sender account: " + e.getMessage());
+                TransferTransaction fromTransaction = new TransferTransaction(amount, fromAccountId, toAccountId);
+                TransferTransaction toTransaction = new TransferTransaction(roundedConvertedAmount, fromAccountId, toAccountId);
+                fromAccount.getTransactionHistory().add(fromTransaction);
+                toAccount.getTransactionHistory().add(toTransaction);
+
+            } else {
+                fromAccount.withdraw(amount);
+                toAccount.deposit(amount);
+
+                TransferTransaction transaction = new TransferTransaction(amount, fromAccountId, toAccountId);
+                fromAccount.getTransactionHistory().add(transaction);
+                toAccount.getTransactionHistory().add(transaction);
+            }
+
+        } catch (InsufficientFundsException | OverdraftLimitExceededException e) {
+            System.out.println("Transfer failed: " + e.getMessage());
         } catch (Exception e) {
             System.out.println("Transfer failed: " + e.getMessage());
         }
@@ -79,10 +80,21 @@ public class AccountService {
 
     // Savings Account: Apply interest
     public void addInterest(SavingsAccount savingsAccount) {
-        double interest = savingsAccount.getBalance() * savingsAccount.getInterestRate();
+        double interestRateDecimal = savingsAccount.getInterestRatPercentage() / 100.0;
+        double interest = savingsAccount.getBalance() * interestRateDecimal;
         double newBalance = savingsAccount.getBalance() + interest;
         savingsAccount.setBalance(newBalance);
         accountPersistenceService.updateAccount(savingsAccount);
+    }
+
+    // Get Transaction History by account ID
+    public String getTransactionHistory(String accountId) {
+        Account account = getAccountById(accountId);
+        StringBuilder transactionHistory = new StringBuilder();
+        for (Transaction transaction : account.getTransactionHistory()) {
+            transactionHistory.append(transaction.toString()).append("\n");
+        }
+        return transactionHistory.toString();
     }
 
     // Create Checking Account
@@ -120,6 +132,22 @@ public class AccountService {
     // Get account by ID
     public Account getAccountById(String accountId) {
         return accountPersistenceService.getAccountById(accountId);
+    }
+
+    // Get balance by account ID
+    public double getBalance(String accountId) {
+        return accountPersistenceService.getAccountById(accountId).getBalance();
+    }
+
+    // Get overdraft limit by account ID
+    public double getOverdraftLimit(String accountId) {
+        Account account = accountPersistenceService.getAccountById(accountId);
+        if (account instanceof CheckingAccount) {
+            CheckingAccount checkingAccount = (CheckingAccount) account;
+            return checkingAccount.getOverdraftLimit();
+        } else {
+            return 0;
+        }
     }
 
     // Delete account by ID
