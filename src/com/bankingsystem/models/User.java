@@ -30,5 +30,13 @@ public class User {
     public List<Account> getAccounts() {
         return accounts;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "firstName=" + person.getFirstName() + '\'' +
+                ", lastName=" + person.getLastName() + '\'' +
+                '}';
+    }
 }
 

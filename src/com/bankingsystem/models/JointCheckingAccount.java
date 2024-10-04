@@ -15,4 +15,13 @@ public class JointCheckingAccount extends CheckingAccount {
     public void setSecondOwner(User newSecondOwner) {
         this.secondOwner = newSecondOwner;
     }
+
+    @Override
+    public String toString() {
+        return "JointCheckingAccount{" +
+                "iban=" + iban + '\'' +
+                "owner=" + owner + '\'' +
+                "secondOwner=" + secondOwner + '\'' +
+                '}';
+    }
 }

@@ -27,4 +27,13 @@ public class CheckingAccount extends Account {
         this.overdraftLimit = newOverdraftLimit;
     }
 
+    @Override
+    public String toString() {
+        return "CheckingAccount{" +
+                "iban=" + iban + '\'' +
+                "owner=" + owner + '\'' +
+                "overdraftLimit=" + overdraftLimit + '\'' +
+                '}';
+    }
+
 }

@@ -26,4 +26,11 @@ public class Bank {
         return users;
     }
 
+    @Override
+    public String toString() {
+        return "Bank{" +
+                "bic=" + bic + '\'' +
+                '}';
+    }
+
 }

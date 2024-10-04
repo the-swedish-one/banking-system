@@ -26,5 +26,14 @@ public class SavingsAccount extends Account {
     public void setInterestRatePercentage(double newInterestRatePercentage) {
         this.interestRatePercentage = newInterestRatePercentage;
     }
+
+    @Override
+    public String toString() {
+        return "SavingsAccount{" +
+                "iban=" + iban + '\'' +
+                "owner=" + owner + '\'' +
+                "interestRatePercentage=" + interestRatePercentage + '\'' +
+                '}';
+    }
 }
 

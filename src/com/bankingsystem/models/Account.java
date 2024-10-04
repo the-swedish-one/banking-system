@@ -92,5 +92,13 @@ public abstract class Account implements Withdrawable, Depositable {
     public List<Transaction> getTransactionHistory() {
         return this.transactionHistory;
     }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "iban=" + iban + '\'' +
+                "owner=" + owner + '\'' +
+                '}';
+    }
 }
 
