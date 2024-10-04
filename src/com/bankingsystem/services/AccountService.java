@@ -3,6 +3,7 @@ package com.bankingsystem.services;
 import com.bankingsystem.models.*;
 import com.bankingsystem.models.exceptions.*;
 import com.bankingsystem.persistence.AccountPersistenceService;
+import com.bankingsystem.persistence.BankPersistenceService;
 import com.bankingsystem.persistence.UserPersistenceService;
 
 import java.math.BigDecimal;
@@ -11,11 +12,13 @@ import java.math.RoundingMode;
 public class AccountService {
     private final AccountPersistenceService accountPersistenceService;
     private final UserPersistenceService userPersistenceService;
+    private final BankPersistenceService bankPersistenceService;
     private final CurrencyConversionService currencyConversionService;
 
-    public AccountService(AccountPersistenceService accountPersistenceService, UserPersistenceService userPersistenceService, CurrencyConversionService currencyConversionService) {
+    public AccountService(AccountPersistenceService accountPersistenceService, UserPersistenceService userPersistenceService, BankPersistenceService bankPersistenceService, CurrencyConversionService currencyConversionService) {
         this.accountPersistenceService = accountPersistenceService;
         this.userPersistenceService = userPersistenceService;
+        this.bankPersistenceService = bankPersistenceService;
         this.currencyConversionService = currencyConversionService;
     }
 
@@ -98,34 +101,37 @@ public class AccountService {
     }
 
     // Create Checking Account
-    // TODO - add account to banks list of accounts
-    public CheckingAccount createCheckingAccount(User owner, double balance, CurrencyCode currency, double overdraftLimit) {
+    public CheckingAccount createCheckingAccount(Bank bank, User owner, double balance, CurrencyCode currency, double overdraftLimit) {
         CheckingAccount checkingAccount = new CheckingAccount(owner, balance, currency, overdraftLimit);
         accountPersistenceService.createAccount(checkingAccount);
         owner.getAccounts().add(checkingAccount);
         userPersistenceService.updateUser(owner);
+        bank.getAccounts().add(checkingAccount);
+        bankPersistenceService.updateBank(bank);
         return checkingAccount;
     }
 
     // Create Savings Account
-    // TODO - add account to banks list of accounts
-    public SavingsAccount createSavingsAccount(User owner, double balance, CurrencyCode currency, double interestRate) {
+    public SavingsAccount createSavingsAccount(Bank bank, User owner, double balance, CurrencyCode currency, double interestRate) {
         SavingsAccount savingsAccount = new SavingsAccount(owner, balance, currency, interestRate);
         accountPersistenceService.createAccount(savingsAccount);
         owner.getAccounts().add(savingsAccount);
         userPersistenceService.updateUser(owner);
+        bank.getAccounts().add(savingsAccount);
+        bankPersistenceService.updateBank(bank);
         return savingsAccount;
     }
 
     // Create Joint Checking Account
-    // TODO - add account to banks list of accounts
-    public JointCheckingAccount createJointCheckingAccount(User owner, User secondOwner, double balance, CurrencyCode currency, double overdraftLimit) {
+    public JointCheckingAccount createJointCheckingAccount(Bank bank, User owner, User secondOwner, double balance, CurrencyCode currency, double overdraftLimit) {
         JointCheckingAccount jointCheckingAccount = new JointCheckingAccount(owner, secondOwner, balance, currency, overdraftLimit);
         accountPersistenceService.createAccount(jointCheckingAccount);
         owner.getAccounts().add(jointCheckingAccount);
         secondOwner.getAccounts().add(jointCheckingAccount);
         userPersistenceService.updateUser(owner);
         userPersistenceService.updateUser(secondOwner);
+        bank.getAccounts().add(jointCheckingAccount);
+        bankPersistenceService.updateBank(bank);
         return jointCheckingAccount;
     }
 
