@@ -17,12 +17,13 @@ public class CurrencyConversionService {
     // Convert an amount from one currency to another
     public double convertAmount(double amount, CurrencyCode fromCurrency, CurrencyCode toCurrency) {
         CurrencyConversion conversion = currencyConversionDAO.getLatestConversion();
-        double rate = getExchangeRate(conversion, fromCurrency, toCurrency);
+        double rate = getExchangeRate(fromCurrency, toCurrency);
         return amount * rate;
     }
 
     // Get rate for exchanging one currency to another
-    private double getExchangeRate(CurrencyConversion conversion, CurrencyCode fromCurrency, CurrencyCode toCurrency) {
+    public double getExchangeRate(CurrencyCode fromCurrency, CurrencyCode toCurrency) {
+        CurrencyConversion conversion = currencyConversionDAO.getLatestConversion();
         if (fromCurrency == toCurrency) {
             return 1.0;
         }
@@ -32,7 +33,6 @@ public class CurrencyConversionService {
         if (fromRate == null || toRate == null) {
             throw new IllegalArgumentException("Unsupported currency conversion");
         }
-
         return toRate / fromRate;
     }
 
