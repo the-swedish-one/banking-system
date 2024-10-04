@@ -26,7 +26,7 @@ public class BankService {
         for (Account account : bank.getAccounts()) {
             users.append(account.getOwner().toString()).append("\n");
         }
-        if (users.length() == 0) {
+        if (users.isEmpty()) {
             return "No users found";
         }
         return users.toString();
@@ -40,7 +40,7 @@ public class BankService {
         for (Account account : bank.getAccounts()) {
             accounts.append(account.toString()).append("\n");
         }
-        if (accounts.length() == 0) {
+        if (accounts.isEmpty()) {
             return "No accounts found";
         }
         return accounts.toString();

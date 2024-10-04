@@ -1,9 +1,7 @@
 package com.bankingsystem.services;
 
 import com.bankingsystem.models.Person;
-import com.bankingsystem.models.User;
 import com.bankingsystem.persistence.PersonPersistenceService;
-import com.bankingsystem.persistence.dao.PersonDAO;
 
 import java.util.List;
 

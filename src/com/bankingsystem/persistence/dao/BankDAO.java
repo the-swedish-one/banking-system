@@ -8,7 +8,7 @@ import java.util.List;
 
 public class BankDAO implements BankPersistenceService {
 
-    private List<Bank> banks = new ArrayList<Bank>();
+    private List<Bank> banks = new ArrayList<>();
 
     // Create new bank
     @Override

@@ -44,7 +44,7 @@ public class AccountDAO implements AccountPersistenceService {
     @Override
     public void updateAccount(Account account) {
         for (int i = 0; i < accounts.size(); i++) {
-            if (accounts.get(i).getAccountId() == account.getAccountId()) {
+            if (Objects.equals(accounts.get(i).getAccountId(), account.getAccountId())) {
                 accounts.set(i, account);
                 return;
             }

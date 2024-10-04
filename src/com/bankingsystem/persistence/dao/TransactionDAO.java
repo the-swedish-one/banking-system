@@ -1,6 +1,5 @@
 package com.bankingsystem.persistence.dao;
 
-import com.bankingsystem.models.Account;
 import com.bankingsystem.models.Transaction;
 import com.bankingsystem.persistence.TransactionPersistenceService;
 

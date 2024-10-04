@@ -5,6 +5,7 @@ import com.bankingsystem.persistence.UserPersistenceService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class UserDAO implements UserPersistenceService {
 
@@ -35,7 +36,7 @@ public class UserDAO implements UserPersistenceService {
     @Override
     public void updateUser(User user) {
         for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getUserId() == user.getUserId()) {
+            if (Objects.equals(users.get(i).getUserId(), user.getUserId())) {
                 users.set(i, user);
                 return;
             }

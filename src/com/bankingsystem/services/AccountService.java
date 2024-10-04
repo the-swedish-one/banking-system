@@ -148,8 +148,7 @@ public class AccountService {
     // Get overdraft limit by account ID
     public double getOverdraftLimit(String accountId) {
         Account account = accountPersistenceService.getAccountById(accountId);
-        if (account instanceof CheckingAccount) {
-            CheckingAccount checkingAccount = (CheckingAccount) account;
+        if (account instanceof CheckingAccount checkingAccount) {
             return checkingAccount.getOverdraftLimit();
         } else {
             return 0;

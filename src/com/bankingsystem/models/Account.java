@@ -16,7 +16,7 @@ public abstract class Account implements Withdrawable, Depositable {
 
     public Account(User owner, double balance, CurrencyCode currency) {
         this.accountId = "account-" + UUID.randomUUID();
-        this.iban = generateIBAN(owner.getPerson().getCountry());;
+        this.iban = generateIBAN(owner.getPerson().getCountry());
         this.owner = owner;
         this.balance = balance;
         this.currency = currency;
