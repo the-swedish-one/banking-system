@@ -41,13 +41,11 @@ public class User {
 
     @Override
     public boolean equals(Object obj) {
-        // Check if the object is being compared with itself
+        // same object
         if (this == obj) return true;
-
-        // Check if obj is null or not of the same class
+        // Null or not the same class
         if (obj == null || getClass() != obj.getClass()) return false;
 
-        // Cast to User
         User user = (User) obj;
         // Compare fields for logical equality
         return userId.equals(user.userId);

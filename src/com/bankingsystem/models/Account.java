@@ -1,9 +1,6 @@
 package com.bankingsystem.models;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class Account implements Withdrawable, Depositable {
     protected String accountId;
@@ -99,6 +96,25 @@ public abstract class Account implements Withdrawable, Depositable {
                 "iban=" + iban + '\'' +
                 "owner=" + owner + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        // same object
+        if (this == obj) return true;
+        // Null or not the same class
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Account account = (Account) obj;
+        // Compare fields for logical equality
+        return Objects.equals(accountId, account.accountId) &&
+                Objects.equals(iban, account.iban) &&
+                Objects.equals(owner, account.owner);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(accountId, iban, owner);
     }
 }
 

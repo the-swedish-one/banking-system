@@ -1,5 +1,6 @@
 package com.bankingsystem.models;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class Person {
@@ -13,7 +14,7 @@ public class Person {
     private String country;
 
     public Person(String firstName, String lastName, String email, String addressLine1, String addressLine2, String city, String country) {
-        this.personId = "person-"+ UUID.randomUUID();
+        this.personId = "person-" + UUID.randomUUID();
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -90,5 +91,23 @@ public class Person {
                 "lastName=" + lastName + '\'' +
                 "email=" + email + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        // same object
+        if (this == obj) return true;
+        // Null or not the same class
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Person person = (Person) obj;
+        // Compare fields for logical equality
+        return Objects.equals(personId, person.personId) &&
+                Objects.equals(email, person.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(personId, email);
     }
 }
