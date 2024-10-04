@@ -3,11 +3,11 @@ package com.bankingsystem.models;
 import com.bankingsystem.models.exceptions.InsufficientFundsException;
 
 public class SavingsAccount extends Account {
-    private double interestRate;
+    private double interestRatePercentage;
 
     public SavingsAccount(User owner, double balance, CurrencyCode currency, double interestRate) {
         super(owner, balance, currency);
-        this.interestRate = interestRate;
+        this.interestRatePercentage = interestRate;
     }
 
     @Override
@@ -19,12 +19,12 @@ public class SavingsAccount extends Account {
         }
     }
 
-    public double getInterestRate() {
-        return this.interestRate;
+    public double getInterestRatPercentage() {
+        return this.interestRatePercentage;
     }
 
-    public void setInterestRate(double newInterestRate) {
-        this.interestRate = newInterestRate;
+    public void setInterestRatePercentage(double newInterestRatePercentage) {
+        this.interestRatePercentage = newInterestRatePercentage;
     }
 }
 
