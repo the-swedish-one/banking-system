@@ -197,11 +197,6 @@ public class Main {
 
         System.out.println("***************************");
 
-        // Get Transaction History for Alex's checking account
-        System.out.println("Getting transaction history for Alex's checking account");
-        String alexCheckingAccountTransactionHistory = accountService.getTransactionHistory(alexCheckingAccount.getAccountId());
-        System.out.println(alexCheckingAccountTransactionHistory);
-
         // Get list of Users of bank
         System.out.println("Getting list of Users of Bank");
         String bankUsers = bankService.getAllBankUsers("BESBA123");
@@ -211,5 +206,10 @@ public class Main {
         System.out.println("Getting list of Accounts of Bank");
         String bankAccounts = bankService.getAllBankAccounts("BESBA123");
         System.out.println(bankAccounts);
+
+        // Get Transaction History for Alex's checking account
+        System.out.println("Getting transaction history for Alex's checking account");
+        String alexCheckingAccountTransactionHistory = accountService.getTransactionHistory(alexCheckingAccount.getAccountId());
+        System.out.println(alexCheckingAccountTransactionHistory);
     }
 }
