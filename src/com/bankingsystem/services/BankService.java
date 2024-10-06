@@ -2,6 +2,7 @@ package com.bankingsystem.services;
 
 import com.bankingsystem.models.Account;
 import com.bankingsystem.models.Bank;
+import com.bankingsystem.models.User;
 import com.bankingsystem.persistence.BankPersistenceService;
 
 public class BankService {
@@ -23,8 +24,8 @@ public class BankService {
         Bank bank = bankPersistenceService.getBankByBic(bic);
         StringBuilder users = new StringBuilder();
         users.append("Users of bank ").append(bank.getBankName()).append(":\n");
-        for (Account account : bank.getAccounts()) {
-            users.append(account.getOwner().toString()).append("\n");
+        for (User user : bank.getUsers()) {
+            users.append(user.toString()).append("\n");
         }
         if (users.isEmpty()) {
             return "No users found";
