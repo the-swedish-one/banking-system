@@ -1,6 +1,8 @@
 package com.bankingsystem.main;
 
 import com.bankingsystem.models.*;
+import com.bankingsystem.models.exceptions.InsufficientFundsException;
+import com.bankingsystem.models.exceptions.OverdraftLimitExceededException;
 import com.bankingsystem.persistence.dao.*;
 import com.bankingsystem.services.*;
 
@@ -89,7 +91,11 @@ public class Main {
 
         // Demonstrate exception: Attempt to withdraw more money than is available Alex's checking account
         System.out.println("Demonstrate exception: Attempting to withdraw 2000 EUR from Alex's checking account");
-        accountService.withdraw(alexCheckingAccount.getAccountId(), 2000.00);
+        try {
+            accountService.withdraw(alexCheckingAccount.getAccountId(), 2000.00);
+        } catch (OverdraftLimitExceededException e) {
+            System.out.println(e.getMessage());
+        }
 
         // Check balance of Alex's savings account
         double alexSavingsAccountBalance = accountService.getBalance(alexSavingsAccount.getAccountId());
@@ -98,7 +104,11 @@ public class Main {
 
         // Demonstrate exception: Attempt to withdraw more money than is in Alex's savings account
         System.out.println("Demonstrate exception: Attempting to withdraw 3000 EUR from Alex's savings account");
-        accountService.withdraw(alexSavingsAccount.getAccountId(), 3000.00);
+        try {
+            accountService.withdraw(alexSavingsAccount.getAccountId(), 3000.00);
+        } catch (InsufficientFundsException e) {
+            System.out.println(e.getMessage());
+        }
 
         System.out.println("***************************");
 
@@ -148,7 +158,11 @@ public class Main {
 
         // Demonstrate exception: Attempt to transfer more money than is in Amee's checking account
         System.out.println("Demonstrate exception: Attempting to transfer 10000 USD from Amee's checking account to Amee's savings account");
-        accountService.transfer(10000.00, ameeCheckingAccount.getAccountId(), ameeSavingsAccount.getAccountId());
+        try {
+            accountService.transfer(10000.00, ameeCheckingAccount.getAccountId(), ameeSavingsAccount.getAccountId());
+        } catch (OverdraftLimitExceededException e) {
+            System.out.println(e.getMessage());
+        }
 
 
         System.out.println("***************************");

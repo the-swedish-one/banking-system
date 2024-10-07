@@ -15,7 +15,7 @@ public class CheckingAccount extends Account {
         if (this.balance + this.overdraftLimit >= amount) {
             this.balance -= amount;
         } else {
-            throw new OverdraftLimitExceededException("Overdraft limit exceeded");
+            throw new OverdraftLimitExceededException("Withdraw Failed: Overdraft limit exceeded");
         }
     }
 

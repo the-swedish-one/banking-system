@@ -15,7 +15,7 @@ public class SavingsAccount extends Account {
         if (balance >= amount) {
             balance -= amount;
         } else {
-            throw new InsufficientFundsException("Insufficient funds");
+            throw new InsufficientFundsException("Withdraw Filed: Insufficient funds");
         }
     }
 

@@ -26,37 +26,26 @@ public class AccountService {
 
     // Deposit
     public void deposit(String accountId, double amount) {
-        try {
             Account account = getAccountById(accountId);
             account.deposit(amount);
             DepositTransaction transaction = transactionService.createDepositTransaction(amount);
             account.getTransactionHistory().add(transaction);
             accountPersistenceService.updateAccount(account);
-        } catch (RuntimeException e) {
-            System.out.println("Deposit failed: " + e.getMessage());
-        }
     }
 
     // Withdraw
     public void withdraw(String accountId, double amount) {
-        try {
             Account account = getAccountById(accountId);
             account.withdraw(amount);
             WithdrawTransaction transaction = transactionService.createWithdrawTransaction(amount);
             account.getTransactionHistory().add(transaction);
             accountPersistenceService.updateAccount(account);
-        } catch (InsufficientFundsException | OverdraftLimitExceededException e) {
-            System.out.println("Withdraw failed: " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Withdraw failed: " + e.getMessage());
-        }
     }
 
     // Transfer
     public void transfer(double amount, String fromAccountId, String toAccountId) {
         Account fromAccount = getAccountById(fromAccountId);
         Account toAccount = getAccountById(toAccountId);
-        try {
             if (fromAccount.getCurrency() != toAccount.getCurrency()) {
                 double convertedAmount = currencyConversionService.convertAmount(amount, fromAccount.getCurrency(), toAccount.getCurrency());
                 BigDecimal bd = new BigDecimal(convertedAmount).setScale(2, RoundingMode.HALF_UP);
@@ -80,12 +69,6 @@ public class AccountService {
                 accountPersistenceService.updateAccount(fromAccount);
                 accountPersistenceService.updateAccount(toAccount);
             }
-
-        } catch (InsufficientFundsException | OverdraftLimitExceededException e) {
-            System.out.println("Transfer failed: " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Transfer failed: " + e.getMessage());
-        }
     }
 
     // Savings Account: Apply interest
