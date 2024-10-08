@@ -20,8 +20,8 @@ public class JointCheckingAccount extends CheckingAccount {
     public String toString() {
         return "JointCheckingAccount{" +
                 "iban=" + iban + '\'' +
-                "owner=" + owner + '\'' +
-                "secondOwner=" + secondOwner + '\'' +
+                "owner=" + owner.getPerson().getFirstName() + owner.getPerson().getLastName() + '\'' +
+                "secondOwner=" + secondOwner.getPerson().getFirstName() + secondOwner.getPerson().getLastName() + '\'' +
                 '}';
     }
 }
