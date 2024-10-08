@@ -34,8 +34,9 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "firstName=" + person.getFirstName() + '\'' +
-                ", lastName=" + person.getLastName() + '\'' +
+                "userId='" + userId + '\'' +
+                ", firstName='" + person.getFirstName() + '\'' +
+                ", lastName='" + person.getLastName() + '\'' +
                 '}';
     }
 
