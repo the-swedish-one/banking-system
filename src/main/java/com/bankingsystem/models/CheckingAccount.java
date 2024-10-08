@@ -12,6 +12,9 @@ public class CheckingAccount extends Account {
 
     @Override
     public void withdraw(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Withdraw Failed: Amount must be greater than 0");
+        }
         if (this.balance + this.overdraftLimit >= amount) {
             this.balance -= amount;
         } else {
