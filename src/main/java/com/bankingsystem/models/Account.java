@@ -35,6 +35,9 @@ public abstract class Account implements Withdrawable, Depositable {
 
     @Override
     public void deposit(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Deposit failed: Amount must be greater than 0");
+        }
         this.balance = this.balance + amount;
     }
 
