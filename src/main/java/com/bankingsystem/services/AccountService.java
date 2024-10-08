@@ -72,7 +72,7 @@ public class AccountService {
 
     // Savings Account: Apply interest
     public void addInterest(SavingsAccount savingsAccount) {
-        double interestRateDecimal = savingsAccount.getInterestRatPercentage() / 100.0;
+        double interestRateDecimal = savingsAccount.getInterestRatePercentage() / 100.0;
         double interest = savingsAccount.getBalance() * interestRateDecimal;
         double newBalance = savingsAccount.getBalance() + interest;
         savingsAccount.setBalance(newBalance);
