@@ -12,6 +12,9 @@ public class SavingsAccount extends Account {
 
     @Override
     public void withdraw(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Withdraw Failed: Amount must be greater than 0");
+        }
         if (balance >= amount) {
             balance -= amount;
         } else {
@@ -19,7 +22,7 @@ public class SavingsAccount extends Account {
         }
     }
 
-    public double getInterestRatPercentage() {
+    public double getInterestRatePercentage() {
         return this.interestRatePercentage;
     }
 
