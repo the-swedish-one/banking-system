@@ -48,7 +48,7 @@ public class SavingsAccountTest {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             account.deposit(-500);
         });
-        assertEquals("Invalid deposit amount", exception.getMessage());
+        assertEquals("Deposit failed: Amount must be greater than 0", exception.getMessage());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class SavingsAccountTest {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             account.withdraw(-500);
         });
-        assertEquals("Invalid deposit amount", exception.getMessage());
+        assertEquals("Withdraw Failed: Amount must be greater than 0", exception.getMessage());
     }
 
     @Test
