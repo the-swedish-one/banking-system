@@ -1,7 +1,7 @@
 package com.bankingsystem.services;
 
+import bankingsystem.models.*;
 import com.bankingsystem.models.*;
-import com.bankingsystem.models.exceptions.*;
 import com.bankingsystem.persistence.AccountPersistenceService;
 import com.bankingsystem.persistence.BankPersistenceService;
 import com.bankingsystem.persistence.UserPersistenceService;
