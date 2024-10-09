@@ -181,6 +181,8 @@ public class TransactionServiceTest {
         DepositTransaction transaction = TestDataFactory.createDepositTransaction(1000);
         String transactionId = transaction.getTransactionId();
 
+        when(transactionPersistenceService.deleteTransaction(transactionId)).thenReturn(true);
+
         // Act
         boolean isDeleted = transactionService.deleteTransaction(transactionId);
 
@@ -188,5 +190,22 @@ public class TransactionServiceTest {
         assertTrue(isDeleted);
         verify(transactionPersistenceService, times(1)).deleteTransaction(transactionId);
     }
+
+    @Test
+    void testDeleteTransaction_NonExistent() {
+        // Arrange
+        String nonExistentTransactionId = "non-existent-id";
+
+        // Mock the persistence service to return false for a non-existent transaction
+        when(transactionPersistenceService.deleteTransaction(nonExistentTransactionId)).thenReturn(false);
+
+        // Act
+        boolean isDeleted = transactionService.deleteTransaction(nonExistentTransactionId);
+
+        // Assert
+        assertFalse(isDeleted);
+        verify(transactionPersistenceService, times(1)).deleteTransaction(nonExistentTransactionId);
+    }
+
 
 }
