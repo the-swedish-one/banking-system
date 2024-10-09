@@ -1,6 +1,7 @@
 package com.bankingsystem.services;
 
 import com.bankingsystem.models.Person;
+import com.bankingsystem.models.exceptions.PersonNotFoundException;
 import com.bankingsystem.persistence.PersonPersistenceService;
 
 import java.util.List;
@@ -20,18 +21,32 @@ public class PersonService {
         return person;
     }
 
-    // Get person by ID
     public Person getPersonById(String personId) {
-        return personPersistenceService.getPersonById(personId);
+        if (personId == null || personId.isEmpty()) {
+            throw new IllegalArgumentException("Person ID cannot be null or empty");
+        }
+        Person person = personPersistenceService.getPersonById(personId);
+        if (person == null) {
+            throw new PersonNotFoundException("Person not found for ID: " + personId);
+        }
+        return person;
     }
+
 
     // Get all persons
     public List<Person> getAllPersons() {
-        return personPersistenceService.getAllPersons();
+        List<Person> persons = personPersistenceService.getAllPersons();
+        if (persons.isEmpty()) {
+            throw new PersonNotFoundException("No persons found");
+        }
+        return persons;
     }
 
     // Delete person by ID
     public boolean deletePerson(String personId) {
+        if (personId == null) {
+            throw new IllegalArgumentException("Person ID cannot be null");
+        }
         return personPersistenceService.deletePerson(personId);
     }
 }
