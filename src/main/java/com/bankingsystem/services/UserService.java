@@ -3,9 +3,11 @@ package com.bankingsystem.services;
 import com.bankingsystem.models.Bank;
 import com.bankingsystem.models.Person;
 import com.bankingsystem.models.User;
+import com.bankingsystem.models.exceptions.UserNotFoundException;
 import com.bankingsystem.persistence.BankPersistenceService;
 import com.bankingsystem.persistence.UserPersistenceService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserService {
@@ -19,6 +21,9 @@ public class UserService {
 
     // Create new user
     public User createUser(Bank bank, Person person) {
+        if (bank == null || person == null) {
+            throw new IllegalArgumentException("Bank and Person cannot be null");
+        }
         User user = new User(person);
         userPersistenceService.createUser(user);
         bank.getUsers().add(user);
@@ -28,12 +33,20 @@ public class UserService {
 
     // Get user by ID
     public User getUserById(String userId) {
-        return userPersistenceService.getUserById(userId);
+        if (userId == null || userId.isEmpty()) {
+            throw new IllegalArgumentException("User ID cannot be null or empty");
+        }
+        User user = userPersistenceService.getUserById(userId);
+        if (user == null) {
+            throw new UserNotFoundException("User not found for ID: " + userId);
+        }
+        return user;
     }
 
     // Get all users
     public List<User> getAllUsers() {
-        return userPersistenceService.getAllUsers();
+        List<User> users = userPersistenceService.getAllUsers();
+        return (users == null) ? new ArrayList<>() : users;
     }
 
     // Delete user by ID
