@@ -7,7 +7,9 @@ import java.util.List;
 public interface TransactionPersistenceService {
 
     // Create a new transaction
-    void createTransaction(Transaction transaction);
+    void createDepositTransaction(Transaction transaction);
+    void createWithdrawTransaction(Transaction transaction);
+    void createTransferTransaction(Transaction transaction);
 
     // Get one transaction by ID
     Transaction getTransactionById(String transactionId);
