@@ -35,10 +35,10 @@ public class UserServiceTest {
     void testCreateUser() {
         // Arrange
         Bank bank = TestDataFactory.createBank("My Bank", "MB001");
-        User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
+        Person person = TestDataFactory.createPerson("Jane", "Doe", "jd@gmail.com");
 
         // Act
-        User createdUser = userService.createUser(bank, user.getPerson());
+        User createdUser = userService.createUser(bank, person);
 
         // Assert
         assertNotNull(createdUser);
