@@ -5,6 +5,7 @@ import com.bankingsystem.models.DepositTransaction;
 import com.bankingsystem.models.Transaction;
 import com.bankingsystem.models.TransferTransaction;
 import com.bankingsystem.models.WithdrawTransaction;
+import com.bankingsystem.models.exceptions.TransactionNotFoundException;
 import com.bankingsystem.persistence.TransactionPersistenceService;
 
 import java.util.List;
@@ -19,37 +20,57 @@ public class TransactionService {
 
     // Create new deposit transaction
     public DepositTransaction createDepositTransaction(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than 0");
+        }
         DepositTransaction transaction = new DepositTransaction(amount);
-        transactionPersistenceService.createTransaction(transaction);
+        transactionPersistenceService.createDepositTransaction(transaction);
         return transaction;
     }
 
     // Create new withdraw transaction
     public WithdrawTransaction createWithdrawTransaction(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than 0");
+        }
         WithdrawTransaction transaction = new WithdrawTransaction(amount);
-        transactionPersistenceService.createTransaction(transaction);
+        transactionPersistenceService.createWithdrawTransaction(transaction);
         return transaction;
     }
 
     // Create new transfer transaction
     public TransferTransaction createTransferTransaction(double amount, String fromAccountId, String toAccountId) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than 0");
+        }
         TransferTransaction transaction = new TransferTransaction(amount, fromAccountId, toAccountId);
-        transactionPersistenceService.createTransaction(transaction);
+        transactionPersistenceService.createTransferTransaction(transaction);
         return transaction;
     }
 
     // Get transaction by ID
     public Transaction getTransactionById(String transactionId) {
-        return transactionPersistenceService.getTransactionById(transactionId);
+        if (transactionId == null || transactionId.isEmpty()) {
+            throw new IllegalArgumentException("Transaction ID cannot be null or empty");
+        }
+        Transaction transaction = transactionPersistenceService.getTransactionById(transactionId);
+        if (transaction == null) {
+            throw new TransactionNotFoundException("Transaction not found");
+        }
+        return transaction;
     }
 
     // Get all transactions
     public List<Transaction> getAllTransactions() {
-        return transactionPersistenceService.getAllTransactions();
+        List<Transaction> transactions = transactionPersistenceService.getAllTransactions();
+        if (transactions.isEmpty()) {
+            throw new TransactionNotFoundException("No transactions found");
+        }
+        return transactions;
     }
 
     // Delete transaction by ID
-    public boolean deleteTransactions(String transactionId) {
+    public boolean deleteTransaction(String transactionId) {
         return transactionPersistenceService.deleteTransaction(transactionId);
     }
 }
