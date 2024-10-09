@@ -1,40 +1,44 @@
-package com.bankingsystem;
+package com.bankingsystem.models;
 
-import com.bankingsystem.models.*;
-import com.bankingsystem.models.exceptions.InsufficientFundsException;
+import com.bankingsystem.models.exceptions.OverdraftLimitExceededException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SavingsAccountTest {
+public class JointCheckingAccountTest {
 
-    private SavingsAccount account;
+    private JointCheckingAccount account;
     private static User user;
+    private static User user2;
 
     @BeforeAll
     static void beforeAll() {
         Person person = new Person("John", "Doe", "jd@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
         user = new User(person);
+        Person person2 = new Person("Jane", "Doe", "jd@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
+        user2 = new User(person2);
     }
 
     @BeforeEach
     void beforeEach() {
-        account = new SavingsAccount(user, 1000, CurrencyCode.EUR, 1.5);
+        account = new JointCheckingAccount(user, user2,1000, CurrencyCode.EUR, 1000);
     }
 
     @Test
-    void testSavingsAccount() {
+    void testJointCheckingAccount() {
         assertEquals(1000, account.getBalance());
         assertEquals(CurrencyCode.EUR, account.getCurrency());
-        assertEquals(1.5, account.getInterestRatePercentage());
+        assertEquals(1000, account.getOverdraftLimit());
+        assertEquals(user, account.getOwner());
+        assertEquals(user2, account.getSecondOwner());
     }
 
     @Test
-    void testSetInterestRate() {
-        account.setInterestRatePercentage(2.0);
-        assertEquals(2.0, account.getInterestRatePercentage());
+    void testSetOverdraftLimit() {
+        account.setOverdraftLimit(2000);
+        assertEquals(2000, account.getOverdraftLimit());
     }
 
     @Test
@@ -66,19 +70,19 @@ public class SavingsAccountTest {
     }
 
     @Test
-    void testWithdraw_InsufficientFunds() {
-        InsufficientFundsException exception = assertThrows(InsufficientFundsException.class, () -> {
-            account.withdraw(1500);
+    void testWithdraw_OverdraftLimitExceeded() {
+        OverdraftLimitExceededException exception = assertThrows(OverdraftLimitExceededException.class, () -> {
+            account.withdraw(5000);
         });
 
-        assertEquals("Withdraw Filed: Insufficient funds", exception.getMessage());
+        assertEquals("Withdraw Failed: Overdraft limit exceeded", exception.getMessage());
         assertEquals(1000, account.getBalance());
     }
 
     @Test
     void testToString() {
-        String expected = "SavingsAccount{iban=null'owner=User{person=John Doe}interestRatePercentage=1.5'}";
-        assertTrue(account.toString().contains("SavingsAccount"));
-        assertTrue(account.toString().contains("interestRatePercentage=1.5"));
+        String expected = "JointCheckingAccount{iban=null'owner=JohnDoe'secondOwner=JaneDoe'}";
+        assertTrue(account.toString().contains("JointCheckingAccount"));
+        assertTrue(account.toString().contains(account.getOwner().getPerson().getFirstName()));
     }
 }

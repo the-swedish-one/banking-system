@@ -1,6 +1,5 @@
-package com.bankingsystem;
+package com.bankingsystem.models;
 
-import com.bankingsystem.models.*;
 import com.bankingsystem.models.exceptions.OverdraftLimitExceededException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

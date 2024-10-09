@@ -1,6 +1,5 @@
-package com.bankingsystem;
+package com.bankingsystem.models;
 
-import com.bankingsystem.models.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
