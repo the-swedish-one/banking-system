@@ -1,7 +1,7 @@
 package com.bankingsystem.services;
 
 import com.bankingsystem.models.Bank;
-import com.bankingsystem.models.Person;
+import com.bankingsystem.models.PersonDetails;
 import com.bankingsystem.models.User;
 import com.bankingsystem.models.exceptions.UserNotFoundException;
 import com.bankingsystem.persistence.BankPersistenceService;
@@ -36,7 +36,7 @@ public class UserServiceTest {
     void testCreateUser() {
         // Arrange
         Bank bank = TestDataFactory.createBank("My Bank", "MB001");
-        Person person = TestDataFactory.createPerson("Jane", "Doe", "jd@gmail.com");
+        PersonDetails person = TestDataFactory.createPerson("Jane", "Doe", "jd@gmail.com");
 
         // Act
         User createdUser = userService.createUser(bank, person);
@@ -44,7 +44,7 @@ public class UserServiceTest {
         // Assert
         assertNotNull(createdUser);
         assertEquals("Jane", createdUser.getPerson().getFirstName());
-        verify(userPersistenceService, times(1)).createUser(any(User.class));
+        verify(userPersistenceService, times(1)).createUser(createdUser);
         verify(bankPersistenceService, times(1)).updateBank(bank);
         assertTrue(bank.getUsers().contains(createdUser));
     }
@@ -61,19 +61,17 @@ public class UserServiceTest {
     @Test
     void testCreateUser_NullBank() {
         // Arrange
-        Person person = TestDataFactory.createPerson("Jane", "Doe", "jd@gmail.com");
+        PersonDetails person = TestDataFactory.createPerson("Jane", "Doe", "jd@gmail.com");
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> userService.createUser(null, person));
     }
 
-//    Test Get User By Id
+//    Test Get User By ID
     @Test
     void testGetUserById() {
         // Arrange
-        Bank bank = TestDataFactory.createBank("My Bank", "MB001");
-        Person person = TestDataFactory.createPerson("Jane", "Doe", "jd@gmail.com");
-        User user = userService.createUser(bank, person);
+        User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
         String userId = user.getUserId();
         when(userPersistenceService.getUserById(userId)).thenReturn(user);
 
@@ -128,7 +126,7 @@ public class UserServiceTest {
     void testGetAllUsers() {
         // Arrange
         Bank bank = TestDataFactory.createBank("My Bank", "MB001");
-        Person person = TestDataFactory.createPerson("Jane", "Doe", "jd@gmail.com");
+        PersonDetails person = TestDataFactory.createPerson("Jane", "Doe", "jd@gmail.com");
         User user = userService.createUser(bank, person);
 
         List<User> users = new ArrayList<>();
@@ -164,7 +162,7 @@ public class UserServiceTest {
     void testDeleteUser() {
         // Arrange
         Bank bank = TestDataFactory.createBank("My Bank", "MB001");
-        Person person = TestDataFactory.createPerson("Jane", "Doe", "jd@gmail.com");
+        PersonDetails person = TestDataFactory.createPerson("Jane", "Doe", "jd@gmail.com");
         User user = userService.createUser(bank, person);
 
         String userId = user.getUserId();
