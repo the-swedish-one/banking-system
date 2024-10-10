@@ -25,6 +25,7 @@ public class TransactionServiceTest {
     @InjectMocks
     private TransactionService transactionService;
 
+//    Test Create Deposit Transaction
     @Test
     void testCreateDepositTransaction() {
         // Act
@@ -46,6 +47,7 @@ public class TransactionServiceTest {
         assertThrows(IllegalArgumentException.class, () -> transactionService.createDepositTransaction(0));
     }
 
+//    Test Create Withdraw Transaction
     @Test
     void testCreateWithdrawTransaction() {
         // Act
@@ -67,6 +69,7 @@ public class TransactionServiceTest {
         assertThrows(IllegalArgumentException.class, () -> transactionService.createWithdrawTransaction(0));
     }
 
+//    Test Create Transfer Transaction
     @Test
     void testCreateTransferTransaction() {
         // Arrange
@@ -103,6 +106,7 @@ public class TransactionServiceTest {
         assertThrows(IllegalArgumentException.class, () -> transactionService.createTransferTransaction(0, fromAccount.getAccountId(), toAccount.getAccountId()));
     }
 
+//    Test Get Transaction By Id
     @Test
     void testGetTransactionById() {
         // Arrange
@@ -141,6 +145,7 @@ public class TransactionServiceTest {
         assertThrows(TransactionNotFoundException.class, () -> transactionService.getTransactionById(invalidTransactionId));
     }
 
+//    Test Get All Transactions
     @Test
     void testGetAllTransactions() {
         // Arrange
@@ -175,6 +180,7 @@ public class TransactionServiceTest {
         assertThrows(TransactionNotFoundException.class, () -> transactionService.getAllTransactions());
     }
 
+//    Test Delete Transaction
     @Test
     void testDeleteTransaction() {
         // Arrange
@@ -206,6 +212,5 @@ public class TransactionServiceTest {
         assertFalse(isDeleted);
         verify(transactionPersistenceService, times(1)).deleteTransaction(nonExistentTransactionId);
     }
-
 
 }
