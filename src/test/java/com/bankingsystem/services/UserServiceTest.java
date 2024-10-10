@@ -177,4 +177,30 @@ public class UserServiceTest {
         assertTrue(isDeleted);
         verify(userPersistenceService, times(1)).deleteUser(userId);
     }
+
+    @Test
+    void testDeleteUser_NullId() {
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> userService.deleteUser(null));
+    }
+
+    @Test
+    void testDeleteUser_EmptyId() {
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> userService.deleteUser(""));
+    }
+
+    @Test
+    void testDeleteUser_NotFound() {
+        // Arrange
+        String invalidUserId = "nonexistent-user-id";
+        when(userPersistenceService.deleteUser(invalidUserId)).thenReturn(false);
+
+        // Act
+        boolean isDeleted = userService.deleteUser(invalidUserId);
+
+        // Assert
+        assertFalse(isDeleted);
+        verify(userPersistenceService, times(1)).deleteUser(invalidUserId);
+    }
 }
