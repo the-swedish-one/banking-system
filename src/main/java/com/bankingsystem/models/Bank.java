@@ -6,13 +6,13 @@ import java.util.Objects;
 
 public class Bank {
     private String bankName;
-    private String bic;
+    private String bankId;
     private List<User> users;
     private List<Account> accounts;
 
-    public Bank(String bankName, String bic) {
+    public Bank(String bankName, String bankId) {
         this.bankName = bankName;
-        this.bic = bic;
+        this.bankId = bankId;
         this.users = new ArrayList<>();
         this.accounts = new ArrayList<>();
     }
@@ -21,8 +21,8 @@ public class Bank {
         return this.bankName;
     }
 
-    public String getBic() {
-        return this.bic;
+    public String getBankId() {
+        return this.bankId;
     }
 
     public List<Account> getAccounts() {
@@ -36,7 +36,7 @@ public class Bank {
     @Override
     public String toString() {
         return "Bank{" +
-                "bic=" + bic + '\'' +
+                "bic=" + bankId + '\'' +
                 '}';
     }
 
@@ -49,13 +49,13 @@ public class Bank {
 
         Bank bank = (Bank) obj;
         // Compare fields for logical equality
-        return Objects.equals(bic, bank.bic) &&
+        return Objects.equals(bankId, bank.bankId) &&
                 Objects.equals(bankName, bank.bankName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(bic, bankName);
+        return Objects.hash(bankId, bankName);
     }
 
 }

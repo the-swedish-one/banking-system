@@ -19,7 +19,7 @@ public class BankDAO implements BankPersistenceService {
     // Get bank by BIC
     public Bank getBankByBic(String bic){
         for (Bank bank : banks) {
-            if (bank.getBic().equals(bic)) {
+            if (bank.getBankId().equals(bic)) {
                 return bank;
             }
         }
@@ -29,7 +29,7 @@ public class BankDAO implements BankPersistenceService {
     // Update bank
     public void updateBank(Bank bank){
         for (int i = 0; i < banks.size(); i++) {
-            if (banks.get(i).getBic().equals(bank.getBic())) {
+            if (banks.get(i).getBankId().equals(bank.getBankId())) {
                 banks.set(i, bank);
                 return;
             }
@@ -39,7 +39,7 @@ public class BankDAO implements BankPersistenceService {
     //Delete bank by BIC
     public boolean deleteBank(String bic){
         for (int i = 0; i < banks.size(); i++) {
-            if (banks.get(i).getBic().equals(bic)) {
+            if (banks.get(i).getBankId().equals(bic)) {
                 banks.remove(i);
                 return true;
             }

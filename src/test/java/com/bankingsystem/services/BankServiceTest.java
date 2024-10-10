@@ -31,7 +31,7 @@ public class BankServiceTest {
 
         // Assert
         assertNotNull(createdBank);
-        assertEquals("MB001", createdBank.getBic());
+        assertEquals("MB001", createdBank.getBankId());
         verify(bankPersistenceService, times(1)).createBank(any(Bank.class));
     }
 
