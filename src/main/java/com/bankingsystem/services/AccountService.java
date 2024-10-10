@@ -1,6 +1,7 @@
 package com.bankingsystem.services;
 
 import com.bankingsystem.models.*;
+import com.bankingsystem.models.exceptions.AccountNotFoundException;
 import com.bankingsystem.persistence.AccountPersistenceService;
 import com.bankingsystem.persistence.BankPersistenceService;
 import com.bankingsystem.persistence.UserPersistenceService;
@@ -62,7 +63,7 @@ public class AccountService {
                 fromAccount.withdraw(amount);
                 toAccount.deposit(amount);
 
-                TransferTransaction transaction = new TransferTransaction(amount, fromAccountId, toAccountId);
+                TransferTransaction transaction = transactionService.createTransferTransaction(amount, fromAccountId, toAccountId);
                 fromAccount.getTransactionHistory().add(transaction);
                 toAccount.getTransactionHistory().add(transaction);
                 accountPersistenceService.updateAccount(fromAccount);
@@ -126,7 +127,14 @@ public class AccountService {
 
     // Get account by ID
     public Account getAccountById(String accountId) {
-        return accountPersistenceService.getAccountById(accountId);
+        if (accountId == null) {
+            throw new IllegalArgumentException("Account ID cannot be null");
+        }
+        Account account = accountPersistenceService.getAccountById(accountId);
+        if (account == null) {
+            throw new AccountNotFoundException("Account not found");
+        }
+        return account;
     }
 
     // Get balance by account ID
