@@ -51,6 +51,9 @@ public class UserService {
 
     // Delete user by ID
     public boolean deleteUser(String userId) {
+        if (userId == null || userId.isEmpty()) {
+            throw new IllegalArgumentException("User ID cannot be null or empty");
+        }
         return userPersistenceService.deleteUser(userId);
     }
 }
