@@ -31,6 +31,7 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
+//    Test Create User
     @Test
     void testCreateUser() {
         // Arrange
@@ -66,6 +67,7 @@ public class UserServiceTest {
         assertThrows(IllegalArgumentException.class, () -> userService.createUser(null, person));
     }
 
+//    Test Get User By Id
     @Test
     void testGetUserById() {
         // Arrange
@@ -121,7 +123,7 @@ public class UserServiceTest {
         verify(userPersistenceService, times(1)).getUserById(userId);
     }
 
-
+//    Test Get All Users
     @Test
     void testGetAllUsers() {
         // Arrange
@@ -157,6 +159,7 @@ public class UserServiceTest {
         verify(userPersistenceService, times(1)).getAllUsers();
     }
 
+//    Test Delete User
     @Test
     void testDeleteUser() {
         // Arrange
