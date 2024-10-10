@@ -39,7 +39,6 @@ class AccountServiceTest {
     private AccountService accountService;
 
 //    Create Accounts
-
     @Test
     void testCreateCheckingAccount() {
         // Arrange
@@ -55,7 +54,9 @@ class AccountServiceTest {
         assertEquals(CurrencyCode.EUR, checkingAccount.getCurrency());
         assertEquals(1000, checkingAccount.getOverdraftLimit());
         assertEquals(user, checkingAccount.getOwner());
-        verify(accountPersistenceService, times(1)).createAccount(any(CheckingAccount.class));
+        verify(accountPersistenceService, times(1)).createAccount(checkingAccount);
+        verify(userPersistenceService, times(1)).updateUser(user);
+        verify(bankPersistenceService, times(1)).updateBank(bank);
     }
 
     @Test
@@ -73,7 +74,9 @@ class AccountServiceTest {
         assertEquals(CurrencyCode.EUR, savingsAccount.getCurrency());
         assertEquals(1.5, savingsAccount.getInterestRatePercentage());
         assertEquals(user, savingsAccount.getOwner());
-        verify(accountPersistenceService, times(1)).createAccount(any(SavingsAccount.class));
+        verify(userPersistenceService, times(1)).updateUser(user);
+        verify(bankPersistenceService, times(1)).updateBank(bank);
+        verify(accountPersistenceService, times(1)).createAccount(savingsAccount);
     }
 
     @Test
@@ -93,11 +96,13 @@ class AccountServiceTest {
         assertEquals(1000, jointCheckingAccount.getOverdraftLimit());
         assertEquals(user1, jointCheckingAccount.getOwner());
         assertEquals(user2, jointCheckingAccount.getSecondOwner());
-        verify(accountPersistenceService, times(1)).createAccount(any(JointCheckingAccount.class));
+        verify(userPersistenceService, times(1)).updateUser(user1);
+        verify(userPersistenceService, times(1)).updateUser(user2);
+        verify(bankPersistenceService, times(1)).updateBank(bank);
+        verify(accountPersistenceService, times(1)).createAccount(jointCheckingAccount);
     }
 
 //    Test Deposit
-
     @Test
     void testDeposit() {
         // Arrange
