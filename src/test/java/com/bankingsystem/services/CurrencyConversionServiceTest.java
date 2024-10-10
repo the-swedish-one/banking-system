@@ -25,6 +25,7 @@ public class CurrencyConversionServiceTest {
     @InjectMocks
     private CurrencyConversionService currencyConversionService;
 
+//    Test Convert Amount
     @Test
     void testConvertAmount() {
         // Arrange
@@ -59,19 +60,6 @@ public class CurrencyConversionServiceTest {
 
         // Assert
         assertEquals(amount, convertedAmount);
-    }
-
-
-    @Test
-    void testGetExchangeRate_SameCurrency() {
-        // Arrange
-        CurrencyCode currency = CurrencyCode.USD;
-
-        // Act
-        double rate = currencyConversionService.getExchangeRate(currency, currency);
-
-        // Assert
-        assertEquals(1.0, rate);
     }
 
     @Test
@@ -149,6 +137,19 @@ public class CurrencyConversionServiceTest {
         });
     }
 
+    //    Test Get Exchange Rate
+    @Test
+    void testGetExchangeRate_SameCurrency() {
+        // Arrange
+        CurrencyCode currency = CurrencyCode.USD;
+
+        // Act
+        double rate = currencyConversionService.getExchangeRate(currency, currency);
+
+        // Assert
+        assertEquals(1.0, rate);
+    }
+
     @Test
     void testGetExchangeRate_DifferentCurrencies() {
         // Arrange
@@ -183,6 +184,7 @@ public class CurrencyConversionServiceTest {
         });
     }
 
+//    Test Update Exchange Rates
     @Test
     void testUpdateExchangeRates() {
         // Arrange
