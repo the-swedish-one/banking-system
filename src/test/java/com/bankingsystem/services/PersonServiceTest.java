@@ -42,6 +42,7 @@ public class PersonServiceTest {
         assertEquals("Doe", personCaptor.getValue().getLastName());
     }
 
+//    Test Get Person By Id
     @Test
     void testGetPersonById() {
         // Arrange
@@ -84,6 +85,7 @@ public class PersonServiceTest {
         verify(personPersistenceService, times(1)).getPersonById(invalidPersonId);
     }
 
+//    Test Get All Persons
     @Test
     void testGetAllPersons() {
         // Arrange
@@ -112,6 +114,7 @@ public class PersonServiceTest {
         assertThrows(PersonNotFoundException.class, () -> personService.getAllPersons());
     }
 
+//    Test Delete Person
     @Test
     void testDeletePerson() {
         // Arrange
