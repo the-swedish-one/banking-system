@@ -8,12 +8,12 @@ public class TestDataFactory {
         return new Bank(name, bic);
     }
 
-    public static Person createPerson(String firstName, String lastName, String email) {
-        return new Person(firstName, lastName, email, "Address Line 1", "Address Line 2", "City", "Country");
+    public static PersonDetails createPerson(String firstName, String lastName, String email) {
+        return new PersonDetails(firstName, lastName, email, "Address Line 1", "Address Line 2", "City", "Country");
     }
 
     public static User createUser(String firstName, String lastName, String email) {
-        Person person = createPerson(firstName, lastName, email);
+        PersonDetails person = createPerson(firstName, lastName, email);
         return new User(person);
     }
 

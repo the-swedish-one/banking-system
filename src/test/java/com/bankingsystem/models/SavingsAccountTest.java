@@ -12,7 +12,7 @@ public class SavingsAccountTest {
 
     @BeforeEach
     void beforeEach() {
-        Person person = new Person("John", "Doe", "jd@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
+        PersonDetails person = new PersonDetails("John", "Doe", "jd@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
         User user = new User(person);
         account = new SavingsAccount(user, 1000, CurrencyCode.EUR, 1.5);
     }

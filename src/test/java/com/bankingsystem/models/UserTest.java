@@ -8,12 +8,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserTest {
 
-    private static Person person;
+    private static PersonDetails person;
     private User user;
 
     @BeforeAll
     static void beforeAll() {
-        person = new Person("Jane", "Doe", "jd@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
+        person = new PersonDetails("Jane", "Doe", "jd@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
 
     }
 
@@ -32,7 +32,7 @@ public class UserTest {
 
     @Test
     void testSetPerson() {
-        Person newPerson = new Person("John", "Doe", "jd2@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
+        PersonDetails newPerson = new PersonDetails("John", "Doe", "jd2@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
         user.setPerson(newPerson);
         assertEquals("John", user.getPerson().getFirstName());
     }

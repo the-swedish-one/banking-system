@@ -1,6 +1,6 @@
 package com.bankingsystem.persistence.dao;
 
-import com.bankingsystem.models.Person;
+import com.bankingsystem.models.PersonDetails;
 import com.bankingsystem.persistence.PersonPersistenceService;
 
 import java.util.ArrayList;
@@ -9,16 +9,16 @@ import java.util.Objects;
 
 public class PersonDAO implements PersonPersistenceService {
 
-    private List<Person> persons = new ArrayList<>();
+    private List<PersonDetails> persons = new ArrayList<>();
 
-    // Create a new Person
+    // Create a new PersonDetails
     @Override
-    public void createPerson(Person person) {
+    public void createPerson(PersonDetails person) {
         persons.add(person);
     }
 
     // Get a person by ID
-    public Person getPersonById(String personId) {
+    public PersonDetails getPersonById(String personId) {
         return persons.stream()
                 .filter(person -> person.getPersonId().equals(personId))
                 .findFirst()
@@ -27,13 +27,13 @@ public class PersonDAO implements PersonPersistenceService {
 
     // Get all Persons
     @Override
-    public List<Person> getAllPersons() {
-        return new ArrayList<Person>(persons);
+    public List<PersonDetails> getAllPersons() {
+        return new ArrayList<PersonDetails>(persons);
     }
 
     // Update person
     @Override
-    public void updatePerson(Person person) {
+    public void updatePerson(PersonDetails person) {
         for (int i = 0; i < persons.size(); i++) {
             if (Objects.equals(persons.get(i).getPersonId(), person.getPersonId())) {
                 persons.set(i, person);

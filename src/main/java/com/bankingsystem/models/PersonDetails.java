@@ -3,7 +3,7 @@ package com.bankingsystem.models;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Person {
+public class PersonDetails {
     private String personId;
     private String firstName;
     private String lastName;
@@ -13,7 +13,7 @@ public class Person {
     private String city;
     private String country;
 
-    public Person(String firstName, String lastName, String email, String addressLine1, String addressLine2, String city, String country) {
+    public PersonDetails(String firstName, String lastName, String email, String addressLine1, String addressLine2, String city, String country) {
         this.personId = "person-" + UUID.randomUUID();
         this.firstName = firstName;
         this.lastName = lastName;
@@ -86,7 +86,7 @@ public class Person {
 
     @Override
     public String toString() {
-        return "Person{" +
+        return "PersonDetails{" +
                 "firstName=" + firstName + '\'' +
                 "lastName=" + lastName + '\'' +
                 "email=" + email + '\'' +
@@ -100,7 +100,7 @@ public class Person {
         // Null or not the same class
         if (obj == null || getClass() != obj.getClass()) return false;
 
-        Person person = (Person) obj;
+        PersonDetails person = (PersonDetails) obj;
         // Compare fields for logical equality
         return Objects.equals(personId, person.personId) &&
                 Objects.equals(email, person.email);

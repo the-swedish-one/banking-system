@@ -34,11 +34,11 @@ public class Main {
 
         // Create persons
         System.out.println("Creating persons called Alex, Amee, Nicolas");
-        Person alex = personService.createPerson("Alex", "The Bestest", "alex@gmail.com", "Cosy Cottage", "1 Alex Street", "Alexville", "Alexland");
+        PersonDetails alex = personService.createPerson("Alex", "The Bestest", "alex@gmail.com", "Cosy Cottage", "1 Alex Street", "Alexville", "Alexland");
 
-        Person amee = personService.createPerson("Amee", "The Greatest", "amee@gmail.com", "Penthouse Suite", "1 Amee Boulevard", "Ameeville", "Ameeland");
+        PersonDetails amee = personService.createPerson("Amee", "The Greatest", "amee@gmail.com", "Penthouse Suite", "1 Amee Boulevard", "Ameeville", "Ameeland");
 
-        Person nicolas = personService.createPerson("Nicolas", "The Coolest", "nicolas@gmail.com", "Coolest House", "1 Nicolas Avenue", "Nicville", "Nicland");
+        PersonDetails nicolas = personService.createPerson("Nicolas", "The Coolest", "nicolas@gmail.com", "Coolest House", "1 Nicolas Avenue", "Nicville", "Nicland");
 
         // Create users
         System.out.println("Making Persons into Users");

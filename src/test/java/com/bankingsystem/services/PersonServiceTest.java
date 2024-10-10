@@ -1,12 +1,11 @@
 package com.bankingsystem.services;
 
-import com.bankingsystem.models.Person;
+import com.bankingsystem.models.PersonDetails;
 import com.bankingsystem.models.exceptions.PersonNotFoundException;
 import com.bankingsystem.persistence.PersonPersistenceService;
 import com.bankingsystem.testutils.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -28,30 +27,24 @@ public class PersonServiceTest {
     @Test
     void testCreatePerson() {
         // Act
-        Person createdPerson = personService.createPerson("John", "Doe", "jd@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
+        PersonDetails createdPerson = personService.createPerson("John", "Doe", "jd@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
 
         // Assert
         assertNotNull(createdPerson);
         assertEquals("John", createdPerson.getFirstName());
-
-        ArgumentCaptor<Person> personCaptor = ArgumentCaptor.forClass(Person.class);
-        verify(personPersistenceService, times(1)).createPerson(personCaptor.capture());
-
-        // Check the captured person details
-        assertEquals("John", personCaptor.getValue().getFirstName());
-        assertEquals("Doe", personCaptor.getValue().getLastName());
+        verify(personPersistenceService, times(1)).createPerson(createdPerson);
     }
 
-//    Test Get Person By Id
+//    Test Get PersonDetails By ID
     @Test
     void testGetPersonById() {
         // Arrange
-        Person person = TestDataFactory.createPerson("John", "Doe", "jd@gmail.com");
+        PersonDetails person = TestDataFactory.createPerson("John", "Doe", "jd@gmail.com");
         String personId = person.getPersonId();
         when(personPersistenceService.getPersonById(personId)).thenReturn(person);
 
         // Act
-        Person result = personService.getPersonById(personId);
+        PersonDetails result = personService.getPersonById(personId);
 
         // Assert
         assertNotNull(result);
@@ -74,7 +67,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    void testGetPersonById_NonExistent() {
+    void testGetPersonById_NotFound() {
         // Arrange
         String invalidPersonId = "nonexistent-person-id";
         when(personPersistenceService.getPersonById(invalidPersonId)).thenReturn(null);
@@ -89,12 +82,12 @@ public class PersonServiceTest {
     @Test
     void testGetAllPersons() {
         // Arrange
-        Person person1 = TestDataFactory.createPerson("John", "Doe", "jd@gmail.com");
-        Person person2 = TestDataFactory.createPerson("Jane", "Doe", "jd2@gmail.com");
+        PersonDetails person1 = TestDataFactory.createPerson("John", "Doe", "jd@gmail.com");
+        PersonDetails person2 = TestDataFactory.createPerson("Jane", "Doe", "jd2@gmail.com");
         when(personPersistenceService.getAllPersons()).thenReturn(List.of(person1, person2));
 
         // Act
-        List<Person> result = personService.getAllPersons();
+        List<PersonDetails> result = personService.getAllPersons();
 
         // Assert
         assertNotNull(result);
@@ -114,7 +107,7 @@ public class PersonServiceTest {
         assertThrows(PersonNotFoundException.class, () -> personService.getAllPersons());
     }
 
-//    Test Delete Person
+//    Test Delete PersonDetails
     @Test
     void testDeletePerson() {
         // Arrange

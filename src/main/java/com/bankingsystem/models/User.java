@@ -6,10 +6,10 @@ import java.util.UUID;
 
 public class User {
     private String userId;
-    private Person person;
+    private PersonDetails person;
     private List<Account> accounts;
 
-    public User(Person person) {
+    public User(PersonDetails person) {
         this.userId = "user-" + UUID.randomUUID();
         this.person = person;
         this.accounts = new ArrayList<>();
@@ -19,11 +19,11 @@ public class User {
         return userId;
     }
 
-    public Person getPerson() {
+    public PersonDetails getPerson() {
         return this.person;
     }
 
-    public void setPerson(Person newPerson) {
+    public void setPerson(PersonDetails newPerson) {
         this.person = newPerson;
     }
 

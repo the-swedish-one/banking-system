@@ -15,9 +15,9 @@ public class JointCheckingAccountTest {
 
     @BeforeAll
     static void beforeAll() {
-        Person person = new Person("John", "Doe", "jd@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
+        PersonDetails person = new PersonDetails("John", "Doe", "jd@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
         user = new User(person);
-        Person person2 = new Person("Jane", "Doe", "jd@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
+        PersonDetails person2 = new PersonDetails("Jane", "Doe", "jd@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
         user2 = new User(person2);
     }
 

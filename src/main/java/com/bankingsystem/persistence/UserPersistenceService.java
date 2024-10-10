@@ -9,6 +9,8 @@ public interface UserPersistenceService {
     /**
      * Create a new user
      */
+    // TODO - rename to save()
+    // TODO - return the created user
     void createUser(User user);
 
     /**

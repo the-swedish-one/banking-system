@@ -1,22 +1,22 @@
 package com.bankingsystem.persistence;
 
-import com.bankingsystem.models.Person;
+import com.bankingsystem.models.PersonDetails;
 
 import java.util.List;
 
 public interface PersonPersistenceService {
 
-    // Create a new Person
-    void createPerson(Person person);
+    // Create a new PersonDetails
+    void createPerson(PersonDetails person);
 
     // Get a person by ID
-    Person getPersonById(String personId);
+    PersonDetails getPersonById(String personId);
 
     // Get all Persons
-    List<Person> getAllPersons();
+    List<PersonDetails> getAllPersons();
 
     // Update person
-    void updatePerson(Person person);
+    void updatePerson(PersonDetails person);
 
     // Delete person
     boolean deletePerson(String personId);

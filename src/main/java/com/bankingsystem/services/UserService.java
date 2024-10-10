@@ -1,7 +1,7 @@
 package com.bankingsystem.services;
 
 import com.bankingsystem.models.Bank;
-import com.bankingsystem.models.Person;
+import com.bankingsystem.models.PersonDetails;
 import com.bankingsystem.models.User;
 import com.bankingsystem.models.exceptions.UserNotFoundException;
 import com.bankingsystem.persistence.BankPersistenceService;
@@ -20,12 +20,12 @@ public class UserService {
     }
 
     // Create new user
-    public User createUser(Bank bank, Person person) {
+    public User createUser(Bank bank, PersonDetails person) {
         if (bank == null || person == null) {
-            throw new IllegalArgumentException("Bank and Person cannot be null");
+            throw new IllegalArgumentException("Bank and PersonDetails cannot be null");
         }
         User user = new User(person);
-        userPersistenceService.createUser(user);
+        userPersistenceService.createUser(user); // TODO - rename to save()
         bank.getUsers().add(user);
         bankPersistenceService.updateBank(bank);
         return user;

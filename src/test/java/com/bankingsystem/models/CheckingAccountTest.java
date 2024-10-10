@@ -14,7 +14,7 @@ public class CheckingAccountTest {
 
     @BeforeAll
     static void beforeAll() {
-        Person person = new Person("John", "Doe", "jd@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
+        PersonDetails person = new PersonDetails("John", "Doe", "jd@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
         user = new User(person);
     }
 
