@@ -154,6 +154,9 @@ public class AccountService {
 
     // Delete account by ID
     public boolean deleteAccount(String accountId) {
+        if(accountId == null) {
+            throw new IllegalArgumentException("Account ID cannot be null");
+        }
         return accountPersistenceService.deleteAccount(accountId);
     }
 }
