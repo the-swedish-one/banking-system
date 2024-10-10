@@ -14,7 +14,6 @@ public class TestDataFactory {
 
     public static User createUser(String firstName, String lastName, String email) {
         Person person = createPerson(firstName, lastName, email);
-        Bank bank = createBank("My Bank", "MB001");
         return new User(person);
     }
 
