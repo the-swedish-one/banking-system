@@ -419,5 +419,26 @@ class AccountServiceTest {
         assertTrue(wasDeleted);
         verify(accountPersistenceService, times(1)).deleteAccount(checkingAccount.getAccountId());
     }
+
+    @Test
+    void testDeleteAccount_NullId() {
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> accountService.deleteAccount(null));
+    }
+
+    @Test
+    void testDeleteAccount_NotFound() {
+        // Arrange
+        String accountId = "123";
+        when(accountPersistenceService.deleteAccount(accountId)).thenReturn(false);
+
+        // Act
+        boolean wasDeleted = accountService.deleteAccount(accountId);
+
+        // Assert
+        assertFalse(wasDeleted);
+        verify(accountPersistenceService, times(1)).deleteAccount(accountId);
+    }
+
 }
 
