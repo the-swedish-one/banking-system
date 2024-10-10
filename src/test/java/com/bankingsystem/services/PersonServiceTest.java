@@ -137,7 +137,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    void testDeletePerson_NonExistent() {
+    void testDeletePerson_NotFound() {
         // Arrange
         String nonExistentPersonId = "non-existent-id";
         when(personPersistenceService.deletePerson(nonExistentPersonId)).thenReturn(false);

@@ -198,7 +198,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    void testDeleteTransaction_NonExistent() {
+    void testDeleteTransaction_NotFound() {
         // Arrange
         String nonExistentTransactionId = "non-existent-id";
 
