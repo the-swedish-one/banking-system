@@ -35,6 +35,7 @@ public class BankServiceTest {
         verify(bankPersistenceService, times(1)).createBank(any(Bank.class));
     }
 
+//    Test Get All Bank Users
     @Test
     void testGetAllBankUsers() {
         // Arrange
@@ -85,6 +86,7 @@ public class BankServiceTest {
         verify(bankPersistenceService, times(1)).getBankByBic(bic);
     }
 
+//    Test Get All Bank Accounts
     @Test
     void testGetAllBankAccounts() {
         // Arrange
