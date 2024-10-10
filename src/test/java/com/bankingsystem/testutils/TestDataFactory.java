@@ -30,4 +30,16 @@ public class TestDataFactory {
         return new TransferTransaction(amount, fromAccountId, toAccountId);
     }
 
+    public static CheckingAccount createCheckingAccount(User user, double amount, CurrencyCode currency, double overdraftLimit) {
+        return new CheckingAccount(user, amount, currency, overdraftLimit);
+    }
+
+    public static SavingsAccount createSavingsAccount(User user, double amount, CurrencyCode currency, double interestRate) {
+        return new SavingsAccount(user, amount, currency, interestRate);
+    }
+
+    public static JointCheckingAccount createJointCheckingAccount(User user, User secondOwner, double amount, CurrencyCode currency, double overdraftLimit) {
+        return new JointCheckingAccount(user, secondOwner, amount, currency, overdraftLimit);
+    }
+
 }
