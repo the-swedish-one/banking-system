@@ -16,7 +16,7 @@ public class Main {
         AccountDAO accountDAO = new AccountDAO();
         TransactionDAO transactionDAO = new TransactionDAO();
         CurrencyConversionDAO currencyConversionDAO = new CurrencyConversionDAO();
-        PersonDAO personDAO = new PersonDAO();
+        PersonDetailsDAO personDAO = new PersonDetailsDAO();
         UserDAO userDAO = new UserDAO();
 
         // Instantiate Services
@@ -25,7 +25,7 @@ public class Main {
         CurrencyConversionService currencyConversionService = new CurrencyConversionService(currencyConversionDAO);
         TransactionService transactionService = new TransactionService(transactionDAO);
         AccountService accountService = new AccountService(accountDAO, userDAO, bankDAO, currencyConversionService, transactionService);
-        PersonService personService = new PersonService(personDAO);
+        PersonDetailsService personService = new PersonDetailsService(personDAO);
         UserService userService = new UserService(userDAO, bankDAO);
 
         // Create a bank
@@ -34,11 +34,11 @@ public class Main {
 
         // Create persons
         System.out.println("Creating persons called Alex, Amee, Nicolas");
-        PersonDetails alex = personService.createPerson("Alex", "The Bestest", "alex@gmail.com", "Cosy Cottage", "1 Alex Street", "Alexville", "Alexland");
+        PersonDetails alex = personService.createPersonDetails("Alex", "The Bestest", "alex@gmail.com", "Cosy Cottage", "1 Alex Street", "Alexville", "Alexland");
 
-        PersonDetails amee = personService.createPerson("Amee", "The Greatest", "amee@gmail.com", "Penthouse Suite", "1 Amee Boulevard", "Ameeville", "Ameeland");
+        PersonDetails amee = personService.createPersonDetails("Amee", "The Greatest", "amee@gmail.com", "Penthouse Suite", "1 Amee Boulevard", "Ameeville", "Ameeland");
 
-        PersonDetails nicolas = personService.createPerson("Nicolas", "The Coolest", "nicolas@gmail.com", "Coolest House", "1 Nicolas Avenue", "Nicville", "Nicland");
+        PersonDetails nicolas = personService.createPersonDetails("Nicolas", "The Coolest", "nicolas@gmail.com", "Coolest House", "1 Nicolas Avenue", "Nicville", "Nicland");
 
         // Create users
         System.out.println("Making Persons into Users");
