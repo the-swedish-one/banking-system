@@ -25,7 +25,7 @@ public class UserService {
             throw new IllegalArgumentException("Bank and PersonDetails cannot be null");
         }
         User user = new User(person);
-        userPersistenceService.createUser(user); // TODO - rename to save()
+        userPersistenceService.save(user);
         bank.getUsers().add(user);
         bankPersistenceService.updateBank(bank);
         return user;

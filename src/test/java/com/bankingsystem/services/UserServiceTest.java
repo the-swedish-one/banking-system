@@ -44,7 +44,7 @@ public class UserServiceTest {
         // Assert
         assertNotNull(createdUser);
         assertEquals("Jane", createdUser.getPerson().getFirstName());
-        verify(userPersistenceService, times(1)).createUser(createdUser);
+        verify(userPersistenceService, times(1)).save(createdUser);
         verify(bankPersistenceService, times(1)).updateBank(bank);
         assertTrue(bank.getUsers().contains(createdUser));
     }

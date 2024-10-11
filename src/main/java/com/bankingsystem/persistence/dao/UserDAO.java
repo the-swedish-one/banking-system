@@ -13,8 +13,9 @@ public class UserDAO implements UserPersistenceService {
 
     // Create a new user
     @Override
-    public void createUser(User user) {
+    public User save(User user) {
         users.add(user);
+        return user;
     }
 
     // Get a user by ID

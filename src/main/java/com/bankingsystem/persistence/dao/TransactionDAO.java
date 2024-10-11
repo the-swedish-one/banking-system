@@ -13,18 +13,9 @@ public class TransactionDAO implements TransactionPersistenceService {
 
     // Create a new transaction
     @Override
-    public void createDepositTransaction(Transaction transaction) {
+    public Transaction save(Transaction transaction) {
         transactions.add(transaction);
-    }
-
-    @Override
-    public void createWithdrawTransaction(Transaction transaction) {
-        transactions.add(transaction);
-    }
-
-    @Override
-    public void createTransferTransaction(Transaction transaction) {
-        transactions.add(transaction);
+        return transaction;
     }
 
     // Get one transaction by ID

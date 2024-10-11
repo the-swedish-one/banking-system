@@ -24,7 +24,7 @@ public class TransactionService {
             throw new IllegalArgumentException("Amount must be greater than 0");
         }
         DepositTransaction transaction = new DepositTransaction(amount);
-        transactionPersistenceService.createDepositTransaction(transaction);
+        transactionPersistenceService.save(transaction);
         return transaction;
     }
 
@@ -34,7 +34,7 @@ public class TransactionService {
             throw new IllegalArgumentException("Amount must be greater than 0");
         }
         WithdrawTransaction transaction = new WithdrawTransaction(amount);
-        transactionPersistenceService.createWithdrawTransaction(transaction);
+        transactionPersistenceService.save(transaction);
         return transaction;
     }
 
@@ -44,7 +44,7 @@ public class TransactionService {
             throw new IllegalArgumentException("Amount must be greater than 0");
         }
         TransferTransaction transaction = new TransferTransaction(amount, fromAccountId, toAccountId);
-        transactionPersistenceService.createTransferTransaction(transaction);
+        transactionPersistenceService.save(transaction);
         return transaction;
     }
 

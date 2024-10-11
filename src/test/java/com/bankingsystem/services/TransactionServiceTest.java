@@ -29,10 +29,10 @@ public class TransactionServiceTest {
     @Test
     void testCreateDepositTransaction() {
         // Act
-        transactionService.createDepositTransaction(1000);
+       DepositTransaction depositTransaction = transactionService.createDepositTransaction(1000);
 
         // Assert
-        verify(transactionPersistenceService, times(1)).createDepositTransaction(any(DepositTransaction.class));
+        verify(transactionPersistenceService, times(1)).save(depositTransaction);
     }
 
     @Test
@@ -51,10 +51,10 @@ public class TransactionServiceTest {
     @Test
     void testCreateWithdrawTransaction() {
         // Act
-        transactionService.createWithdrawTransaction(1000);
+       WithdrawTransaction withdrawTransaction = transactionService.createWithdrawTransaction(1000);
 
         // Assert
-        verify(transactionPersistenceService, times(1)).createWithdrawTransaction(any(WithdrawTransaction.class));
+        verify(transactionPersistenceService, times(1)).save(withdrawTransaction);
     }
 
     @Test
@@ -78,10 +78,10 @@ public class TransactionServiceTest {
         SavingsAccount toAccount = new SavingsAccount(user, 0, CurrencyCode.EUR, 1.5);
 
         // Act
-        transactionService.createTransferTransaction(1000, fromAccount.getAccountId(), toAccount.getAccountId());
+       TransferTransaction transferTransaction = transactionService.createTransferTransaction(1000, fromAccount.getAccountId(), toAccount.getAccountId());
 
         // Assert
-        verify(transactionPersistenceService, times(1)).createTransferTransaction(any(TransferTransaction.class));
+        verify(transactionPersistenceService, times(1)).save(transferTransaction);
     }
 
     @Test
