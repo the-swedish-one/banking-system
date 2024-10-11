@@ -4,7 +4,7 @@ import com.bankingsystem.models.Bank;
 
 public interface BankPersistenceService {
 
-    void createBank(Bank bank);
+    Bank save(Bank bank);
 
     Bank getBankByBic(String bic);
 

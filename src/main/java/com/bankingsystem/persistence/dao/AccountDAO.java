@@ -13,8 +13,9 @@ public class AccountDAO implements AccountPersistenceService {
 
     // Create a new account
     @Override
-    public void createAccount(Account account) {
+    public Account save(Account account) {
         accounts.add(account);
+        return account;
     }
 
     // Get one account by ID

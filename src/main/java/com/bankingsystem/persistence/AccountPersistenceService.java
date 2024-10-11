@@ -7,7 +7,7 @@ import java.util.List;
 public interface AccountPersistenceService {
 
     // Create a new account
-    void createAccount(Account account);
+    Account save(Account account);
 
     // Get one account by ID
     Account getAccountById(String accountId);

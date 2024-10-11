@@ -93,7 +93,7 @@ public class AccountService {
     // Create Checking Account
     public CheckingAccount createCheckingAccount(Bank bank, User owner, double balance, CurrencyCode currency, double overdraftLimit) {
         CheckingAccount checkingAccount = new CheckingAccount(owner, balance, currency, overdraftLimit);
-        accountPersistenceService.createAccount(checkingAccount);
+        accountPersistenceService.save(checkingAccount);
         owner.getAccounts().add(checkingAccount);
         userPersistenceService.updateUser(owner);
         bank.getAccounts().add(checkingAccount);
@@ -104,7 +104,7 @@ public class AccountService {
     // Create Savings Account
     public SavingsAccount createSavingsAccount(Bank bank, User owner, double balance, CurrencyCode currency, double interestRate) {
         SavingsAccount savingsAccount = new SavingsAccount(owner, balance, currency, interestRate);
-        accountPersistenceService.createAccount(savingsAccount);
+        accountPersistenceService.save(savingsAccount);
         owner.getAccounts().add(savingsAccount);
         userPersistenceService.updateUser(owner);
         bank.getAccounts().add(savingsAccount);
@@ -115,7 +115,7 @@ public class AccountService {
     // Create Joint Checking Account
     public JointCheckingAccount createJointCheckingAccount(Bank bank, User owner, User secondOwner, double balance, CurrencyCode currency, double overdraftLimit) {
         JointCheckingAccount jointCheckingAccount = new JointCheckingAccount(owner, secondOwner, balance, currency, overdraftLimit);
-        accountPersistenceService.createAccount(jointCheckingAccount);
+        accountPersistenceService.save(jointCheckingAccount);
         owner.getAccounts().add(jointCheckingAccount);
         secondOwner.getAccounts().add(jointCheckingAccount);
         userPersistenceService.updateUser(owner);

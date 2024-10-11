@@ -18,7 +18,7 @@ public class BankService {
 
     public Bank createBank(String bankName, String bic) {
         Bank bank = new Bank(bankName, bic);
-        bankPersistenceService.createBank(bank);
+        bankPersistenceService.save(bank);
         return bank;
     }
 

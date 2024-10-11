@@ -12,8 +12,9 @@ public class BankDAO implements BankPersistenceService {
 
     // Create new bank
     @Override
-    public void createBank(Bank bank){
+    public Bank save(Bank bank){
         banks.add(bank);
+        return bank;
     }
 
     // Get bank by BIC

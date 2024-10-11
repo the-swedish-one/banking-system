@@ -54,7 +54,7 @@ class AccountServiceTest {
         assertEquals(CurrencyCode.EUR, checkingAccount.getCurrency());
         assertEquals(1000, checkingAccount.getOverdraftLimit());
         assertEquals(user, checkingAccount.getOwner());
-        verify(accountPersistenceService, times(1)).createAccount(checkingAccount);
+        verify(accountPersistenceService, times(1)).save(checkingAccount);
         verify(userPersistenceService, times(1)).updateUser(user);
         verify(bankPersistenceService, times(1)).updateBank(bank);
     }
@@ -76,7 +76,7 @@ class AccountServiceTest {
         assertEquals(user, savingsAccount.getOwner());
         verify(userPersistenceService, times(1)).updateUser(user);
         verify(bankPersistenceService, times(1)).updateBank(bank);
-        verify(accountPersistenceService, times(1)).createAccount(savingsAccount);
+        verify(accountPersistenceService, times(1)).save(savingsAccount);
     }
 
     @Test
@@ -99,7 +99,7 @@ class AccountServiceTest {
         verify(userPersistenceService, times(1)).updateUser(user1);
         verify(userPersistenceService, times(1)).updateUser(user2);
         verify(bankPersistenceService, times(1)).updateBank(bank);
-        verify(accountPersistenceService, times(1)).createAccount(jointCheckingAccount);
+        verify(accountPersistenceService, times(1)).save(jointCheckingAccount);
     }
 
 //    Test Deposit
