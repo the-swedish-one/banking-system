@@ -1,0 +1,81 @@
+### Build Tools ###
+# Maven build artifacts
+/target/
+/pom.xml.tag
+/pom.xml.releaseBackup
+/pom.xml.versionsBackup
+/.mvn/timing.properties
+!.mvn/wrapper/maven-wrapper.jar
+
+### Java Specific ###
+# Compiled class files
+*.class
+
+# Java-specific configuration files
+/.classpath
+/.project
+/.settings/
+
+### IDEs and Editors ###
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# Eclipse
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Atom
+*.atom/
+
+# Vim swap files
+*.swp
+
+### OS-Specific Files ###
+# Mac OS
+.DS_Store
+
+# Linux
+*~
+
+# Windows
+Thumbs.db
+
+### Logs and Temporary Files ###
+# Log files
+*.log
+/logs/
+
+# Temporary files
+*.tmp
+*.temp
+
+### Miscellaneous ###
+# JAR files
+*.jar
