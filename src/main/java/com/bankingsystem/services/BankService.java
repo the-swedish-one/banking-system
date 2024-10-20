@@ -8,6 +8,8 @@ import com.bankingsystem.models.exceptions.BankNotFoundException;
 import com.bankingsystem.models.exceptions.UserNotFoundException;
 import com.bankingsystem.persistence.BankPersistenceService;
 
+import java.util.stream.Collectors;
+
 public class BankService {
 
     private final BankPersistenceService bankPersistenceService;
@@ -32,16 +34,11 @@ public class BankService {
             throw new UserNotFoundException("No users found");
         }
 
-        StringBuilder users = new StringBuilder();
-        users.append("Users of bank ").append(bank.getBankName()).append(":\n");
-        for (User user : bank.getUsers()) {
-            users.append(user.getPerson().getFirstName()).append(" ")
-                    .append(user.getPerson().getLastName()).append("\n");
-        }
-
-        return users.toString();
+        return "Users of bank " + bank.getBankName() + ":\n" +
+                bank.getUsers().stream()
+                        .map(user -> user.getPerson().getFirstName() + " " + user.getPerson().getLastName())
+                        .collect(Collectors.joining("\n"));
     }
-
 
     // Get all accounts of the bank
     public String getAllBankAccounts(String bic) {
@@ -52,11 +49,10 @@ public class BankService {
         if (bank.getAccounts().isEmpty()) {
             throw new AccountNotFoundException("No accounts found");
         }
-        StringBuilder accounts = new StringBuilder();
-        accounts.append("Accounts of bank ").append(bank.getBankName()).append(":\n");
-        for (Account account : bank.getAccounts()) {
-            accounts.append(account.toString()).append("\n");
-        }
-        return accounts.toString();
+
+        return "Accounts of bank " + bank.getBankName() + ":\n" +
+                bank.getAccounts().stream()
+                        .map(Account::toString)
+                        .collect(Collectors.joining("\n"));
     }
 }
