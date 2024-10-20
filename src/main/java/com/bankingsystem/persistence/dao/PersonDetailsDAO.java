@@ -35,12 +35,10 @@ public class PersonDetailsDAO implements PersonDetailsPersistenceService {
     // Update person details
     @Override
     public void updatePersonDetails(PersonDetails person) {
-        for (int i = 0; i < personDetails.size(); i++) {
-            if (Objects.equals(personDetails.get(i).getPersonId(), person.getPersonId())) {
-                personDetails.set(i, person);
-                return;
-            }
-        }
+        personDetails.stream()
+                .filter(p -> p.getPersonId().equals(person.getPersonId()))
+                .findFirst()
+                .ifPresent(p -> p = person);
     }
 
     // Delete person

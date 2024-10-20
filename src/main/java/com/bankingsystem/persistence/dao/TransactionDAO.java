@@ -21,12 +21,10 @@ public class TransactionDAO implements TransactionPersistenceService {
     // Get one transaction by ID
     @Override
     public Transaction getTransactionById(String transactionId) {
-        for (Transaction transaction : transactions) {
-            if (Objects.equals(transaction.getTransactionId(), transactionId)) {
-                return transaction;
-            }
-        }
-        return null;
+        return transactions.stream()
+                .filter(transaction -> Objects.equals(transaction.getTransactionId(), transactionId))
+                .findFirst()
+                .orElse(null);
     }
 
     // Get all transactions
@@ -38,12 +36,10 @@ public class TransactionDAO implements TransactionPersistenceService {
     // Update transaction
     @Override
     public void updateTransaction(Transaction transaction) {
-        for (int i = 0; i < transactions.size(); i++) {
-            if (Objects.equals(transactions.get(i).getTransactionId(), transaction.getTransactionId())) {
-                transactions.set(i, transaction);
-                return;
-            }
-        }
+        transactions.stream()
+                .filter(t -> t.getTransactionId().equals(transaction.getTransactionId()))
+                .findFirst()
+                .ifPresent(t -> t = transaction);
     }
 
     // Delete an transaction

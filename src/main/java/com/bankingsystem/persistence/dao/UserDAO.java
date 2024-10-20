@@ -36,12 +36,10 @@ public class UserDAO implements UserPersistenceService {
     // Update user
     @Override
     public void updateUser(User user) {
-        for (int i = 0; i < users.size(); i++) {
-            if (Objects.equals(users.get(i).getUserId(), user.getUserId())) {
-                users.set(i, user);
-                return;
-            }
-        }
+        users.stream()
+                .filter(u -> u.getUserId().equals(user.getUserId()))
+                .findFirst()
+                .ifPresent(u -> u = user);
     }
 
     // Delete a user by ID
