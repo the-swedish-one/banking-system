@@ -19,33 +19,22 @@ public class BankDAO implements BankPersistenceService {
 
     // Get bank by BIC
     public Bank getBankByBic(String bic){
-        for (Bank bank : banks) {
-            if (bank.getBankId().equals(bic)) {
-                return bank;
-            }
-        }
-        return null;
+        return banks.stream()
+                .filter(bank -> bank.getBankId().equals(bic))
+                .findFirst()
+                .orElse(null);
     }
 
     // Update bank
     public void updateBank(Bank bank){
-        for (int i = 0; i < banks.size(); i++) {
-            if (banks.get(i).getBankId().equals(bank.getBankId())) {
-                banks.set(i, bank);
-                return;
-            }
-        }
+        banks.stream()
+                .filter(b -> b.getBankId().equals(bank.getBankId()))
+                .findFirst()
+                .ifPresent(b -> b = bank);
     }
 
     //Delete bank by BIC
     public boolean deleteBank(String bic){
-        for (int i = 0; i < banks.size(); i++) {
-            if (banks.get(i).getBankId().equals(bic)) {
-                banks.remove(i);
-                return true;
-            }
-        }
-        return false;
+        return banks.removeIf(bank -> bank.getBankId().equals(bic));
     }
-
 }
