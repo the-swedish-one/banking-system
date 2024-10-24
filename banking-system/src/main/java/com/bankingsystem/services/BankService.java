@@ -2,7 +2,6 @@ package com.bankingsystem.services;
 
 import com.bankingsystem.models.Account;
 import com.bankingsystem.models.Bank;
-import com.bankingsystem.models.User;
 import com.bankingsystem.models.exceptions.AccountNotFoundException;
 import com.bankingsystem.models.exceptions.BankNotFoundException;
 import com.bankingsystem.models.exceptions.UserNotFoundException;
