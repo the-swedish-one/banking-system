@@ -139,7 +139,7 @@ public class UserServiceTest {
         // Assert
         assertNotNull(retrievedUsers);
         assertEquals(1, retrievedUsers.size());
-        assertEquals(user, retrievedUsers.getFirst());
+        assertEquals(user, retrievedUsers.get(0));
         verify(userPersistenceService, times(1)).getAllUsers();
     }
 
