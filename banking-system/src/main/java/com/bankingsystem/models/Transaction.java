@@ -1,14 +1,15 @@
 package com.bankingsystem.models;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public abstract class Transaction {
     protected String transactionId;
-    protected double amount;
+    protected BigDecimal amount;
     protected LocalDateTime timestamp;
 
-    public Transaction(double amount) {
+    public Transaction(BigDecimal amount) {
         this.amount = amount;
         this.timestamp = LocalDateTime.now();
     }
@@ -17,7 +18,7 @@ public abstract class Transaction {
         return transactionId;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 

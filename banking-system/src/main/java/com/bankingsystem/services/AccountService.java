@@ -25,7 +25,7 @@ public class AccountService {
     }
 
     // Deposit
-    public void deposit(String accountId, double amount) {
+    public void deposit(String accountId, BigDecimal amount) {
             Account account = getAccountById(accountId);
             account.deposit(amount);
             DepositTransaction transaction = transactionService.createDepositTransaction(amount);
@@ -34,7 +34,7 @@ public class AccountService {
     }
 
     // Withdraw
-    public void withdraw(String accountId, double amount) {
+    public void withdraw(String accountId, BigDecimal amount) {
             Account account = getAccountById(accountId);
             account.withdraw(amount);
             WithdrawTransaction transaction = transactionService.createWithdrawTransaction(amount);
@@ -43,18 +43,17 @@ public class AccountService {
     }
 
     // Transfer
-    public void transfer(double amount, String fromAccountId, String toAccountId) {
+    public void transfer(BigDecimal amount, String fromAccountId, String toAccountId) {
         Account fromAccount = getAccountById(fromAccountId);
         Account toAccount = getAccountById(toAccountId);
-            if (fromAccount.getCurrency() != toAccount.getCurrency()) {
-                double convertedAmount = currencyConversionService.convertAmount(amount, fromAccount.getCurrency(), toAccount.getCurrency());
-                BigDecimal bd = new BigDecimal(convertedAmount).setScale(2, RoundingMode.HALF_UP);
-                double roundedConvertedAmount = bd.doubleValue();
+            if (!fromAccount.getCurrency().equals(toAccount.getCurrency())) {
+                BigDecimal convertedAmount = currencyConversionService.convertAmount(amount, fromAccount.getCurrency(), toAccount.getCurrency());
+                convertedAmount = convertedAmount.setScale(2, RoundingMode.HALF_UP);
                 fromAccount.withdraw(amount);
-                toAccount.deposit(roundedConvertedAmount);
+                toAccount.deposit(convertedAmount);
 
                 TransferTransaction fromTransaction = transactionService.createTransferTransaction(amount, fromAccountId, toAccountId);
-                TransferTransaction toTransaction = transactionService.createTransferTransaction(roundedConvertedAmount, fromAccountId, toAccountId);
+                TransferTransaction toTransaction = transactionService.createTransferTransaction(convertedAmount, fromAccountId, toAccountId);
                 fromAccount.getTransactionHistory().add(fromTransaction);
                 toAccount.getTransactionHistory().add(toTransaction);
                 accountPersistenceService.updateAccount(fromAccount);
@@ -73,9 +72,10 @@ public class AccountService {
 
     // Savings Account: Apply interest
     public void addInterest(SavingsAccount savingsAccount) {
-        double interestRateDecimal = savingsAccount.getInterestRatePercentage() / 100.0;
-        double interest = savingsAccount.getBalance() * interestRateDecimal;
-        double newBalance = savingsAccount.getBalance() + interest;
+        BigDecimal interestRateDecimal = BigDecimal.valueOf(savingsAccount.getInterestRatePercentage()).divide(new BigDecimal("100"), 5, RoundingMode.HALF_UP);
+        BigDecimal interest = savingsAccount.getBalance().multiply(interestRateDecimal);
+        BigDecimal newBalance = savingsAccount.getBalance().add(interest);
+        newBalance = newBalance.setScale(2, RoundingMode.HALF_UP);
         savingsAccount.setBalance(newBalance);
         accountPersistenceService.updateAccount(savingsAccount);
     }
@@ -91,7 +91,7 @@ public class AccountService {
     }
 
     // Create Checking Account
-    public CheckingAccount createCheckingAccount(Bank bank, User owner, double balance, CurrencyCode currency, double overdraftLimit) {
+    public CheckingAccount createCheckingAccount(Bank bank, User owner, BigDecimal balance, CurrencyCode currency, BigDecimal overdraftLimit) {
         CheckingAccount checkingAccount = new CheckingAccount(owner, balance, currency, overdraftLimit);
         accountPersistenceService.save(checkingAccount);
         owner.getAccounts().add(checkingAccount);
@@ -102,7 +102,7 @@ public class AccountService {
     }
 
     // Create Savings Account
-    public SavingsAccount createSavingsAccount(Bank bank, User owner, double balance, CurrencyCode currency, double interestRate) {
+    public SavingsAccount createSavingsAccount(Bank bank, User owner, BigDecimal balance, CurrencyCode currency, double interestRate) {
         SavingsAccount savingsAccount = new SavingsAccount(owner, balance, currency, interestRate);
         accountPersistenceService.save(savingsAccount);
         owner.getAccounts().add(savingsAccount);
@@ -113,7 +113,7 @@ public class AccountService {
     }
 
     // Create Joint Checking Account
-    public JointCheckingAccount createJointCheckingAccount(Bank bank, User owner, User secondOwner, double balance, CurrencyCode currency, double overdraftLimit) {
+    public JointCheckingAccount createJointCheckingAccount(Bank bank, User owner, User secondOwner, BigDecimal balance, CurrencyCode currency, BigDecimal overdraftLimit) {
         JointCheckingAccount jointCheckingAccount = new JointCheckingAccount(owner, secondOwner, balance, currency, overdraftLimit);
         accountPersistenceService.save(jointCheckingAccount);
         owner.getAccounts().add(jointCheckingAccount);
@@ -138,17 +138,17 @@ public class AccountService {
     }
 
     // Get balance by account ID
-    public double getBalance(String accountId) {
+    public BigDecimal getBalance(String accountId) {
         return accountPersistenceService.getAccountById(accountId).getBalance();
     }
 
     // Get overdraft limit by account ID
-    public double getOverdraftLimit(String accountId) {
+    public BigDecimal getOverdraftLimit(String accountId) {
         Account account = accountPersistenceService.getAccountById(accountId);
         if (account instanceof CheckingAccount checkingAccount) {
             return checkingAccount.getOverdraftLimit();
         } else {
-            return 0;
+            return new BigDecimal("0");
         }
     }
 

@@ -1,5 +1,6 @@
 package com.bankingsystem.models;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class TransferTransaction extends Transaction {
@@ -7,7 +8,7 @@ public class TransferTransaction extends Transaction {
     private String fromAccountId;
     private String toAccountId;
 
-    public TransferTransaction(double amount, String fromAccountId, String toAccountId) {
+    public TransferTransaction(BigDecimal amount, String fromAccountId, String toAccountId) {
         super(amount);
         this.transactionId = "transfer-" + UUID.randomUUID();
         this.fromAccountId = fromAccountId;

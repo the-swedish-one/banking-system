@@ -2,31 +2,35 @@ package com.bankingsystem.models;
 
 import com.bankingsystem.models.exceptions.OverdraftLimitExceededException;
 
-public class CheckingAccount extends Account {
-    private double overdraftLimit;
+import java.math.BigDecimal;
 
-    public CheckingAccount(User owner, double balance, CurrencyCode currency, double overdraftLimit) {
+public class CheckingAccount extends Account {
+    private BigDecimal overdraftLimit;
+
+    public CheckingAccount(User owner, BigDecimal balance, CurrencyCode currency, BigDecimal overdraftLimit) {
         super(owner, balance, currency);
         this.overdraftLimit = overdraftLimit;
     }
 
     @Override
-    public void withdraw(double amount) {
-        if (amount <= 0) {
+    public void withdraw(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Withdraw Failed: Amount must be greater than 0");
         }
-        if (this.balance + this.overdraftLimit >= amount) {
-            this.balance -= amount;
+
+        BigDecimal availableBalance = this.balance.add(this.overdraftLimit);
+        if (availableBalance.compareTo(amount) >= 0) {
+            this.balance = this.balance.subtract(amount);
         } else {
             throw new OverdraftLimitExceededException("Withdraw Failed: Overdraft limit exceeded");
         }
     }
 
-    public double getOverdraftLimit() {
+    public BigDecimal getOverdraftLimit() {
         return this.overdraftLimit;
     }
 
-    public void setOverdraftLimit(double newOverdraftLimit) {
+    public void setOverdraftLimit(BigDecimal newOverdraftLimit) {
         this.overdraftLimit = newOverdraftLimit;
     }
 

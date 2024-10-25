@@ -4,6 +4,8 @@ import com.bankingsystem.models.exceptions.InsufficientFundsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SavingsAccountTest {
@@ -14,12 +16,12 @@ public class SavingsAccountTest {
     void beforeEach() {
         PersonDetails person = new PersonDetails("John", "Doe", "jd@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
         User user = new User(person);
-        account = new SavingsAccount(user, 1000, CurrencyCode.EUR, 1.5);
+        account = new SavingsAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, 1.5);
     }
 
     @Test
     void testSavingsAccount() {
-        assertEquals(1000, account.getBalance());
+        assertEquals(BigDecimal.valueOf(1000), account.getBalance());
         assertEquals(CurrencyCode.EUR, account.getCurrency());
         assertEquals(1.5, account.getInterestRatePercentage());
     }
@@ -32,28 +34,28 @@ public class SavingsAccountTest {
 
     @Test
     void testDeposit() {
-        account.deposit(500);
-        assertEquals(1500, account.getBalance());
+        account.deposit(new BigDecimal("500"));
+        assertEquals(new BigDecimal("1500"), account.getBalance());
     }
 
     @Test
     void testDepositNegativeAmount() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            account.deposit(-500);
+            account.deposit(BigDecimal.valueOf(-500));
         });
         assertEquals("Deposit failed: Amount must be greater than 0", exception.getMessage());
     }
 
     @Test
     void testWithdraw() {
-        account.withdraw(500);
-        assertEquals(500, account.getBalance());
+        account.withdraw(BigDecimal.valueOf(500));
+        assertEquals(BigDecimal.valueOf(500), account.getBalance());
     }
 
     @Test
     void testWithdrawNegativeAmount() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            account.withdraw(-500);
+            account.withdraw(BigDecimal.valueOf(-500));
         });
         assertEquals("Withdraw Failed: Amount must be greater than 0", exception.getMessage());
     }
@@ -61,11 +63,11 @@ public class SavingsAccountTest {
     @Test
     void testWithdraw_InsufficientFunds() {
         InsufficientFundsException exception = assertThrows(InsufficientFundsException.class, () -> {
-            account.withdraw(1500);
+            account.withdraw(BigDecimal.valueOf(1500));
         });
 
         assertEquals("Withdraw Filed: Insufficient funds", exception.getMessage());
-        assertEquals(1000, account.getBalance());
+        assertEquals(BigDecimal.valueOf(1000), account.getBalance());
     }
 
     @Test

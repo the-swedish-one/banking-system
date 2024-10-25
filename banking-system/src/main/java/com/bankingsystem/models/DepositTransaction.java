@@ -1,10 +1,11 @@
 package com.bankingsystem.models;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class DepositTransaction extends Transaction {
 
-    public DepositTransaction(double amount) {
+    public DepositTransaction(BigDecimal amount) {
         super(amount);
         this.transactionId = "deposit-" + UUID.randomUUID();
     }

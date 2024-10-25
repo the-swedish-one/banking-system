@@ -2,6 +2,8 @@ package com.bankingsystem.testutils;
 
 import com.bankingsystem.models.*;
 
+import java.math.BigDecimal;
+
 
 public class TestDataFactory {
     public static Bank createBank(String name, String bic) {
@@ -17,27 +19,27 @@ public class TestDataFactory {
         return new User(person);
     }
 
-    public static DepositTransaction createDepositTransaction(double amount) {
+    public static DepositTransaction createDepositTransaction(BigDecimal amount) {
         return new DepositTransaction(amount);
     }
 
-    public static WithdrawTransaction createWithdrawTransaction(double amount) {
+    public static WithdrawTransaction createWithdrawTransaction(BigDecimal amount) {
         return new WithdrawTransaction(amount);
     }
 
-    public static TransferTransaction createTransferTransaction(double amount, String fromAccountId, String toAccountId) {
+    public static TransferTransaction createTransferTransaction(BigDecimal amount, String fromAccountId, String toAccountId) {
         return new TransferTransaction(amount, fromAccountId, toAccountId);
     }
 
-    public static CheckingAccount createCheckingAccount(User user, double amount, CurrencyCode currency, double overdraftLimit) {
+    public static CheckingAccount createCheckingAccount(User user, BigDecimal amount, CurrencyCode currency, BigDecimal overdraftLimit) {
         return new CheckingAccount(user, amount, currency, overdraftLimit);
     }
 
-    public static SavingsAccount createSavingsAccount(User user, double amount, CurrencyCode currency, double interestRate) {
+    public static SavingsAccount createSavingsAccount(User user, BigDecimal amount, CurrencyCode currency, double interestRate) {
         return new SavingsAccount(user, amount, currency, interestRate);
     }
 
-    public static JointCheckingAccount createJointCheckingAccount(User user, User secondOwner, double amount, CurrencyCode currency, double overdraftLimit) {
+    public static JointCheckingAccount createJointCheckingAccount(User user, User secondOwner, BigDecimal amount, CurrencyCode currency, BigDecimal overdraftLimit) {
         return new JointCheckingAccount(user, secondOwner, amount, currency, overdraftLimit);
     }
 

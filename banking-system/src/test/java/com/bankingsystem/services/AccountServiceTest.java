@@ -14,6 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,13 +49,13 @@ class AccountServiceTest {
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
 
         // Act
-        CheckingAccount checkingAccount = accountService.createCheckingAccount(bank, user, 1000, CurrencyCode.EUR, 1000);
+        CheckingAccount checkingAccount = accountService.createCheckingAccount(bank, user, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
 
         // Assert
         assertNotNull(checkingAccount);
-        assertEquals(1000, checkingAccount.getBalance());
+        assertEquals(BigDecimal.valueOf(1000), checkingAccount.getBalance());
         assertEquals(CurrencyCode.EUR, checkingAccount.getCurrency());
-        assertEquals(1000, checkingAccount.getOverdraftLimit());
+        assertEquals(BigDecimal.valueOf(1000), checkingAccount.getOverdraftLimit());
         assertEquals(user, checkingAccount.getOwner());
         verify(accountPersistenceService, times(1)).save(checkingAccount);
         verify(userPersistenceService, times(1)).updateUser(user);
@@ -66,11 +69,11 @@ class AccountServiceTest {
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
 
         // Act
-        SavingsAccount savingsAccount = accountService.createSavingsAccount(bank, user, 1000, CurrencyCode.EUR, 1.5);
+        SavingsAccount savingsAccount = accountService.createSavingsAccount(bank, user, BigDecimal.valueOf(1000), CurrencyCode.EUR, 1.5);
 
         // Assert
         assertNotNull(savingsAccount);
-        assertEquals(1000, savingsAccount.getBalance());
+        assertEquals(BigDecimal.valueOf(1000), savingsAccount.getBalance());
         assertEquals(CurrencyCode.EUR, savingsAccount.getCurrency());
         assertEquals(1.5, savingsAccount.getInterestRatePercentage());
         assertEquals(user, savingsAccount.getOwner());
@@ -87,13 +90,13 @@ class AccountServiceTest {
         User user2 = TestDataFactory.createUser("John", "Smith", "js@gmail.com");
 
         // Act
-        JointCheckingAccount jointCheckingAccount = accountService.createJointCheckingAccount(bank, user1, user2, 1000, CurrencyCode.EUR, 1000);
+        JointCheckingAccount jointCheckingAccount = accountService.createJointCheckingAccount(bank, user1, user2, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
 
         // Assert
         assertNotNull(jointCheckingAccount);
-        assertEquals(1000, jointCheckingAccount.getBalance());
+        assertEquals(BigDecimal.valueOf(1000), jointCheckingAccount.getBalance());
         assertEquals(CurrencyCode.EUR, jointCheckingAccount.getCurrency());
-        assertEquals(1000, jointCheckingAccount.getOverdraftLimit());
+        assertEquals(BigDecimal.valueOf(1000), jointCheckingAccount.getOverdraftLimit());
         assertEquals(user1, jointCheckingAccount.getOwner());
         assertEquals(user2, jointCheckingAccount.getSecondOwner());
         verify(userPersistenceService, times(1)).updateUser(user1);
@@ -107,31 +110,31 @@ class AccountServiceTest {
     void testDeposit() {
         // Arrange
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
-        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, 1000, CurrencyCode.EUR, 1000);
-        DepositTransaction depositTransaction = TestDataFactory.createDepositTransaction(500);
+        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
+        DepositTransaction depositTransaction = TestDataFactory.createDepositTransaction(BigDecimal.valueOf(500));
 
         when(accountPersistenceService.getAccountById(checkingAccount.getAccountId())).thenReturn(checkingAccount);
-        when(transactionService.createDepositTransaction(500)).thenReturn(depositTransaction);
+        when(transactionService.createDepositTransaction(BigDecimal.valueOf(500))).thenReturn(depositTransaction);
 
         // Act
-        accountService.deposit(checkingAccount.getAccountId(), 500);
+        accountService.deposit(checkingAccount.getAccountId(), BigDecimal.valueOf(500));
 
         // Assert
-        assertEquals(1500, checkingAccount.getBalance());
+        assertEquals(BigDecimal.valueOf(1500), checkingAccount.getBalance());
         verify(accountPersistenceService, times(1)).updateAccount(checkingAccount);
-        verify(transactionService, times(1)).createDepositTransaction(500);
+        verify(transactionService, times(1)).createDepositTransaction(BigDecimal.valueOf(500));
     }
 
     @Test
     void testDeposit_NegativeAmount() {
         // Arrange
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
-        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, 1000, CurrencyCode.EUR, 1000);
+        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
 
         when(accountPersistenceService.getAccountById(checkingAccount.getAccountId())).thenReturn(checkingAccount);
 
         // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> accountService.deposit(checkingAccount.getAccountId(), -500));
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> accountService.deposit(checkingAccount.getAccountId(), BigDecimal.valueOf(-500)));
         assertEquals("Deposit failed: Amount must be greater than 0", exception.getMessage());
         verify(accountPersistenceService, times(0)).updateAccount(checkingAccount);
     }
@@ -141,49 +144,49 @@ class AccountServiceTest {
     void testWithdraw() {
         // Arrange
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
-        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, 1000, CurrencyCode.EUR, 1000);
-        WithdrawTransaction withdrawTransaction = TestDataFactory.createWithdrawTransaction(500);
+        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
+        WithdrawTransaction withdrawTransaction = TestDataFactory.createWithdrawTransaction(BigDecimal.valueOf(500));
 
         when(accountPersistenceService.getAccountById(checkingAccount.getAccountId())).thenReturn(checkingAccount);
-        when(transactionService.createWithdrawTransaction(500)).thenReturn(withdrawTransaction);
+        when(transactionService.createWithdrawTransaction(BigDecimal.valueOf(500))).thenReturn(withdrawTransaction);
 
         // Act
-        accountService.withdraw(checkingAccount.getAccountId(), 500);
+        accountService.withdraw(checkingAccount.getAccountId(), BigDecimal.valueOf(500));
 
         // Assert
-        assertEquals(500, checkingAccount.getBalance());
+        assertEquals(BigDecimal.valueOf(500), checkingAccount.getBalance());
         verify(accountPersistenceService, times(1)).updateAccount(checkingAccount);
-        verify(transactionService, times(1)).createWithdrawTransaction(500);
+        verify(transactionService, times(1)).createWithdrawTransaction(BigDecimal.valueOf(500));
     }
 
     @Test
     void testWithdraw_ExceedsBalanceWithinOverdraftLimit() {
         // Arrange
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
-        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, 100, CurrencyCode.EUR, 500);
-        WithdrawTransaction withdrawTransaction = TestDataFactory.createWithdrawTransaction(300);
+        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(100), CurrencyCode.EUR, BigDecimal.valueOf(500));
+        WithdrawTransaction withdrawTransaction = TestDataFactory.createWithdrawTransaction(BigDecimal.valueOf(300));
 
         when(accountPersistenceService.getAccountById(checkingAccount.getAccountId())).thenReturn(checkingAccount);
-        when(transactionService.createWithdrawTransaction(300)).thenReturn(withdrawTransaction);
+        when(transactionService.createWithdrawTransaction(BigDecimal.valueOf(300))).thenReturn(withdrawTransaction);
 
         // Act
-        accountService.withdraw(checkingAccount.getAccountId(), 300);
+        accountService.withdraw(checkingAccount.getAccountId(), BigDecimal.valueOf(300));
 
         // Assert
-        assertEquals(-200, checkingAccount.getBalance());
+        assertEquals(BigDecimal.valueOf(-200), checkingAccount.getBalance());
         verify(accountPersistenceService, times(1)).updateAccount(checkingAccount);
-        verify(transactionService, times(1)).createWithdrawTransaction(300);
+        verify(transactionService, times(1)).createWithdrawTransaction(BigDecimal.valueOf(300));
     }
 
     @Test
     void testWithdraw_ExceedsOverdraftLimit() {
         // Arrange
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
-        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, 100, CurrencyCode.EUR, 200);
+        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(100), CurrencyCode.EUR, BigDecimal.valueOf(200));
         when(accountPersistenceService.getAccountById(checkingAccount.getAccountId())).thenReturn(checkingAccount);
 
         // Act & Assert
-        Exception exception = assertThrows(OverdraftLimitExceededException.class, () -> accountService.withdraw(checkingAccount.getAccountId(), 400));
+        Exception exception = assertThrows(OverdraftLimitExceededException.class, () -> accountService.withdraw(checkingAccount.getAccountId(), BigDecimal.valueOf(400)));
         assertEquals("Withdraw Failed: Overdraft limit exceeded", exception.getMessage());
         verify(accountPersistenceService, times(0)).updateAccount(checkingAccount);
     }
@@ -192,12 +195,12 @@ class AccountServiceTest {
     void testWithdraw_InsufficientFunds() {
         // Arrange
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
-        SavingsAccount savingsAccount = TestDataFactory.createSavingsAccount(user, 100, CurrencyCode.EUR, 2.0);
+        SavingsAccount savingsAccount = TestDataFactory.createSavingsAccount(user, BigDecimal.valueOf(100), CurrencyCode.EUR, 2.0);
 
         when(accountPersistenceService.getAccountById(savingsAccount.getAccountId())).thenReturn(savingsAccount);
 
         // Act & Assert
-        Exception exception = assertThrows(InsufficientFundsException.class, () -> accountService.withdraw(savingsAccount.getAccountId(), 200));
+        Exception exception = assertThrows(InsufficientFundsException.class, () -> accountService.withdraw(savingsAccount.getAccountId(), BigDecimal.valueOf(200)));
         assertEquals("Withdraw Filed: Insufficient funds", exception.getMessage());
         verify(accountPersistenceService, times(0)).updateAccount(savingsAccount);
     }
@@ -206,12 +209,12 @@ class AccountServiceTest {
     void testWithdraw_NegativeAmount() {
         // Arrange
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
-        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, 1000, CurrencyCode.EUR, 1000);
+        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
 
         when(accountPersistenceService.getAccountById(checkingAccount.getAccountId())).thenReturn(checkingAccount);
 
         // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> accountService.withdraw(checkingAccount.getAccountId(), -500));
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> accountService.withdraw(checkingAccount.getAccountId(), BigDecimal.valueOf(-500)));
         assertEquals("Withdraw Failed: Amount must be greater than 0", exception.getMessage());
         verify(accountPersistenceService, times(0)).updateAccount(checkingAccount);
     }
@@ -221,64 +224,67 @@ class AccountServiceTest {
     void testTransfer() {
         // Arrange
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
-        CheckingAccount fromAccount = TestDataFactory.createCheckingAccount(user, 1000, CurrencyCode.EUR, 1000);
-        SavingsAccount toAccount = TestDataFactory.createSavingsAccount(user, 0, CurrencyCode.EUR, 2.0);
-        TransferTransaction transferTransaction = TestDataFactory.createTransferTransaction(500, fromAccount.getAccountId(), toAccount.getAccountId());
+        CheckingAccount fromAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
+        SavingsAccount toAccount = TestDataFactory.createSavingsAccount(user, BigDecimal.valueOf(0), CurrencyCode.EUR, 2.0);
+        TransferTransaction transferTransaction = TestDataFactory.createTransferTransaction(BigDecimal.valueOf(500), fromAccount.getAccountId(), toAccount.getAccountId());
 
         when(accountPersistenceService.getAccountById(fromAccount.getAccountId())).thenReturn(fromAccount);
         when(accountPersistenceService.getAccountById(toAccount.getAccountId())).thenReturn(toAccount);
-        when(transactionService.createTransferTransaction(500, fromAccount.getAccountId(), toAccount.getAccountId())).thenReturn(transferTransaction);
+        when(transactionService.createTransferTransaction(BigDecimal.valueOf(500), fromAccount.getAccountId(), toAccount.getAccountId())).thenReturn(transferTransaction);
 
         // Act
-        accountService.transfer(500, fromAccount.getAccountId(), toAccount.getAccountId());
+        accountService.transfer(BigDecimal.valueOf(500), fromAccount.getAccountId(), toAccount.getAccountId());
 
         // Assert
-        assertEquals(500, fromAccount.getBalance());
-        assertEquals(500, toAccount.getBalance());
+        assertEquals(BigDecimal.valueOf(500), fromAccount.getBalance());
+        assertEquals(BigDecimal.valueOf(500), toAccount.getBalance());
         verify(accountPersistenceService, times(1)).updateAccount(fromAccount);
         verify(accountPersistenceService, times(1)).updateAccount(toAccount);
-        verify(transactionService, times(1)).createTransferTransaction(500, fromAccount.getAccountId(), toAccount.getAccountId());
+        verify(transactionService, times(1)).createTransferTransaction(BigDecimal.valueOf(500), fromAccount.getAccountId(), toAccount.getAccountId());
     }
 
     @Test
     void testTransfer_DifferentCurrencies() {
         // Arrange
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
-        CheckingAccount fromAccount = TestDataFactory.createCheckingAccount(user, 1000, CurrencyCode.EUR, 1000);
-        SavingsAccount toAccount = TestDataFactory.createSavingsAccount(user, 0, CurrencyCode.USD, 2.0);
-        TransferTransaction fromTransaction = TestDataFactory.createTransferTransaction(500, fromAccount.getAccountId(), toAccount.getAccountId());
-        TransferTransaction toTransaction = TestDataFactory.createTransferTransaction(530, fromAccount.getAccountId(), toAccount.getAccountId());  // Example converted amount
+        CheckingAccount fromAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
+        SavingsAccount toAccount = TestDataFactory.createSavingsAccount(user, BigDecimal.valueOf(0), CurrencyCode.USD, 2.0);
+        TransferTransaction fromTransaction = TestDataFactory.createTransferTransaction(BigDecimal.valueOf(500), fromAccount.getAccountId(), toAccount.getAccountId());
+        TransferTransaction toTransaction = TestDataFactory.createTransferTransaction(BigDecimal.valueOf(530), fromAccount.getAccountId(), toAccount.getAccountId());
+
+        BigDecimal amount = BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal convertedAmount = BigDecimal.valueOf(530).setScale(2, RoundingMode.HALF_UP);
 
         when(accountPersistenceService.getAccountById(fromAccount.getAccountId())).thenReturn(fromAccount);
         when(accountPersistenceService.getAccountById(toAccount.getAccountId())).thenReturn(toAccount);
-        when(currencyConversionService.convertAmount(500, CurrencyCode.EUR, CurrencyCode.USD)).thenReturn(530.0);
-        when(transactionService.createTransferTransaction(500, fromAccount.getAccountId(), toAccount.getAccountId())).thenReturn(fromTransaction);
-        when(transactionService.createTransferTransaction(530, fromAccount.getAccountId(), toAccount.getAccountId())).thenReturn(toTransaction);
+        when(currencyConversionService.convertAmount(amount, CurrencyCode.EUR, CurrencyCode.USD)).thenReturn(convertedAmount);
+        when(transactionService.createTransferTransaction(amount, fromAccount.getAccountId(), toAccount.getAccountId())).thenReturn(fromTransaction);
+        when(transactionService.createTransferTransaction(convertedAmount, fromAccount.getAccountId(), toAccount.getAccountId())).thenReturn(toTransaction);
 
         // Act
-        accountService.transfer(500, fromAccount.getAccountId(), toAccount.getAccountId());
+        accountService.transfer(amount, fromAccount.getAccountId(), toAccount.getAccountId());
 
         // Assert
-        assertEquals(500, fromAccount.getBalance());
-        assertEquals(530, toAccount.getBalance());  // Converted amount
+        assertEquals(BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP), fromAccount.getBalance());
+        assertEquals(BigDecimal.valueOf(530).setScale(2, RoundingMode.HALF_UP), toAccount.getBalance());  // Converted amount
         verify(accountPersistenceService, times(1)).updateAccount(fromAccount);
         verify(accountPersistenceService, times(1)).updateAccount(toAccount);
-        verify(transactionService, times(1)).createTransferTransaction(500, fromAccount.getAccountId(), toAccount.getAccountId());
-        verify(transactionService, times(1)).createTransferTransaction(530, fromAccount.getAccountId(), toAccount.getAccountId());
+        verify(transactionService, times(1)).createTransferTransaction(BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP), fromAccount.getAccountId(), toAccount.getAccountId());
+        verify(transactionService, times(1)).createTransferTransaction(BigDecimal.valueOf(530).setScale(2, RoundingMode.HALF_UP), fromAccount.getAccountId(), toAccount.getAccountId());
     }
 
     @Test
     void testTransfer_InsufficientFunds() {
         // Arrange
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
-        SavingsAccount fromAccount = TestDataFactory.createSavingsAccount(user, 100, CurrencyCode.EUR, 2.0);
-        CheckingAccount toAccount = TestDataFactory.createCheckingAccount(user, 0, CurrencyCode.EUR, 100);
+        SavingsAccount fromAccount = TestDataFactory.createSavingsAccount(user, BigDecimal.valueOf(100), CurrencyCode.EUR, 2.0);
+        CheckingAccount toAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(0), CurrencyCode.EUR, BigDecimal.valueOf(100));
 
         when(accountPersistenceService.getAccountById(fromAccount.getAccountId())).thenReturn(fromAccount);
         when(accountPersistenceService.getAccountById(toAccount.getAccountId())).thenReturn(toAccount);
 
         // Act & Assert
-        Exception exception = assertThrows(InsufficientFundsException.class, () -> accountService.transfer(200, fromAccount.getAccountId(), toAccount.getAccountId()));
+        Exception exception = assertThrows(InsufficientFundsException.class, () -> accountService.transfer(BigDecimal.valueOf(200), fromAccount.getAccountId(), toAccount.getAccountId()));
         assertEquals("Withdraw Filed: Insufficient funds", exception.getMessage());
         verify(accountPersistenceService, times(0)).updateAccount(fromAccount);
         verify(accountPersistenceService, times(0)).updateAccount(toAccount);
@@ -288,14 +294,14 @@ class AccountServiceTest {
     void testTransfer_NegativeAmount() {
         // Arrange
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
-        CheckingAccount fromAccount = TestDataFactory.createCheckingAccount(user, 1000, CurrencyCode.EUR, 1000);
-        SavingsAccount toAccount = TestDataFactory.createSavingsAccount(user, 0, CurrencyCode.EUR, 2.0);
+        CheckingAccount fromAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
+        SavingsAccount toAccount = TestDataFactory.createSavingsAccount(user, BigDecimal.valueOf(0), CurrencyCode.EUR, 2.0);
 
         when(accountPersistenceService.getAccountById(fromAccount.getAccountId())).thenReturn(fromAccount);
         when(accountPersistenceService.getAccountById(toAccount.getAccountId())).thenReturn(toAccount);
 
         // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> accountService.transfer(-500, fromAccount.getAccountId(), toAccount.getAccountId()));
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> accountService.transfer(BigDecimal.valueOf(-500), fromAccount.getAccountId(), toAccount.getAccountId()));
         assertEquals("Withdraw Failed: Amount must be greater than 0", exception.getMessage());
         verify(accountPersistenceService, times(0)).updateAccount(fromAccount);
         verify(accountPersistenceService, times(0)).updateAccount(toAccount);
@@ -306,7 +312,7 @@ class AccountServiceTest {
     void testGetAccountById() {
         // Arrange
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
-        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, 1000, CurrencyCode.EUR, 1000);
+        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
 
         when(accountPersistenceService.getAccountById(checkingAccount.getAccountId())).thenReturn(checkingAccount);
 
@@ -336,13 +342,13 @@ class AccountServiceTest {
     void testAddInterest() {
         // Arrange
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
-        SavingsAccount savingsAccount = TestDataFactory.createSavingsAccount(user, 1000, CurrencyCode.EUR, 2.0);
+        SavingsAccount savingsAccount = TestDataFactory.createSavingsAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, 2.0);
 
         // Act
         accountService.addInterest(savingsAccount);
 
         // Assert
-        assertEquals(1020, savingsAccount.getBalance());
+        assertEquals(BigDecimal.valueOf(1020.00).setScale(2, RoundingMode.HALF_UP), savingsAccount.getBalance());
         verify(accountPersistenceService, times(1)).updateAccount(savingsAccount);
     }
 
@@ -351,9 +357,9 @@ class AccountServiceTest {
     void testGetTransactionHistory() {
         // Arrange
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
-        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, 1000, CurrencyCode.EUR, 1000);
-        DepositTransaction depositTransaction = TestDataFactory.createDepositTransaction(500);
-        WithdrawTransaction withdrawTransaction = TestDataFactory.createWithdrawTransaction(300);
+        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
+        DepositTransaction depositTransaction = TestDataFactory.createDepositTransaction(BigDecimal.valueOf(500));
+        WithdrawTransaction withdrawTransaction = TestDataFactory.createWithdrawTransaction(BigDecimal.valueOf(300));
 
         checkingAccount.getTransactionHistory().add(depositTransaction);
         checkingAccount.getTransactionHistory().add(withdrawTransaction);
@@ -375,15 +381,15 @@ class AccountServiceTest {
     void testGetBalance() {
         // Arrange
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
-        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, 1000, CurrencyCode.EUR, 1000);
+        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
 
         when(accountPersistenceService.getAccountById(checkingAccount.getAccountId())).thenReturn(checkingAccount);
 
         // Act
-        double balance = accountService.getBalance(checkingAccount.getAccountId());
+        BigDecimal balance = accountService.getBalance(checkingAccount.getAccountId());
 
         // Assert
-        assertEquals(1000, balance);
+        assertEquals(BigDecimal.valueOf(1000), balance);
         verify(accountPersistenceService, times(1)).getAccountById(checkingAccount.getAccountId());
     }
 
@@ -391,15 +397,15 @@ class AccountServiceTest {
     @Test
     void testGetOverdraftLimit() {
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
-        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, 1000, CurrencyCode.EUR, 1000);
+        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
 
         when(accountPersistenceService.getAccountById(checkingAccount.getAccountId())).thenReturn(checkingAccount);
 
         // Act
-        double overdraftLimit = accountService.getOverdraftLimit(checkingAccount.getAccountId());
+        BigDecimal overdraftLimit = accountService.getOverdraftLimit(checkingAccount.getAccountId());
 
         // Assert
-        assertEquals(1000, overdraftLimit);
+        assertEquals(BigDecimal.valueOf(1000), overdraftLimit);
         verify(accountPersistenceService, times(1)).getAccountById(checkingAccount.getAccountId());
     }
 
@@ -408,7 +414,7 @@ class AccountServiceTest {
     void testDeleteAccount() {
         // Arrange
         User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
-        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, 1000, CurrencyCode.EUR, 1000);
+        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
 
         when(accountPersistenceService.deleteAccount(checkingAccount.getAccountId())).thenReturn(true);
 

@@ -2,21 +2,23 @@ package com.bankingsystem.models;
 
 import com.bankingsystem.models.exceptions.InsufficientFundsException;
 
+import java.math.BigDecimal;
+
 public class SavingsAccount extends Account {
     private double interestRatePercentage;
 
-    public SavingsAccount(User owner, double balance, CurrencyCode currency, double interestRate) {
+    public SavingsAccount(User owner, BigDecimal balance, CurrencyCode currency, double interestRate) {
         super(owner, balance, currency);
         this.interestRatePercentage = interestRate;
     }
 
     @Override
-    public void withdraw(double amount) {
-        if (amount <= 0) {
+    public void withdraw(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Withdraw Failed: Amount must be greater than 0");
         }
-        if (balance >= amount) {
-            balance -= amount;
+        if (balance.compareTo(amount) >= 0) {
+            balance = balance.subtract(amount);
         } else {
             throw new InsufficientFundsException("Withdraw Filed: Insufficient funds");
         }

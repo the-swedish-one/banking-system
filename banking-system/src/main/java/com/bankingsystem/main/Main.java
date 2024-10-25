@@ -6,6 +6,8 @@ import com.bankingsystem.services.*;
 import com.bankingsystem.models.exceptions.InsufficientFundsException;
 import com.bankingsystem.models.exceptions.OverdraftLimitExceededException;
 
+import java.math.BigDecimal;
+
 public class Main {
     public static void main(String[] args) {
         System.out.println("Welcome to Alex's Banking System");
@@ -52,60 +54,60 @@ public class Main {
 
         // Create accounts
         System.out.println("Creating Alex's checking and savings accounts");
-        CheckingAccount alexCheckingAccount = accountService.createCheckingAccount(bestBank, alexUser, 0, CurrencyCode.EUR, 1000.00);
+        CheckingAccount alexCheckingAccount = accountService.createCheckingAccount(bestBank, alexUser, new BigDecimal("0"), CurrencyCode.EUR, BigDecimal.valueOf(1000.00));
 
-        SavingsAccount alexSavingsAccount = accountService.createSavingsAccount(bestBank, alexUser, 0, CurrencyCode.EUR, 1.5);
+        SavingsAccount alexSavingsAccount = accountService.createSavingsAccount(bestBank, alexUser, new BigDecimal("0"), CurrencyCode.EUR, 1.5);
 
         System.out.println("Creating Amee's checking and savings accounts");
-        CheckingAccount ameeCheckingAccount = accountService.createCheckingAccount(bestBank, ameeUser, 0, CurrencyCode.USD, 2000.00);
+        CheckingAccount ameeCheckingAccount = accountService.createCheckingAccount(bestBank, ameeUser, new BigDecimal("0"), CurrencyCode.USD, BigDecimal.valueOf(2000.00));
 
-        SavingsAccount ameeSavingsAccount = accountService.createSavingsAccount(bestBank, ameeUser, 0, CurrencyCode.USD, 2.0);
+        SavingsAccount ameeSavingsAccount = accountService.createSavingsAccount(bestBank, ameeUser, new BigDecimal("0"), CurrencyCode.USD, 2.0);
 
         System.out.println("Creating Nicolas's checking account");
-        CheckingAccount nicolasCheckingAccount = accountService.createCheckingAccount(bestBank, nicolasUser, 0, CurrencyCode.EUR, 1000.00);
+        CheckingAccount nicolasCheckingAccount = accountService.createCheckingAccount(bestBank, nicolasUser, new BigDecimal("0"), CurrencyCode.EUR, BigDecimal.valueOf(1000.00));
 
         System.out.println("Creating a joint checking account for Alex and Amee");
-        JointCheckingAccount alexAmeeJointCheckingAccount = accountService.createJointCheckingAccount(bestBank, alexUser, ameeUser, 0, CurrencyCode.SEK, 3000.00);
+        JointCheckingAccount alexAmeeJointCheckingAccount = accountService.createJointCheckingAccount(bestBank, alexUser, ameeUser, new BigDecimal("0"), CurrencyCode.SEK, BigDecimal.valueOf(3000.00));
 
         System.out.println("***************************");
 
         // Deposit money into Alex's accounts
         System.out.println("Depositing 1000 EUR into Alex's checking account");
-        accountService.deposit(alexCheckingAccount.getAccountId(), 1000.00);
+        accountService.deposit(alexCheckingAccount.getAccountId(), BigDecimal.valueOf(1000.00));
 
         System.out.println("Depositing 2000 EUR into Alex's savings account");
-        accountService.deposit(alexSavingsAccount.getAccountId(), 2000.00);
+        accountService.deposit(alexSavingsAccount.getAccountId(), BigDecimal.valueOf(2000.00));
 
         // Withdraw money from Alex's checking account
         System.out.println("Withdrawing 500 EUR from Alex's checking account");
-        accountService.withdraw(alexCheckingAccount.getAccountId(), 500.00);
+        accountService.withdraw(alexCheckingAccount.getAccountId(), BigDecimal.valueOf(500.00));
 
         // Check balance of Alex's checking account
-        double alexCheckingAccountBalance = accountService.getBalance(alexCheckingAccount.getAccountId());
+        BigDecimal alexCheckingAccountBalance = accountService.getBalance(alexCheckingAccount.getAccountId());
         CurrencyCode alexCheckingAccountCurrency = accountService.getAccountById(alexCheckingAccount.getAccountId()).getCurrency();
         System.out.println("Alex's checking account balance is now: " + alexCheckingAccountBalance + " " + alexCheckingAccountCurrency);
 
         // Check overdraft limit of Alex's checking account
-        double alexCheckingAccountOverdraftLimit = accountService.getOverdraftLimit(alexCheckingAccount.getAccountId());
+        BigDecimal alexCheckingAccountOverdraftLimit = accountService.getOverdraftLimit(alexCheckingAccount.getAccountId());
         System.out.println("Alex's Checking account overdraft limit: " + alexCheckingAccountOverdraftLimit);
 
         // Demonstrate exception: Attempt to withdraw more money than is available Alex's checking account
         System.out.println("Demonstrate exception: Attempting to withdraw 2000 EUR from Alex's checking account");
         try {
-            accountService.withdraw(alexCheckingAccount.getAccountId(), 2000.00);
+            accountService.withdraw(alexCheckingAccount.getAccountId(), BigDecimal.valueOf(2000.00));
         } catch (OverdraftLimitExceededException e) {
             System.out.println(e.getMessage());
         }
 
         // Check balance of Alex's savings account
-        double alexSavingsAccountBalance = accountService.getBalance(alexSavingsAccount.getAccountId());
+        BigDecimal alexSavingsAccountBalance = accountService.getBalance(alexSavingsAccount.getAccountId());
         CurrencyCode alexSavingsAccountCurrency = accountService.getAccountById(alexSavingsAccount.getAccountId()).getCurrency();
         System.out.println("Alex's savings account balance: " + alexSavingsAccountBalance + " " + alexSavingsAccountCurrency);
 
         // Demonstrate exception: Attempt to withdraw more money than is in Alex's savings account
         System.out.println("Demonstrate exception: Attempting to withdraw 3000 EUR from Alex's savings account");
         try {
-            accountService.withdraw(alexSavingsAccount.getAccountId(), 3000.00);
+            accountService.withdraw(alexSavingsAccount.getAccountId(), BigDecimal.valueOf(3000.00));
         } catch (InsufficientFundsException e) {
             System.out.println(e.getMessage());
         }
@@ -114,20 +116,20 @@ public class Main {
 
         // Transfer money from Alex's checking account to Nicolas's checking account (same currencies)
         System.out.println("Transferring 500 EUR from Alex's checking account to Nicolas's checking account");
-        accountService.transfer(500.00, alexCheckingAccount.getAccountId(), nicolasCheckingAccount.getAccountId());
+        accountService.transfer(BigDecimal.valueOf(500.00), alexCheckingAccount.getAccountId(), nicolasCheckingAccount.getAccountId());
 
         // Confirm amounts in Alex's and Nicolas's checking accounts
         alexCheckingAccountBalance = accountService.getBalance(alexCheckingAccount.getAccountId());
         alexCheckingAccountCurrency = accountService.getAccountById(alexCheckingAccount.getAccountId()).getCurrency();
         System.out.println("Alex's checking account balance after transfer: " + alexCheckingAccountBalance + " " + alexCheckingAccountCurrency);
 
-        double nicolasCheckingAccountBalance = accountService.getBalance(nicolasCheckingAccount.getAccountId());
+        BigDecimal nicolasCheckingAccountBalance = accountService.getBalance(nicolasCheckingAccount.getAccountId());
         CurrencyCode nicolasCheckingAccountCurrency = accountService.getAccountById(nicolasCheckingAccount.getAccountId()).getCurrency();
         System.out.println("Nicolas's checking account balance after transfer: " + nicolasCheckingAccountBalance + " " + nicolasCheckingAccountCurrency);
 
         // Transfer money from Alex's checking account to Nicolas's checking account (go into Alex's overdraft)
         System.out.println("Transferring 500 EUR from Alex's checking account (overdraft) to Nicolas's checking account");
-        accountService.transfer(500.00, alexCheckingAccount.getAccountId(), nicolasCheckingAccount.getAccountId());
+        accountService.transfer(BigDecimal.valueOf(500.00), alexCheckingAccount.getAccountId(), nicolasCheckingAccount.getAccountId());
 
         // Confirm amounts in Alex's checking account
         alexCheckingAccountBalance = accountService.getBalance(alexCheckingAccount.getAccountId());
@@ -138,28 +140,28 @@ public class Main {
 
         // Deposit money into Amee's accounts
         System.out.println("Depositing 2000 USD into Amee's checking account");
-        accountService.deposit(ameeCheckingAccount.getAccountId(), 2000.00);
+        accountService.deposit(ameeCheckingAccount.getAccountId(), BigDecimal.valueOf(2000.00));
 
         System.out.println("Depositing 3000 USD into Amee's savings account");
-        accountService.deposit(ameeSavingsAccount.getAccountId(), 3000.00);
+        accountService.deposit(ameeSavingsAccount.getAccountId(), BigDecimal.valueOf(3000.00));
 
         // Transfer money from Amee's checking account to Amee's checking account
         System.out.println("Transferring 1000 USD from Amee's checking account to Amee's savings account");
-        accountService.transfer(1000.00, ameeCheckingAccount.getAccountId(), ameeSavingsAccount.getAccountId());
+        accountService.transfer(BigDecimal.valueOf(1000.00), ameeCheckingAccount.getAccountId(), ameeSavingsAccount.getAccountId());
 
         // Confirm amounts in Amee's accounts
-        double ameeCheckingAccountBalance = accountService.getBalance(ameeCheckingAccount.getAccountId());
+        BigDecimal ameeCheckingAccountBalance = accountService.getBalance(ameeCheckingAccount.getAccountId());
         CurrencyCode ameeCheckingAccountCurrency = accountService.getAccountById(ameeCheckingAccount.getAccountId()).getCurrency();
         System.out.println("Amee's checking account balance after transfer: " + ameeCheckingAccountBalance + " " + ameeCheckingAccountCurrency);
 
-        double ameeSavingsAccountBalance = accountService.getBalance(ameeSavingsAccount.getAccountId());
+        BigDecimal ameeSavingsAccountBalance = accountService.getBalance(ameeSavingsAccount.getAccountId());
         CurrencyCode ameeSavingsAccountCurrency = accountService.getAccountById(ameeSavingsAccount.getAccountId()).getCurrency();
         System.out.println("Amee's savings account balance after balance: " + ameeSavingsAccountBalance + " " + ameeSavingsAccountCurrency);
 
         // Demonstrate exception: Attempt to transfer more money than is in Amee's checking account
         System.out.println("Demonstrate exception: Attempting to transfer 10000 USD from Amee's checking account to Amee's savings account");
         try {
-            accountService.transfer(10000.00, ameeCheckingAccount.getAccountId(), ameeSavingsAccount.getAccountId());
+            accountService.transfer(BigDecimal.valueOf(10000.00), ameeCheckingAccount.getAccountId(), ameeSavingsAccount.getAccountId());
         } catch (OverdraftLimitExceededException e) {
             System.out.println(e.getMessage());
         }
@@ -173,12 +175,12 @@ public class Main {
         System.out.println("USD to SEK exchange rate: " + usdToSekRate);
 
         // Perform currency conversion
-        double convertedAmount = currencyConversionService.convertAmount(500.00, CurrencyCode.USD, CurrencyCode.SEK);
+        BigDecimal convertedAmount = currencyConversionService.convertAmount(BigDecimal.valueOf(500.00), CurrencyCode.USD, CurrencyCode.SEK);
         System.out.println("500 USD exchanges to: " + convertedAmount + " SEK");
 
         // Transfer money from Amee's checking account to Alex & Amee's joint checking account (different currencies) and demonstrate rounding
         System.out.println("Transferring 500 USD from Amee's checking account to Alex and Amee's joint checking account (SEK)");
-        accountService.transfer(500.00, ameeCheckingAccount.getAccountId(), alexAmeeJointCheckingAccount.getAccountId());
+        accountService.transfer(BigDecimal.valueOf(500.00), ameeCheckingAccount.getAccountId(), alexAmeeJointCheckingAccount.getAccountId());
 
         // Confirm amounts in Amee's checking account
         ameeCheckingAccountBalance = accountService.getBalance(ameeCheckingAccount.getAccountId());
@@ -186,7 +188,7 @@ public class Main {
         System.out.println("Amee's checking account balance after transfer: " + ameeCheckingAccountBalance + " " + ameeCheckingAccountCurrency);
 
         // Confirm amounts in Alex & Amee's joint checking account
-        double alexAmeeJointCheckingAccountBalance = accountService.getBalance(alexAmeeJointCheckingAccount.getAccountId());
+        BigDecimal alexAmeeJointCheckingAccountBalance = accountService.getBalance(alexAmeeJointCheckingAccount.getAccountId());
         CurrencyCode alexAmeeJointCheckingAccountCurrency = accountService.getAccountById(alexAmeeJointCheckingAccount.getAccountId()).getCurrency();
         System.out.println("Alex and Amee's joint checking account balance after transfer: " + alexAmeeJointCheckingAccountBalance + " " + alexAmeeJointCheckingAccountCurrency);
 

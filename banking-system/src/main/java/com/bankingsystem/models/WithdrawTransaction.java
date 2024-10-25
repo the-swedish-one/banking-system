@@ -1,10 +1,11 @@
 package com.bankingsystem.models;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class WithdrawTransaction extends Transaction {
 
-    public WithdrawTransaction( double amount) {
+    public WithdrawTransaction( BigDecimal amount) {
         super(amount);
         this.transactionId = "withdraw-" + UUID.randomUUID();
     }

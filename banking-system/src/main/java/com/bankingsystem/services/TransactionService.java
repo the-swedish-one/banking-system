@@ -8,6 +8,7 @@ import com.bankingsystem.models.WithdrawTransaction;
 import com.bankingsystem.models.exceptions.TransactionNotFoundException;
 import com.bankingsystem.persistence.TransactionPersistenceService;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class TransactionService {
@@ -19,8 +20,8 @@ public class TransactionService {
     }
 
     // Create new deposit transaction
-    public DepositTransaction createDepositTransaction(double amount) {
-        if (amount <= 0) {
+    public DepositTransaction createDepositTransaction(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Amount must be greater than 0");
         }
         DepositTransaction transaction = new DepositTransaction(amount);
@@ -29,8 +30,8 @@ public class TransactionService {
     }
 
     // Create new withdraw transaction
-    public WithdrawTransaction createWithdrawTransaction(double amount) {
-        if (amount <= 0) {
+    public WithdrawTransaction createWithdrawTransaction(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Amount must be greater than 0");
         }
         WithdrawTransaction transaction = new WithdrawTransaction(amount);
@@ -39,8 +40,8 @@ public class TransactionService {
     }
 
     // Create new transfer transaction
-    public TransferTransaction createTransferTransaction(double amount, String fromAccountId, String toAccountId) {
-        if (amount <= 0) {
+    public TransferTransaction createTransferTransaction(BigDecimal amount, String fromAccountId, String toAccountId) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Amount must be greater than 0");
         }
         TransferTransaction transaction = new TransferTransaction(amount, fromAccountId, toAccountId);

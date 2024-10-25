@@ -1,5 +1,6 @@
 package com.bankingsystem.models;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 public abstract class Account implements Withdrawable, Depositable {
@@ -7,11 +8,11 @@ public abstract class Account implements Withdrawable, Depositable {
     protected String iban;
     protected String accountName;
     protected User owner;
-    protected double balance;
+    protected BigDecimal balance;
     protected CurrencyCode currency;
     protected List<Transaction> transactionHistory;
 
-    public Account(User owner, double balance, CurrencyCode currency) {
+    public Account(User owner, BigDecimal balance, CurrencyCode currency) {
         this.accountId = "account-" + UUID.randomUUID();
         this.iban = generateIBAN(owner.getPerson().getCountry());
         this.owner = owner;
@@ -34,11 +35,11 @@ public abstract class Account implements Withdrawable, Depositable {
     }
 
     @Override
-    public void deposit(double amount) {
-        if (amount <= 0) {
+    public void deposit(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Deposit failed: Amount must be greater than 0");
         }
-        this.balance = this.balance + amount;
+        this.balance = this.balance.add(amount);
     }
 
     public String getAccountId() {
@@ -73,11 +74,11 @@ public abstract class Account implements Withdrawable, Depositable {
         this.owner = newOwner;
     }
 
-    public double getBalance() {
+    public BigDecimal getBalance() {
         return this.balance;
     }
 
-    public void setBalance(double newBalance) {
+    public void setBalance(BigDecimal newBalance) {
         this.balance = newBalance;
     }
 

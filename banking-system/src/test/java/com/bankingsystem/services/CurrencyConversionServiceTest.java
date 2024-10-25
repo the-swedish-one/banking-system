@@ -10,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +31,7 @@ public class CurrencyConversionServiceTest {
     @Test
     void testConvertAmount() {
         // Arrange
-        double amount = 100.0;
+        BigDecimal amount = BigDecimal.valueOf(100);
         CurrencyCode fromCurrency = CurrencyCode.USD;
         CurrencyCode toCurrency = CurrencyCode.EUR;
 
@@ -42,21 +44,21 @@ public class CurrencyConversionServiceTest {
         when(currencyConversionDAO.getLatestConversion()).thenReturn(conversion);
 
         // Act
-        double convertedAmount = currencyConversionService.convertAmount(amount, fromCurrency, toCurrency);
+        BigDecimal convertedAmount = currencyConversionService.convertAmount(amount, fromCurrency, toCurrency);
 
         // Assert
-        assertEquals(85.0, convertedAmount);  // 100 USD -> 85 EUR
+        assertEquals(BigDecimal.valueOf(85.00).setScale(2, RoundingMode.HALF_UP), convertedAmount);  // 100 USD -> 85 EUR
         verify(currencyConversionDAO, times(2)).getLatestConversion();
     }
 
     @Test
     void testConvertAmount_SameCurrency() {
         // Arrange
-        double amount = 100.0;
+        BigDecimal amount = BigDecimal.valueOf(100.00).setScale(2, RoundingMode.HALF_UP);
         CurrencyCode currency = CurrencyCode.USD;
 
         // Act
-        double convertedAmount = currencyConversionService.convertAmount(amount, currency, currency);
+        BigDecimal convertedAmount = currencyConversionService.convertAmount(amount, currency, currency);
 
         // Assert
         assertEquals(amount, convertedAmount);
@@ -65,7 +67,7 @@ public class CurrencyConversionServiceTest {
     @Test
     void testConvertAmount_UnsupportedCurrency() {
         // Arrange
-        double amount = 100.0;
+        BigDecimal amount = BigDecimal.valueOf(100);
         CurrencyCode unsupportedCurrency = CurrencyCode.GBP;
 
         Map<CurrencyCode, Double> exchangeRates = new HashMap<>();
@@ -83,7 +85,7 @@ public class CurrencyConversionServiceTest {
     @Test
     void testConvertAmount_ZeroAmount() {
         // Arrange
-        double amount = 0.0;
+        BigDecimal amount = BigDecimal.valueOf(0);
         CurrencyCode fromCurrency = CurrencyCode.USD;
         CurrencyCode toCurrency = CurrencyCode.EUR;
 
@@ -94,16 +96,16 @@ public class CurrencyConversionServiceTest {
         when(currencyConversionDAO.getLatestConversion()).thenReturn(conversion);
 
         // Act
-        double convertedAmount = currencyConversionService.convertAmount(amount, fromCurrency, toCurrency);
+        BigDecimal convertedAmount = currencyConversionService.convertAmount(amount, fromCurrency, toCurrency);
 
         // Assert
-        assertEquals(0.0, convertedAmount);  // 0 USD -> 0 EUR
+        assertEquals(BigDecimal.valueOf(0.00).setScale(2, RoundingMode.HALF_UP), convertedAmount);  // 0 USD -> 0 EUR
     }
 
     @Test
     void testConvertAmount_NegativeAmount() {
         // Arrange
-        double amount = -100.0;
+        BigDecimal amount = BigDecimal.valueOf(-100);
         CurrencyCode fromCurrency = CurrencyCode.USD;
         CurrencyCode toCurrency = CurrencyCode.EUR;
 
@@ -114,16 +116,16 @@ public class CurrencyConversionServiceTest {
         when(currencyConversionDAO.getLatestConversion()).thenReturn(conversion);
 
         // Act
-        double convertedAmount = currencyConversionService.convertAmount(amount, fromCurrency, toCurrency);
+        BigDecimal convertedAmount = currencyConversionService.convertAmount(amount, fromCurrency, toCurrency);
 
         // Assert
-        assertEquals(-85.0, convertedAmount);  // -100 USD -> -85 EUR
+        assertEquals(BigDecimal.valueOf(-85.00).setScale(2, RoundingMode.HALF_UP), convertedAmount);  // -100 USD -> -85 EUR
     }
 
     @Test
     void testConvertAmount_NoRatesAvailable() {
         // Arrange
-        double amount = 100.0;
+        BigDecimal amount = BigDecimal.valueOf(100);
         CurrencyCode fromCurrency = CurrencyCode.USD;
         CurrencyCode toCurrency = CurrencyCode.EUR;
 

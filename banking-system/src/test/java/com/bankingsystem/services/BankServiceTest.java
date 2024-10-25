@@ -12,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -95,8 +97,8 @@ public class BankServiceTest {
         User user1 = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
         User user2 = TestDataFactory.createUser("John", "Smith", "js@gmail.com");
 
-        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user1, 1000, CurrencyCode.EUR, 500);
-        SavingsAccount savingsAccount = TestDataFactory.createSavingsAccount(user2, 2000, CurrencyCode.USD, 2.0);
+        CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user1, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(500));
+        SavingsAccount savingsAccount = TestDataFactory.createSavingsAccount(user2, BigDecimal.valueOf(2000), CurrencyCode.USD, 2.0);
 
         bank.getAccounts().add(checkingAccount);
         bank.getAccounts().add(savingsAccount);

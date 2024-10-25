@@ -1,9 +1,11 @@
 package com.bankingsystem.models;
 
+import java.math.BigDecimal;
+
 public class JointCheckingAccount extends CheckingAccount {
     private User secondOwner;
 
-    public JointCheckingAccount(User owner, User secondOwner, double balance, CurrencyCode currency, double overdraftLimit) {
+    public JointCheckingAccount(User owner, User secondOwner, BigDecimal balance, CurrencyCode currency, BigDecimal overdraftLimit) {
         super(owner, balance, currency, overdraftLimit);
         this.secondOwner = secondOwner;
     }

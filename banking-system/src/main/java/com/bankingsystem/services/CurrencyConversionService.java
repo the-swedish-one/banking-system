@@ -4,6 +4,8 @@ import com.bankingsystem.models.CurrencyCode;
 import com.bankingsystem.models.CurrencyConversion;
 import com.bankingsystem.persistence.dao.CurrencyConversionDAO;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 
 public class CurrencyConversionService {
@@ -15,10 +17,11 @@ public class CurrencyConversionService {
     }
 
     // Convert an amount from one currency to another
-    public double convertAmount(double amount, CurrencyCode fromCurrency, CurrencyCode toCurrency) {
+    public BigDecimal convertAmount(BigDecimal amount, CurrencyCode fromCurrency, CurrencyCode toCurrency) {
         CurrencyConversion conversion = currencyConversionDAO.getLatestConversion();
-        double rate = getExchangeRate(fromCurrency, toCurrency);
-        return amount * rate;
+        BigDecimal rate = BigDecimal.valueOf(getExchangeRate(fromCurrency, toCurrency));
+        BigDecimal convertedAmount = amount.multiply(rate);
+        return convertedAmount.setScale(2, RoundingMode.HALF_UP);
     }
 
     // Get rate for exchanging one currency to another

@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class TransactionServiceTest {
     @Test
     void testCreateDepositTransaction() {
         // Act
-       DepositTransaction depositTransaction = transactionService.createDepositTransaction(1000);
+       DepositTransaction depositTransaction = transactionService.createDepositTransaction(BigDecimal.valueOf(1000));
 
         // Assert
         verify(transactionPersistenceService, times(1)).save(depositTransaction);
@@ -38,20 +39,20 @@ public class TransactionServiceTest {
     @Test
     void testCreateDepositTransaction_NegativeAmount() {
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> transactionService.createDepositTransaction(-1000));
+        assertThrows(IllegalArgumentException.class, () -> transactionService.createDepositTransaction(BigDecimal.valueOf(-1000)));
     }
 
     @Test
     void testCreateDepositTransaction_ZeroAmount() {
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> transactionService.createDepositTransaction(0));
+        assertThrows(IllegalArgumentException.class, () -> transactionService.createDepositTransaction(BigDecimal.valueOf(0)));
     }
 
 //    Test Create Withdraw Transaction
     @Test
     void testCreateWithdrawTransaction() {
         // Act
-       WithdrawTransaction withdrawTransaction = transactionService.createWithdrawTransaction(1000);
+       WithdrawTransaction withdrawTransaction = transactionService.createWithdrawTransaction(BigDecimal.valueOf(1000));
 
         // Assert
         verify(transactionPersistenceService, times(1)).save(withdrawTransaction);
@@ -60,13 +61,13 @@ public class TransactionServiceTest {
     @Test
     void testCreateWithdrawTransaction_NegativeAmount() {
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> transactionService.createWithdrawTransaction(-1000));
+        assertThrows(IllegalArgumentException.class, () -> transactionService.createWithdrawTransaction(BigDecimal.valueOf(-1000)));
     }
 
     @Test
     void testCreateWithdrawTransaction_ZeroAmount() {
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> transactionService.createWithdrawTransaction(0));
+        assertThrows(IllegalArgumentException.class, () -> transactionService.createWithdrawTransaction(BigDecimal.valueOf(0)));
     }
 
 //    Test Create Transfer Transaction
@@ -74,11 +75,11 @@ public class TransactionServiceTest {
     void testCreateTransferTransaction() {
         // Arrange
         User user = TestDataFactory.createUser("John", "Doe", "jd@gmail.com");
-        SavingsAccount fromAccount = new SavingsAccount(user, 1000, CurrencyCode.EUR, 1.5);
-        SavingsAccount toAccount = new SavingsAccount(user, 0, CurrencyCode.EUR, 1.5);
+        SavingsAccount fromAccount = new SavingsAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, 1.5);
+        SavingsAccount toAccount = new SavingsAccount(user, BigDecimal.valueOf(0), CurrencyCode.EUR, 1.5);
 
         // Act
-       TransferTransaction transferTransaction = transactionService.createTransferTransaction(1000, fromAccount.getAccountId(), toAccount.getAccountId());
+       TransferTransaction transferTransaction = transactionService.createTransferTransaction(BigDecimal.valueOf(1000), fromAccount.getAccountId(), toAccount.getAccountId());
 
         // Assert
         verify(transactionPersistenceService, times(1)).save(transferTransaction);
@@ -88,29 +89,29 @@ public class TransactionServiceTest {
     void testCreateTransferTransaction_NegativeAmount() {
         // Arrange
         User user = TestDataFactory.createUser("John", "Doe", "jd@gmail.com");
-        SavingsAccount fromAccount = new SavingsAccount(user, 1000, CurrencyCode.EUR, 1.5);
-        SavingsAccount toAccount = new SavingsAccount(user, 0, CurrencyCode.EUR, 1.5);
+        SavingsAccount fromAccount = new SavingsAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, 1.5);
+        SavingsAccount toAccount = new SavingsAccount(user, BigDecimal.valueOf(0), CurrencyCode.EUR, 1.5);
 
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> transactionService.createTransferTransaction(-1000, fromAccount.getAccountId(), toAccount.getAccountId()));
+        assertThrows(IllegalArgumentException.class, () -> transactionService.createTransferTransaction(BigDecimal.valueOf(-1000), fromAccount.getAccountId(), toAccount.getAccountId()));
     }
 
     @Test
     void testCreateTransferTransaction_ZeroAmount() {
         // Arrange
         User user = TestDataFactory.createUser("John", "Doe", "jd@gmail.com");
-        SavingsAccount fromAccount = new SavingsAccount(user, 1000, CurrencyCode.EUR, 1.5);
-        SavingsAccount toAccount = new SavingsAccount(user, 0, CurrencyCode.EUR, 1.5);
+        SavingsAccount fromAccount = new SavingsAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, 1.5);
+        SavingsAccount toAccount = new SavingsAccount(user, BigDecimal.valueOf(0), CurrencyCode.EUR, 1.5);
 
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> transactionService.createTransferTransaction(0, fromAccount.getAccountId(), toAccount.getAccountId()));
+        assertThrows(IllegalArgumentException.class, () -> transactionService.createTransferTransaction(BigDecimal.valueOf(0), fromAccount.getAccountId(), toAccount.getAccountId()));
     }
 
 //    Test Get Transaction By Id
     @Test
     void testGetTransactionById() {
         // Arrange
-        DepositTransaction transaction = TestDataFactory.createDepositTransaction(1000);
+        DepositTransaction transaction = TestDataFactory.createDepositTransaction(BigDecimal.valueOf(1000));
         String transactionId = transaction.getTransactionId();
         when(transactionPersistenceService.getTransactionById(transactionId)).thenReturn(transaction);
 
@@ -149,9 +150,9 @@ public class TransactionServiceTest {
     @Test
     void testGetAllTransactions() {
         // Arrange
-        DepositTransaction depositTransaction = TestDataFactory.createDepositTransaction(1000);
-        WithdrawTransaction withdrawTransaction = TestDataFactory.createWithdrawTransaction(500);
-        TransferTransaction transferTransaction = TestDataFactory.createTransferTransaction(1000, "fromAccountId", "toAccountId");
+        DepositTransaction depositTransaction = TestDataFactory.createDepositTransaction(BigDecimal.valueOf(1000));
+        WithdrawTransaction withdrawTransaction = TestDataFactory.createWithdrawTransaction(BigDecimal.valueOf(500));
+        TransferTransaction transferTransaction = TestDataFactory.createTransferTransaction(BigDecimal.valueOf(1000), "fromAccountId", "toAccountId");
 
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(depositTransaction);
@@ -184,7 +185,7 @@ public class TransactionServiceTest {
     @Test
     void testDeleteTransaction() {
         // Arrange
-        DepositTransaction transaction = TestDataFactory.createDepositTransaction(1000);
+        DepositTransaction transaction = TestDataFactory.createDepositTransaction(BigDecimal.valueOf(1000));
         String transactionId = transaction.getTransactionId();
 
         when(transactionPersistenceService.deleteTransaction(transactionId)).thenReturn(true);
