@@ -6,6 +6,8 @@
 /pom.xml.versionsBackup
 /.mvn/timing.properties
 !.mvn/wrapper/maven-wrapper.jar
+/mvnw
+/mvnw.cmd
 
 ### Java Specific ###
 # Compiled class files
@@ -18,7 +20,6 @@
 
 ### IDEs and Editors ###
 # IntelliJ IDEA
-../.idea/
 /.idea/
 *.iws
 *.iml
@@ -72,10 +73,13 @@ Thumbs.db
 # Log files
 *.log
 /logs/
-
-# Temporary files
 *.tmp
 *.temp
+/.idea/workspace.xml
+/.idea/tasks.xml
+/.idea/dictionaries
+/.idea/vcs.xml
+
 
 ### Miscellaneous ###
 # JAR files
