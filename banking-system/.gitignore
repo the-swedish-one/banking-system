@@ -20,6 +20,7 @@
 
 ### IDEs and Editors ###
 # IntelliJ IDEA
+/../.idea/
 /.idea/
 *.iws
 *.iml
