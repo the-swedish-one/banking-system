@@ -1,5 +1,8 @@
 package com.bankingsystem.service;
 
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bankingsystem.models.DepositTransaction;
 import com.bankingsystem.models.Transaction;
@@ -11,10 +14,13 @@ import com.bankingsystem.persistence.TransactionPersistenceService;
 import java.math.BigDecimal;
 import java.util.List;
 
+@Service
+@Transactional
 public class TransactionService {
 
     private final TransactionPersistenceService transactionPersistenceService;
 
+    @Autowired
     public TransactionService(TransactionPersistenceService transactionPersistenceService) {
         this.transactionPersistenceService = transactionPersistenceService;
     }

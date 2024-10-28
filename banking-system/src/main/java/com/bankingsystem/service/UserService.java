@@ -1,5 +1,9 @@
 package com.bankingsystem.service;
 
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.bankingsystem.models.Bank;
 import com.bankingsystem.models.PersonDetails;
 import com.bankingsystem.models.User;
@@ -10,10 +14,13 @@ import com.bankingsystem.persistence.UserPersistenceService;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
+@Transactional
 public class UserService {
     private final UserPersistenceService userPersistenceService;
     private final BankPersistenceService bankPersistenceService;
 
+    @Autowired
     public UserService(UserPersistenceService userPersistenceService, BankPersistenceService bankPersistenceService) {
         this.userPersistenceService = userPersistenceService;
         this.bankPersistenceService = bankPersistenceService;

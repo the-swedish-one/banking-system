@@ -1,15 +1,22 @@
 package com.bankingsystem.service;
 
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.bankingsystem.models.PersonDetails;
 import com.bankingsystem.models.exceptions.PersonDetailsNotFoundException;
 import com.bankingsystem.persistence.PersonDetailsPersistenceService;
 
 import java.util.List;
 
+@Service
+@Transactional
 public class PersonDetailsService {
 
     private final PersonDetailsPersistenceService personDetailsPersistenceService;
 
+    @Autowired
     public PersonDetailsService(PersonDetailsPersistenceService personPersistenceService) {
         this.personDetailsPersistenceService = personPersistenceService;
     }

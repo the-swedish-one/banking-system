@@ -1,5 +1,9 @@
 package com.bankingsystem.service;
 
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.bankingsystem.models.Account;
 import com.bankingsystem.models.Bank;
 import com.bankingsystem.models.exceptions.AccountNotFoundException;
@@ -9,10 +13,13 @@ import com.bankingsystem.persistence.BankPersistenceService;
 
 import java.util.stream.Collectors;
 
+@Service
+@Transactional
 public class BankService {
 
     private final BankPersistenceService bankPersistenceService;
 
+    @Autowired
     public BankService(BankPersistenceService bankPersistenceService) {
         this.bankPersistenceService = bankPersistenceService;
     }
