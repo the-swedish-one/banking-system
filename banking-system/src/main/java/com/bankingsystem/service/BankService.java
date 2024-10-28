@@ -1,4 +1,4 @@
-package com.bankingsystem.services;
+package com.bankingsystem.service;
 
 import com.bankingsystem.models.Account;
 import com.bankingsystem.models.Bank;

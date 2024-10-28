@@ -1,4 +1,4 @@
-package com.bankingsystem.services;
+package com.bankingsystem.service;
 
 import com.bankingsystem.models.*;
 import com.bankingsystem.models.exceptions.AccountNotFoundException;
