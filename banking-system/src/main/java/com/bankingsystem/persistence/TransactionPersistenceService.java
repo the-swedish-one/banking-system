@@ -1,6 +1,6 @@
 package com.bankingsystem.persistence;
 
-import com.bankingsystem.models.Transaction;
+import com.bankingsystem.model.Transaction;
 
 import java.util.List;
 

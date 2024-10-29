@@ -4,11 +4,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.bankingsystem.models.DepositTransaction;
-import com.bankingsystem.models.Transaction;
-import com.bankingsystem.models.TransferTransaction;
-import com.bankingsystem.models.WithdrawTransaction;
-import com.bankingsystem.models.exceptions.TransactionNotFoundException;
+import com.bankingsystem.model.DepositTransaction;
+import com.bankingsystem.model.Transaction;
+import com.bankingsystem.model.TransferTransaction;
+import com.bankingsystem.model.WithdrawTransaction;
+import com.bankingsystem.exception.TransactionNotFoundException;
 import com.bankingsystem.persistence.TransactionPersistenceService;
 
 import java.math.BigDecimal;

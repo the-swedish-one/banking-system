@@ -1,6 +1,6 @@
 package com.bankingsystem.persistence;
 
-import com.bankingsystem.models.PersonDetails;
+import com.bankingsystem.model.PersonDetails;
 
 import java.util.List;
 

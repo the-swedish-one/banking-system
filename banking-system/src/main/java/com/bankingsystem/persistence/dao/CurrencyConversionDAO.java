@@ -1,7 +1,7 @@
 package com.bankingsystem.persistence.dao;
 
-import com.bankingsystem.models.CurrencyCode;
-import com.bankingsystem.models.CurrencyConversion;
+import com.bankingsystem.model.CurrencyCode;
+import com.bankingsystem.model.CurrencyConversion;
 import com.bankingsystem.persistence.CurrencyConversionPersistenceService;
 
 import java.util.HashMap;

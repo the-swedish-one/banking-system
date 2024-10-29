@@ -1,9 +1,9 @@
 package com.bankingsystem.service;
 
-import com.bankingsystem.models.*;
-import com.bankingsystem.models.exceptions.AccountNotFoundException;
-import com.bankingsystem.models.exceptions.BankNotFoundException;
-import com.bankingsystem.models.exceptions.UserNotFoundException;
+import com.bankingsystem.model.*;
+import com.bankingsystem.exception.AccountNotFoundException;
+import com.bankingsystem.exception.BankNotFoundException;
+import com.bankingsystem.exception.UserNotFoundException;
 import com.bankingsystem.persistence.BankPersistenceService;
 import com.bankingsystem.testutils.TestDataFactory;
 import org.junit.jupiter.api.Test;

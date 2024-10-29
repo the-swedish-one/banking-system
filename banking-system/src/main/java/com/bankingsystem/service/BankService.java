@@ -4,11 +4,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.bankingsystem.models.Account;
-import com.bankingsystem.models.Bank;
-import com.bankingsystem.models.exceptions.AccountNotFoundException;
-import com.bankingsystem.models.exceptions.BankNotFoundException;
-import com.bankingsystem.models.exceptions.UserNotFoundException;
+import com.bankingsystem.model.Account;
+import com.bankingsystem.model.Bank;
+import com.bankingsystem.exception.AccountNotFoundException;
+import com.bankingsystem.exception.BankNotFoundException;
+import com.bankingsystem.exception.UserNotFoundException;
 import com.bankingsystem.persistence.BankPersistenceService;
 
 import java.util.stream.Collectors;

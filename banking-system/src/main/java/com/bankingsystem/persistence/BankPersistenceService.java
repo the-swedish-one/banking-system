@@ -1,6 +1,6 @@
 package com.bankingsystem.persistence;
 
-import com.bankingsystem.models.Bank;
+import com.bankingsystem.model.Bank;
 
 public interface BankPersistenceService {
 

@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.bankingsystem.models.CurrencyCode;
-import com.bankingsystem.models.CurrencyConversion;
+import com.bankingsystem.model.CurrencyCode;
+import com.bankingsystem.model.CurrencyConversion;
 import com.bankingsystem.persistence.dao.CurrencyConversionDAO;
 
 import java.math.BigDecimal;

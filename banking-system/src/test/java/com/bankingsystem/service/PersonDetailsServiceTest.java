@@ -1,7 +1,7 @@
 package com.bankingsystem.service;
 
-import com.bankingsystem.models.PersonDetails;
-import com.bankingsystem.models.exceptions.PersonDetailsNotFoundException;
+import com.bankingsystem.model.PersonDetails;
+import com.bankingsystem.exception.PersonDetailsNotFoundException;
 import com.bankingsystem.persistence.PersonDetailsPersistenceService;
 import com.bankingsystem.testutils.TestDataFactory;
 import org.junit.jupiter.api.Test;

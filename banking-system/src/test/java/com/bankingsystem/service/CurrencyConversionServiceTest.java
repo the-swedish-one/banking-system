@@ -1,7 +1,7 @@
 package com.bankingsystem.service;
 
-import com.bankingsystem.models.CurrencyCode;
-import com.bankingsystem.models.CurrencyConversion;
+import com.bankingsystem.model.CurrencyCode;
+import com.bankingsystem.model.CurrencyConversion;
 import com.bankingsystem.persistence.dao.CurrencyConversionDAO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

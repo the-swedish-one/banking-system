@@ -1,6 +1,6 @@
 package com.bankingsystem.testutils;
 
-import com.bankingsystem.models.*;
+import com.bankingsystem.model.*;
 
 import java.math.BigDecimal;
 

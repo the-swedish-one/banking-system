@@ -1,6 +1,6 @@
 package com.bankingsystem.persistence.dao;
 
-import com.bankingsystem.models.User;
+import com.bankingsystem.model.User;
 import com.bankingsystem.persistence.UserPersistenceService;
 
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package com.bankingsystem.persistence.dao;
 
-import com.bankingsystem.models.Transaction;
+import com.bankingsystem.model.Transaction;
 import com.bankingsystem.persistence.TransactionPersistenceService;
 
 import java.util.ArrayList;

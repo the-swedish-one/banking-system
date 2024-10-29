@@ -1,6 +1,6 @@
 package com.bankingsystem.persistence;
 
-import com.bankingsystem.models.CurrencyConversion;
+import com.bankingsystem.model.CurrencyConversion;
 
 public interface CurrencyConversionPersistenceService {
     CurrencyConversion getLatestConversion();

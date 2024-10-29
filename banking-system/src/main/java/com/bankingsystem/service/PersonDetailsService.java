@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.bankingsystem.models.PersonDetails;
-import com.bankingsystem.models.exceptions.PersonDetailsNotFoundException;
+import com.bankingsystem.model.PersonDetails;
+import com.bankingsystem.exception.PersonDetailsNotFoundException;
 import com.bankingsystem.persistence.PersonDetailsPersistenceService;
 
 import java.util.List;

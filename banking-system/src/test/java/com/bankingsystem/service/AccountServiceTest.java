@@ -1,9 +1,9 @@
 package com.bankingsystem.service;
 
-import com.bankingsystem.models.*;
-import com.bankingsystem.models.exceptions.AccountNotFoundException;
-import com.bankingsystem.models.exceptions.InsufficientFundsException;
-import com.bankingsystem.models.exceptions.OverdraftLimitExceededException;
+import com.bankingsystem.model.*;
+import com.bankingsystem.exception.AccountNotFoundException;
+import com.bankingsystem.exception.InsufficientFundsException;
+import com.bankingsystem.exception.OverdraftLimitExceededException;
 import com.bankingsystem.persistence.AccountPersistenceService;
 import com.bankingsystem.persistence.BankPersistenceService;
 import com.bankingsystem.persistence.UserPersistenceService;

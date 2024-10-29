@@ -1,6 +1,6 @@
 package com.bankingsystem.persistence.dao;
 
-import com.bankingsystem.models.Bank;
+import com.bankingsystem.model.Bank;
 import com.bankingsystem.persistence.BankPersistenceService;
 
 import java.util.ArrayList;

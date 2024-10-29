@@ -1,7 +1,7 @@
 package com.bankingsystem.service;
 
-import com.bankingsystem.models.*;
-import com.bankingsystem.models.exceptions.TransactionNotFoundException;
+import com.bankingsystem.model.*;
+import com.bankingsystem.exception.TransactionNotFoundException;
 import com.bankingsystem.persistence.TransactionPersistenceService;
 import com.bankingsystem.testutils.TestDataFactory;
 import org.junit.jupiter.api.Test;
