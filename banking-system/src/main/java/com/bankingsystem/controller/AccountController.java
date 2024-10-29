@@ -2,14 +2,16 @@ package com.bankingsystem.controller;
 
 import com.bankingsystem.model.Account;
 import com.bankingsystem.service.AccountService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/account")
+//@RestController
+//@RequestMapping("/account")
+//@RequiredArgsConstructor
 public class AccountController {
 
     private final AccountService accountService;
@@ -18,7 +20,7 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    @GetMapping("/{id}")
+    //    @GetMapping("/{id}")
     public ResponseEntity<Account> getAccountById(@PathVariable String id) {
         return ResponseEntity.ok(accountService.getAccountById(id));
     }
