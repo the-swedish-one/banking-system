@@ -13,13 +13,10 @@ import com.bankingsystem.persistence.BankPersistenceService;
 
 import java.util.stream.Collectors;
 
-@Service
-@Transactional
 public class BankService {
 
     private final BankPersistenceService bankPersistenceService;
 
-    @Autowired
     public BankService(BankPersistenceService bankPersistenceService) {
         this.bankPersistenceService = bankPersistenceService;
     }

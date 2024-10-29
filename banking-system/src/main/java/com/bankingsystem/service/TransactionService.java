@@ -14,13 +14,10 @@ import com.bankingsystem.persistence.TransactionPersistenceService;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Service
-@Transactional
 public class TransactionService {
 
     private final TransactionPersistenceService transactionPersistenceService;
 
-    @Autowired
     public TransactionService(TransactionPersistenceService transactionPersistenceService) {
         this.transactionPersistenceService = transactionPersistenceService;
     }

@@ -10,13 +10,10 @@ import com.bankingsystem.persistence.PersonDetailsPersistenceService;
 
 import java.util.List;
 
-@Service
-@Transactional
 public class PersonDetailsService {
 
     private final PersonDetailsPersistenceService personDetailsPersistenceService;
 
-    @Autowired
     public PersonDetailsService(PersonDetailsPersistenceService personPersistenceService) {
         this.personDetailsPersistenceService = personPersistenceService;
     }

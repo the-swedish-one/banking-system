@@ -12,13 +12,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Map;
 
-@Service
-@Transactional
 public class CurrencyConversionService {
 
     private final CurrencyConversionDAO currencyConversionDAO;
 
-    @Autowired
     public CurrencyConversionService(CurrencyConversionDAO currencyConversionDAO) {
         this.currencyConversionDAO = currencyConversionDAO;
     }

@@ -2,7 +2,6 @@ package com.bankingsystem.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.bankingsystem.model.*;
 import com.bankingsystem.exception.AccountNotFoundException;
@@ -13,8 +12,7 @@ import com.bankingsystem.persistence.UserPersistenceService;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-@Service
-@Transactional
+
 public class AccountService {
     private final AccountPersistenceService accountPersistenceService;
     private final UserPersistenceService userPersistenceService;
@@ -22,7 +20,6 @@ public class AccountService {
     private final CurrencyConversionService currencyConversionService;
     private final TransactionService transactionService;
 
-    @Autowired
     public AccountService(AccountPersistenceService accountPersistenceService, UserPersistenceService userPersistenceService, BankPersistenceService bankPersistenceService, CurrencyConversionService currencyConversionService, TransactionService transactionService) {
         this.accountPersistenceService = accountPersistenceService;
         this.userPersistenceService = userPersistenceService;

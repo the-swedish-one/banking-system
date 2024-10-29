@@ -14,13 +14,10 @@ import com.bankingsystem.persistence.UserPersistenceService;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
-@Transactional
 public class UserService {
     private final UserPersistenceService userPersistenceService;
     private final BankPersistenceService bankPersistenceService;
 
-    @Autowired
     public UserService(UserPersistenceService userPersistenceService, BankPersistenceService bankPersistenceService) {
         this.userPersistenceService = userPersistenceService;
         this.bankPersistenceService = bankPersistenceService;
