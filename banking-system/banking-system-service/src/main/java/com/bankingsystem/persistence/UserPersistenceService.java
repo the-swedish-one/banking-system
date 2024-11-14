@@ -1,6 +1,6 @@
 package com.bankingsystem.persistence;
 
-import com.bankingsystem.model.UserEntity;
+import com.bankingsystem.model.User;
 
 import java.util.List;
 
@@ -9,18 +9,18 @@ public interface UserPersistenceService {
     /**
      * Create a new user
      */
-    UserEntity save(UserEntity user);
+    User save(User user);
 
     /**
      * Get a user by ID
      */
-    UserEntity getUserById(int userId);
+    User getUserById(int userId);
 
     // Get all users
-    List<UserEntity> getAllUsers();
+    List<User> getAllUsers();
 
     // Update user
-    void updateUser(UserEntity user);
+    User updateUser(User user);
 
     // Delete a user by ID
     boolean deleteUser(int userId);
