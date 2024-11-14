@@ -7,16 +7,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class JointCheckingAccountMapper {
 
+    private final UserMapper userMapper;
+
+    public JointCheckingAccountMapper(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
+
     public JointCheckingAccount toModel (JointCheckingAccountEntity entity) {
         JointCheckingAccount model = new JointCheckingAccount();
         model.setAccountId(entity.getAccountId());
         model.setIban(entity.getIban());
         model.setAccountName(entity.getAccountName());
-        model.setOwner(UserMapper.toModel(entity.getOwner()));
+        model.setOwner(userMapper.toModel(entity.getOwner()));
         model.setBalance(entity.getBalance());
         model.setCurrency(entity.getCurrency());
         model.setOverdraftLimit(entity.getOverdraftLimit());
-        model.setSecondOwner(UserMapper.toModel(entity.getSecondOwner()));
+        model.setSecondOwner(userMapper.toModel(entity.getSecondOwner()));
         return model;
     }
 
@@ -25,11 +31,11 @@ public class JointCheckingAccountMapper {
         entity.setAccountId(model.getAccountId());
         entity.setIban(model.getIban());
         entity.setAccountName(model.getAccountName());
-        entity.setOwner(UserMapper.toEntity(model.getOwner()));
+        entity.setOwner(userMapper.toEntity(model.getOwner()));
         entity.setBalance(model.getBalance());
         entity.setCurrency(model.getCurrency());
         entity.setOverdraftLimit(model.getOverdraftLimit());
-        entity.setSecondOwner(UserMapper.toEntity(model.getSecondOwner()));
+        entity.setSecondOwner(userMapper.toEntity(model.getSecondOwner()));
         return entity;
     }
 }
