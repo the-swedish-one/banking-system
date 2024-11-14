@@ -4,8 +4,6 @@ import com.bankingsystem.model.Bank;
 import com.bankingsystem.model.BankEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
-
 @Component
 public class BankMapper {
 
