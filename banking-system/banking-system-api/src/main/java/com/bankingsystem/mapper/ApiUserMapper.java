@@ -13,8 +13,6 @@ public class ApiUserMapper {
         this.apiPersonDetailsMapper = apiPersonDetailsMapper;
     }
 
-//    Mapstruct??
-
     public ApiUser toApiModel(User user) {
         if (user == null) return null;
         ApiUser apiUser = new ApiUser();
