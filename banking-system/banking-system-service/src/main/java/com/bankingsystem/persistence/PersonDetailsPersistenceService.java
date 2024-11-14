@@ -7,17 +7,17 @@ import java.util.List;
 public interface PersonDetailsPersistenceService {
 
     // Create a new PersonDetails
-    PersonDetails save(PersonDetails person);
+    PersonDetails save(PersonDetails personDetails);
 
     // Get a person by ID
-    PersonDetails getPersonDetailsById(String personDetailsId);
+    PersonDetails getPersonDetailsById(int personDetailsId);
 
     // Get all Persons
     List<PersonDetails> getAllPersonDetails();
 
     // Update person
-    void updatePersonDetails(PersonDetails personDetails);
+    PersonDetails updatePersonDetails(PersonDetails personDetails);
 
     // Delete person
-    boolean deletePersonDetails(String personDetailsId);
+    boolean deletePersonDetails(int personDetailsId);
 }
