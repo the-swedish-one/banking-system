@@ -3,6 +3,7 @@ package com.bankingsystem.controller;
 import com.bankingsystem.enums.CurrencyCode;
 import com.bankingsystem.mapper.ApiCurrencyConversionMapper;
 import com.bankingsystem.model.ApiCurrencyConversion;
+import com.bankingsystem.model.CurrencyConversion;
 import com.bankingsystem.service.CurrencyConversionService;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +32,8 @@ public class CurrencyConversionController {
     @GetMapping("/rate")
     public double getExchangeRate(@RequestParam CurrencyCode fromCurrency,
                                   @RequestParam CurrencyCode toCurrency) {
-        return currencyConversionService.getExchangeRate(fromCurrency, toCurrency);
+        CurrencyConversion conversion = currencyConversionService.getLatestCurrencyConversion();
+        return currencyConversionService.getExchangeRate(conversion, fromCurrency, toCurrency);
     }
 
     @PutMapping("/update-rates")
@@ -41,6 +43,6 @@ public class CurrencyConversionController {
 
         // Return updated exchange rates as response
         return apiCurrencyConversionMapper.toApiModel(
-                currencyConversionService.getLatestConversion());
+                currencyConversionService.getLatestCurrencyConversion());
     }
 }

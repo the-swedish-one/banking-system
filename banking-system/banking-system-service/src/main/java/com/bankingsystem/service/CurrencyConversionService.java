@@ -46,12 +46,11 @@ public class CurrencyConversionService {
     }
 
     // Retrieve the latest currency conversion data
-    private CurrencyConversion getLatestCurrencyConversion() {
+    public CurrencyConversion getLatestCurrencyConversion() {
         var conversionEntity = currencyConversionPersistenceService.getLatestConversion();
         return currencyConversionMapper.toModel(conversionEntity);
     }
 
-    // Update all exchange rates
     // Update all exchange rates
     public void updateExchangeRates(Map<CurrencyCode, Double> newRates) {
         CurrencyConversion conversion = new CurrencyConversion(newRates);
