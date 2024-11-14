@@ -13,5 +13,13 @@
   <version>1.0-SNAPSHOT</version>
   <name>banking-system-service</name>
   <url>http://maven.apache.org</url>
+    <dependencies>
+        <dependency>
+            <groupId>com.bankingsystem</groupId>
+            <artifactId>banking-system-persistence</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 </project>
