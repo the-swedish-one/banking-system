@@ -7,9 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Data
 @NoArgsConstructor
@@ -26,22 +23,9 @@ public class JointCheckingAccount implements Withdrawable, Depositable {
     private User secondOwner;
 
     public JointCheckingAccount(User owner, User secondOwner, BigDecimal balance, CurrencyCode currency, BigDecimal overdraftLimit) {
-        this.iban = generateIBAN(owner.getPerson().getCountry()); // TODO - call account service to generate IBAN
         this.owner = owner;
         this.balance = balance;
         this.secondOwner = secondOwner;
-    }
-
-    // TODO - move to Account Service
-    private String generateIBAN(String country) {
-        String countryCode = country.substring(0, 2).toUpperCase();
-        Random random = new Random();
-
-        String randomDigits = IntStream.range(0, 14)
-                .mapToObj(i -> String.valueOf(random.nextInt(10)))
-                .collect(Collectors.joining());
-
-        return countryCode + randomDigits;
     }
 
     @Override
