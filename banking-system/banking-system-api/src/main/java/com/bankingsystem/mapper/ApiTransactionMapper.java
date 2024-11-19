@@ -1,14 +1,15 @@
 package com.bankingsystem.mapper;
 
-import com.bankingsystem.model.TransferTransaction;
+import com.bankingsystem.model.ApiTransaction;
+import com.bankingsystem.model.Transaction;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ApiTransactionMapper {
 
-    public TransferTransaction toServiceModel(ApiTransferTransaction apiModel) {
+    public Transaction toServiceModel(ApiTransaction apiModel) {
         if (apiModel == null) return null;
-        TransferTransaction model = new TransferTransaction();
+        Transaction model = new Transaction();
         model.setTransactionId(apiModel.getTransactionId());
         model.setAmount(apiModel.getAmount());
         model.setTimestamp(apiModel.getTimestamp());
@@ -17,9 +18,9 @@ public class ApiTransactionMapper {
         return model;
     }
 
-    public ApiTransferTransaction toApiModel(TransferTransaction model) {
+    public ApiTransaction toApiModel(Transaction model) {
         if (model == null) return null;
-        ApiTransferTransaction apiModel = new ApiTransferTransaction();
+        ApiTransaction apiModel = new ApiTransaction();
         apiModel.setTransactionId(model.getTransactionId());
         apiModel.setAmount(model.getAmount());
         apiModel.setTimestamp(model.getTimestamp());
