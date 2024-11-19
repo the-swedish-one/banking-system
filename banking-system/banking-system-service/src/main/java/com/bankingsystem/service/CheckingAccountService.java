@@ -1,7 +1,6 @@
 package com.bankingsystem.service;
 
 import com.bankingsystem.exception.AccountNotFoundException;
-import com.bankingsystem.exception.InsufficientFundsException;
 import com.bankingsystem.exception.OverdraftLimitExceededException;
 import com.bankingsystem.model.CheckingAccount;
 import com.bankingsystem.model.Transaction;
