@@ -10,13 +10,12 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class ApiTransaction {
+public class ApiTransaction {
 
-    protected int transactionId;
-    protected BigDecimal amount;
-    protected LocalDateTime timestamp;
+    private int transactionId;
+    private BigDecimal amount;
+    private LocalDateTime timestamp;
+    private Integer fromAccountId;
+    private Integer toAccountId;
 
-    public ApiTransaction(BigDecimal amount) {
-        this.amount = amount;
-    }
 }

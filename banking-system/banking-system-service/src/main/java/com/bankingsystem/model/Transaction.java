@@ -10,13 +10,23 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class Transaction {
+public class Transaction {
 
-    protected int transactionId;
-    protected BigDecimal amount;
-    protected LocalDateTime timestamp;
+    private int transactionId;
+    private BigDecimal amount;
+    private LocalDateTime timestamp;
+    private Integer fromAccountId;
+    private Integer toAccountId;
 
-    public Transaction(BigDecimal amount) {
+    public Transaction(BigDecimal amount, Integer fromAccountId, Integer toAccountId) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than 0");
+        }
+        if (fromAccountId == null && toAccountId == null) {
+            throw new IllegalArgumentException("At least one of fromAccountId or toAccountId must be specified");
+        }
         this.amount = amount;
+        this.fromAccountId = fromAccountId;
+        this.toAccountId = toAccountId;
     }
 }
