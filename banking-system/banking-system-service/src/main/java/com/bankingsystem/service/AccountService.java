@@ -3,7 +3,6 @@ package com.bankingsystem.service;
 import com.bankingsystem.enums.CurrencyCode;
 import com.bankingsystem.exception.AccountNotFoundException;
 import com.bankingsystem.model.*;
-import com.bankingsystem.persistence.AccountPersistenceService;
 import com.bankingsystem.persistence.BankPersistenceService;
 import com.bankingsystem.persistence.UserPersistenceService;
 

@@ -10,11 +10,24 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApiJointCheckingAccount extends ApiCheckingAccount {
+public class ApiJointCheckingAccount {
+
+    private int accountId;
+    private String iban;
+    private String accountName;
+    private ApiUser owner;
     private ApiUser secondOwner;
+    private BigDecimal balance;
+    private CurrencyCode currency;
+    private BigDecimal overdraftLimit;
+
 
     public ApiJointCheckingAccount(ApiUser owner, ApiUser secondOwner, BigDecimal balance, CurrencyCode currency, BigDecimal overdraftLimit) {
-        super(owner, balance, currency, overdraftLimit);
+        this.owner = owner;
         this.secondOwner = secondOwner;
+        this.balance = balance;
+        this.currency = currency;
+        this.overdraftLimit = overdraftLimit;
+
     }
 }
