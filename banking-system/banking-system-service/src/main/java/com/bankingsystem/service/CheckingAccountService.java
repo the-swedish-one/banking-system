@@ -73,8 +73,9 @@ public class CheckingAccountService {
         CheckingAccount fromAccount = getCheckingAccountById(fromAccountId);
         CheckingAccount toAccount = getCheckingAccountById(toAccountId);
 
-        if (fromAccount.getBalance().compareTo(amount) < 0) {
-            throw new InsufficientFundsException("Transfer failed: Insufficient funds");
+        BigDecimal availableBalance = fromAccount.getBalance().add(fromAccount.getOverdraftLimit());
+        if (availableBalance.compareTo(amount) < 0) {
+            throw new OverdraftLimitExceededException("Transfer failed: Overdraft limit exceeded");
         }
 
         BigDecimal finalAmount = amount;
