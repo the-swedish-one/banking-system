@@ -9,20 +9,24 @@ public class TransactionMapper {
 
     public Transaction toModel(TransactionEntity entity) {
         if (entity == null) return null;
-       Transaction model = new Transaction();
-        model.setTransactionId(entity.getTransactionId());
-        model.setAmount(entity.getAmount());
-        model.setTimestamp(entity.getTimestamp());
-        model.setToAccountId(entity.getToAccountId());
-        model.setFromAccountId(entity.getFromAccountId());
-        return model;
+
+        return new Transaction(
+                entity.getTransactionId(),
+                entity.getAmount(),
+                entity.getTimestamp(),
+                entity.getFromAccountId(),
+                entity.getToAccountId()
+        );
     }
 
-    public static TransactionEntity toEntity(Transaction transaction) {
-        return new TransactionEntity(
-                transaction.getAmount(),
-                transaction.getFromAccountId(),
-                transaction.getToAccountId()
-        );
+    public TransactionEntity toEntity(Transaction transaction) {
+        if (transaction == null) return null;
+
+        return TransactionEntity.builder()
+                .transactionId(transaction.getTransactionId())
+                .amount(transaction.getAmount())
+                .fromAccountId(transaction.getFromAccountId())
+                .toAccountId(transaction.getToAccountId())
+                .build();
     }
 }
