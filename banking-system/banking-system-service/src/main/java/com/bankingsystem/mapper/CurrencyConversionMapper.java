@@ -19,8 +19,6 @@ public class CurrencyConversionMapper {
     public CurrencyConversionEntity toEntity(CurrencyConversion model) {
         if (model == null) return null;
         CurrencyConversionEntity entity = new CurrencyConversionEntity();
-        entity.setId(model.getId());
-        entity.setLastUpdated(model.getLastUpdated());
         entity.setExchangeRates(model.getExchangeRates());
         return entity;
     }

@@ -28,8 +28,6 @@ public class JointCheckingAccountMapper {
 
     public JointCheckingAccountEntity toEntity (JointCheckingAccount model) {
         JointCheckingAccountEntity entity = new JointCheckingAccountEntity();
-        entity.setAccountId(model.getAccountId());
-        entity.setIban(model.getIban());
         entity.setAccountName(model.getAccountName());
         entity.setOwner(userMapper.toEntity(model.getOwner()));
         entity.setBalance(model.getBalance());
