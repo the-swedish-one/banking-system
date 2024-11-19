@@ -1,23 +1,24 @@
 package com.bankingsystem.persistence;
 
-import com.bankingsystem.model.TransactionEntity;
+import com.bankingsystem.model.Transaction;
 
 import java.util.List;
 
 public interface TransactionPersistenceService {
 
     // Create a new transaction
-    TransactionEntity save(TransactionEntity transaction);
+    Transaction save(Transaction depositTransaction);
+
 
     // Get one transaction by ID
-    TransactionEntity getTransactionById(String transactionId);
+    Transaction getTransactionById(int transactionId);
 
     // Get all transactions
-    List<TransactionEntity> getAllTransactions();
+    List<Transaction> getAllTransactions();
 
     // Update transaction
-    void updateTransaction(TransactionEntity transaction);
+    Transaction updateTransaction(Transaction transaction);
 
     // Delete an transaction
-    boolean deleteTransaction(String transactionId);
+    boolean deleteTransaction(int transactionId);
 }
