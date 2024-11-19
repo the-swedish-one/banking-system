@@ -1,15 +1,13 @@
 package com.bankingsystem.service;
 
-import com.bankingsystem.model.DepositTransaction;
 import com.bankingsystem.model.Transaction;
-import com.bankingsystem.model.TransferTransaction;
-import com.bankingsystem.model.WithdrawTransaction;
 import com.bankingsystem.exception.TransactionNotFoundException;
 import com.bankingsystem.persistence.TransactionPersistenceService;
+import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 
+@Service
 public class TransactionService {
 
     private final TransactionPersistenceService transactionPersistenceService;
@@ -18,46 +16,17 @@ public class TransactionService {
         this.transactionPersistenceService = transactionPersistenceService;
     }
 
-    // Create new deposit transaction
-    public DepositTransaction createDepositTransaction(BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Amount must be greater than 0");
-        }
-        DepositTransaction transaction = new DepositTransaction(amount);
-        transactionPersistenceService.save(transaction);
-        return transaction;
-    }
-
-    // Create new withdraw transaction
-    public WithdrawTransaction createWithdrawTransaction(BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Amount must be greater than 0");
-        }
-        WithdrawTransaction transaction = new WithdrawTransaction(amount);
-        transactionPersistenceService.save(transaction);
-        return transaction;
-    }
-
-    // Create new transfer transaction
-    public TransferTransaction createTransferTransaction(BigDecimal amount, String fromAccountId, String toAccountId) {
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Amount must be greater than 0");
-        }
-        TransferTransaction transaction = new TransferTransaction(amount, fromAccountId, toAccountId);
-        transactionPersistenceService.save(transaction);
-        return transaction;
+    // Create new transaction
+    public Transaction createTransaction(Transaction transaction) {
+        return transactionPersistenceService.save(transaction);
     }
 
     // Get transaction by ID
-    public Transaction getTransactionById(String transactionId) {
-        if (transactionId == null || transactionId.isEmpty()) {
-            throw new IllegalArgumentException("Transaction ID cannot be null or empty");
+    public Transaction getTransactionById(int transactionId) {
+        if (transactionId <= 0) {
+            throw new IllegalArgumentException("Transaction ID must be greater than zero");
         }
-        Transaction transaction = transactionPersistenceService.getTransactionById(transactionId);
-        if (transaction == null) {
-            throw new TransactionNotFoundException("Transaction not found");
-        }
-        return transaction;
+        return transactionPersistenceService.getTransactionById(transactionId);
     }
 
     // Get all transactions
@@ -70,7 +39,10 @@ public class TransactionService {
     }
 
     // Delete transaction by ID
-    public boolean deleteTransaction(String transactionId) {
+    public boolean deleteTransaction(int transactionId) {
+        if (transactionId <= 0) {
+            throw new IllegalArgumentException("Transaction ID must be greater than zero");
+        }
         return transactionPersistenceService.deleteTransaction(transactionId);
     }
 }
