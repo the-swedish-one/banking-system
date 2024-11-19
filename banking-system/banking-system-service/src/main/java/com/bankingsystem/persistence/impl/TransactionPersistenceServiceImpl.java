@@ -1,52 +1,77 @@
 package com.bankingsystem.persistence.impl;
 
-import com.bankingsystem.model.TransactionEntity;
+import com.bankingsystem.exception.TransactionNotFoundException;
+import com.bankingsystem.model.*;
 import com.bankingsystem.persistence.TransactionPersistenceService;
+import com.bankingsystem.repository.TransactionRepository;
+import com.bankingsystem.mapper.TransactionMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionPersistenceServiceImpl implements TransactionPersistenceService {
 
-    private List<TransactionEntity> transactions = new ArrayList<>();
+    private final TransactionRepository transactionRepository;
+    private final TransactionMapper transactionMapper;
 
-    // Create a new transaction
-    @Override
-    public TransactionEntity save(TransactionEntity transaction) {
-        transactions.add(transaction);
-        return transaction;
+    public TransactionPersistenceServiceImpl(TransactionRepository transactionRepository, TransactionMapper transactionMapper) {
+        this.transactionRepository = transactionRepository;
+        this.transactionMapper = transactionMapper;
     }
 
-    // Get one transaction by ID
+    // Create or save Transaction
     @Override
-    public TransactionEntity getTransactionById(String transactionId) {
-        return transactions.stream()
-                .filter(transaction -> Objects.equals(transaction.getTransactionId(), transactionId))
-                .findFirst()
-                .orElse(null);
+    public Transaction save(Transaction depositTransaction) {
+        TransactionEntity entity = transactionMapper.toEntity(depositTransaction);
+        TransactionEntity savedEntity = transactionRepository.save(entity);
+        return transactionMapper.toModel(savedEntity);
+    }
+
+
+    // Get transaction by ID
+    @Override
+    public Transaction getTransactionById(int transactionId) {
+        TransactionEntity entity = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new TransactionNotFoundException("Transaction not found"));
+        return transactionMapper.toModel(entity);
     }
 
     // Get all transactions
     @Override
-    public List<TransactionEntity> getAllTransactions() {
-        return new ArrayList<>(transactions);
+    public List<Transaction> getAllTransactions() {
+        return transactionRepository.findAll().stream()
+                .map(transactionMapper::toModel)
+                .collect(Collectors.toList());
     }
 
     // Update transaction
-    @Override
-    public void updateTransaction(TransactionEntity transaction) {
-        transactions.stream()
-                .filter(t -> t.getTransactionId().equals(transaction.getTransactionId()))
-                .findFirst()
-                .ifPresent(t -> t = transaction);
+    public Transaction updateTransaction(Transaction transaction) {
+        TransactionEntity existingEntity = transactionRepository.findById(transaction.getTransactionId())
+                .orElseThrow(() -> new TransactionNotFoundException("Transaction not found"));
+
+        // Update fields of the existing transaction
+        existingEntity.setTransactionId(transaction.getTransactionId());
+        existingEntity.setAmount(transaction.getAmount());
+        existingEntity.setFromAccountId(transaction.getFromAccountId());
+        existingEntity.setToAccountId(transaction.getToAccountId());
+
+        TransactionEntity updatedEntity = transactionRepository.save(existingEntity);
+        return transactionMapper.toModel(updatedEntity);
     }
 
-    // Delete an transaction
+    // Delete transaction by ID
     @Override
-    public boolean deleteTransaction(String transactionId) {
-        return transactions.removeIf(account -> Objects.equals(account.getTransactionId(), transactionId));
+    public boolean deleteTransaction(int transactionId) {
+        if(!transactionRepository.existsById(transactionId)) {
+            throw new TransactionNotFoundException("Transaction not found");
+        }
+
+        if (transactionId <= 0) {
+            throw new IllegalArgumentException("Transaction ID must be greater than zero");
+        }
+        transactionRepository.deleteById(transactionId);
+        return true;
     }
 }
