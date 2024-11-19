@@ -2,7 +2,6 @@ package com.bankingsystem.service;
 
 import com.bankingsystem.exception.AccountNotFoundException;
 import com.bankingsystem.model.CheckingAccount;
-import com.bankingsystem.model.DepositTransaction;
 import com.bankingsystem.model.Transaction;
 import com.bankingsystem.persistence.CheckingAccountPersistenceService;
 import org.springframework.stereotype.Service;
