@@ -2,30 +2,20 @@ package com.bankingsystem.mapper;
 
 import com.bankingsystem.model.ApiUser;
 import com.bankingsystem.model.User;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class ApiUserMapper {
+@Mapper(componentModel = "spring")
+public interface ApiUserMapper {
 
-    private final ApiPersonDetailsMapper apiPersonDetailsMapper;
+    // Map from service model User to API model ApiUser
+    @Mapping(source = "userId", target = "userId")
+    @Mapping(source = "person", target = "person")
+    ApiUser toApiModel(User user);
 
-    public ApiUserMapper(ApiPersonDetailsMapper apiPersonDetailsMapper) {
-        this.apiPersonDetailsMapper = apiPersonDetailsMapper;
-    }
+    // Map from API model ApiUser to service model User
+    @Mapping(source = "userId", target = "userId")
+    @Mapping(source = "person", target = "person")
+    User toServiceModel(ApiUser apiUser);
 
-    public ApiUser toApiModel(User user) {
-        if (user == null) return null;
-        ApiUser apiUser = new ApiUser();
-        apiUser.setUserId(user.getUserId());
-        apiUser.setPerson(apiPersonDetailsMapper.toApiModel(user.getPerson()));
-        return apiUser;
-    }
-
-    public User toServiceModel(ApiUser apiUser) {
-        if (apiUser == null) return null;
-        User user = new User();
-        user.setUserId(apiUser.getUserId());
-        user.setPerson(apiPersonDetailsMapper.toServiceModel(apiUser.getPerson()));
-        return user;
-    }
 }
