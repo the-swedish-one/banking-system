@@ -62,33 +62,21 @@ public class CheckingAccountController {
     // Deposit money into checking account
     @PostMapping("/{accountId}/deposit")
     public ResponseEntity<CheckingAccount> deposit(@PathVariable int accountId, @RequestBody BigDecimal amount) {
-        try {
             CheckingAccount updatedAccount = checkingAccountService.deposit(accountId, amount);
             return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
     }
 
     // Withdraw money from checking account
     @PostMapping("/{accountId}/withdraw")
     public ResponseEntity<CheckingAccount> withdraw(@PathVariable int accountId, @RequestBody BigDecimal amount) {
-        try {
             CheckingAccount updatedAccount = checkingAccountService.withdraw(accountId, amount);
             return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
-        } catch (IllegalArgumentException | OverdraftLimitExceededException e) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
     }
 
     // Transfer between two checking accounts
     @PostMapping("/transfer")
     public ResponseEntity<Void> transfer(@RequestParam int fromAccountId, @RequestParam int toAccountId, @RequestParam BigDecimal amount) {
-        try {
             checkingAccountService.transfer(amount, fromAccountId, toAccountId);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (IllegalArgumentException | OverdraftLimitExceededException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
     }
 }
