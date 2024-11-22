@@ -1,9 +1,12 @@
 package com.bankingsystem.persistence.impl;
 
+import com.bankingsystem.model.CurrencyConversion;
 import com.bankingsystem.model.CurrencyConversionEntity;
 import com.bankingsystem.enums.CurrencyCode;
 import com.bankingsystem.persistence.CurrencyConversionPersistenceService;
 import com.bankingsystem.repository.CurrencyConversionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +15,8 @@ import java.util.Map;
 
 @Service
 public class CurrencyConversionPersistenceServiceImpl implements CurrencyConversionPersistenceService {
+
+    private static final Logger logger = LoggerFactory.getLogger(CurrencyConversionPersistenceServiceImpl.class);
 
     private final CurrencyConversionRepository currencyConversionRepository;
 
@@ -36,11 +41,16 @@ public class CurrencyConversionPersistenceServiceImpl implements CurrencyConvers
     @Override
     public CurrencyConversionEntity getLatestConversion() {
         return currencyConversionRepository.findTopByOrderByTimestampDesc()
-                .orElseThrow(() -> new RuntimeException("No currency conversion data found"));
+                .orElseThrow(() -> {
+                    logger.error("No currency conversion data found");
+                    return new RuntimeException("No currency conversion data found");
+                });
     }
 
     @Override
     public void updateConversion(CurrencyConversionEntity conversion) {
+        logger.info("Updating currency conversion data");
         currencyConversionRepository.save(conversion);
+        logger.info("Successfully updated currency conversion data");
     }
 }
