@@ -7,6 +7,8 @@ import com.bankingsystem.model.JointCheckingAccount;
 import com.bankingsystem.model.JointCheckingAccountEntity;
 import com.bankingsystem.persistence.JointCheckingAccountPersistenceService;
 import com.bankingsystem.repository.JointCheckingAccountRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 @Service
 public class JointCheckingAccountPersistenceServiceImpl implements JointCheckingAccountPersistenceService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserPersistenceServiceImpl.class);
 
     private final JointCheckingAccountRepository jointCheckingAccountRepository;
     private final JointCheckingAccountMapper jointCheckingAccountMapper;
@@ -29,29 +33,45 @@ public class JointCheckingAccountPersistenceServiceImpl implements JointChecking
     // Create or save a new savings account
     @Override
     public JointCheckingAccount save(JointCheckingAccount account) {
+        logger.info("Saving new joint checking account");
         JointCheckingAccountEntity entity = jointCheckingAccountMapper.toEntity(account);
         JointCheckingAccountEntity savedEntity = jointCheckingAccountRepository.save(entity);
+        logger.info("Successfully saved joint checking account with ID: {}", savedEntity.getAccountId());
         return jointCheckingAccountMapper.toModel(savedEntity);
     }
 
     @Override
     public JointCheckingAccount getAccountById(int accountId) {
         JointCheckingAccountEntity entity = jointCheckingAccountRepository.findById(accountId)
-                .orElseThrow(() -> new AccountNotFoundException("Joint Checking Account not found"));
+                .orElseThrow(() -> {
+                    logger.error("Joint Checking Account not found for ID: {}", accountId);
+                    return new AccountNotFoundException("Joint Checking Account not found");
+                });
+        logger.info("Successfully fetched joint checking account with ID: {}", accountId);
         return jointCheckingAccountMapper.toModel(entity);
     }
 
     @Override
     public List<JointCheckingAccount> getAllAccounts() {
-        return jointCheckingAccountRepository.findAll().stream()
+        List<JointCheckingAccountEntity> entities = jointCheckingAccountRepository.findAll();
+        if (entities.isEmpty()) {
+            logger.error("No joint checking accounts found");
+            throw new AccountNotFoundException("No joint checking accounts found");
+        }
+        List<JointCheckingAccount> accounts = entities.stream()
                 .map(jointCheckingAccountMapper::toModel)
                 .collect(Collectors.toList());
+        logger.info("Successfully fetched all joint checking accounts");
+        return accounts;
     }
 
     @Override
     public JointCheckingAccount updateAccount(JointCheckingAccount account) {
         JointCheckingAccountEntity existingEntity = jointCheckingAccountRepository.findById(account.getAccountId())
-                .orElseThrow(() -> new AccountNotFoundException("Joint Checking Account not found"));
+                .orElseThrow(() -> {
+                    logger.error("Joint Checking Account not found for ID: {}", account.getAccountId());
+                    return new AccountNotFoundException("Joint Checking Account not found");
+                });
 
         // update fields of existing entity
         existingEntity.setAccountId(account.getAccountId());
@@ -63,15 +83,15 @@ public class JointCheckingAccountPersistenceServiceImpl implements JointChecking
         existingEntity.setCurrency(account.getCurrency());
         existingEntity.setOverdraftLimit(account.getOverdraftLimit());
 
-        return jointCheckingAccountMapper.toModel(jointCheckingAccountRepository.save(existingEntity));
+        JointCheckingAccountEntity updatedEntity = jointCheckingAccountRepository.save(existingEntity);
+        logger.info("Successfully updated joint checking account with ID: {}", updatedEntity.getAccountId());
+        return jointCheckingAccountMapper.toModel(updatedEntity);
     }
 
     @Override
     public boolean deleteAccount(int accountId) {
-        if (accountId <=  0) {
-            throw new IllegalArgumentException("Account ID must be greater than zero");
-        }
         if (!jointCheckingAccountRepository.existsById(accountId)) {
+            logger.error("Joint Checking Account not found for ID: {}", accountId);
             throw new AccountNotFoundException("Joint Checking Account not found");
         }
         jointCheckingAccountRepository.deleteById(accountId);

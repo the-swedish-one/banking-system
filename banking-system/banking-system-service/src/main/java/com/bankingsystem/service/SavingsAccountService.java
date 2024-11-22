@@ -36,6 +36,7 @@ public class SavingsAccountService {
     public SavingsAccount createSavingsAccount(SavingsAccount account) {
         logger.info("Creating new savings account");
         if (account.getOwner() == null || account.getBalance() == null || account.getCurrency() == null) {
+            logger.error("Account creation failed: Missing required fields");
             throw new IllegalArgumentException("Account creation failed: Missing required fields");
         }
         account.setIban(generateIBAN(account.getOwner().getPerson().getCountry()));
@@ -161,6 +162,7 @@ public class SavingsAccountService {
         if (!fromAccount.getCurrency().equals(toAccount.getCurrency())) {
             finalAmount = currencyConversionService.convertAmount(amount, fromAccount.getCurrency(), toAccount.getCurrency())
                     .setScale(2, RoundingMode.HALF_UP);
+            logger.info("Converted amount: {} {} to {} {}", amount, fromAccount.getCurrency(), finalAmount, toAccount.getCurrency());
         }
 
         fromAccount.withdraw(amount);
@@ -173,7 +175,7 @@ public class SavingsAccountService {
         transactionService.createTransaction(fromTransaction);
         transactionService.createTransaction(toTransaction);
 
-        logger.info("Successfully transferred {} {} from account with ID: {} to account with ID: {}", finalAmount, fromAccount.getCurrency(), fromAccountId, toAccountId);
+        logger.info("Successfully transferred {} {} from account with ID: {} to account with ID: {}", amount, fromAccount.getCurrency(), fromAccountId, toAccountId);
     }
 
     // Apply interest
