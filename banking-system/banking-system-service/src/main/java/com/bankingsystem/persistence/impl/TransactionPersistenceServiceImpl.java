@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Service
 public class TransactionPersistenceServiceImpl implements TransactionPersistenceService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserPersistenceServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(TransactionPersistenceServiceImpl.class);
 
     private final TransactionRepository transactionRepository;
     private final TransactionMapper transactionMapper;

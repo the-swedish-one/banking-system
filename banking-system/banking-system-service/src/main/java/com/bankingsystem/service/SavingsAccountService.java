@@ -5,7 +5,6 @@ import com.bankingsystem.exception.InsufficientFundsException;
 import com.bankingsystem.model.SavingsAccount;
 import com.bankingsystem.model.Transaction;
 import com.bankingsystem.persistence.SavingsAccountPersistenceService;
-import com.bankingsystem.persistence.impl.UserPersistenceServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,7 @@ import java.util.stream.IntStream;
 @Service
 public class SavingsAccountService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserPersistenceServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(SavingsAccountService.class);
 
     private final SavingsAccountPersistenceService savingsAccountPersistenceService;
     private final TransactionService transactionService;

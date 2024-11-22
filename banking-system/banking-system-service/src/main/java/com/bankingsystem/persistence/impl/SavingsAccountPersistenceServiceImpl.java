@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class SavingsAccountPersistenceServiceImpl implements SavingsAccountPersistenceService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserPersistenceServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(SavingsAccountPersistenceServiceImpl.class);
 
     private final SavingsAccountRepository savingsAccountRepository;
     private final SavingsAccountMapper savingsAccountMapper;

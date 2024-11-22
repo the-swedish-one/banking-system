@@ -3,7 +3,6 @@ package com.bankingsystem.service;
 import com.bankingsystem.model.Transaction;
 import com.bankingsystem.exception.TransactionNotFoundException;
 import com.bankingsystem.persistence.TransactionPersistenceService;
-import com.bankingsystem.persistence.impl.UserPersistenceServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,7 @@ import java.util.List;
 @Service
 public class TransactionService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserPersistenceServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(TransactionService.class);
 
     private final TransactionPersistenceService transactionPersistenceService;
 

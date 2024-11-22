@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Service
 public class CheckingAccountPersistenceServiceImpl implements CheckingAccountPersistenceService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserPersistenceServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(CheckingAccountPersistenceServiceImpl.class);
 
     private final CheckingAccountRepository checkingAccountRepository;
     private final CheckingAccountMapper checkingAccountMapper;

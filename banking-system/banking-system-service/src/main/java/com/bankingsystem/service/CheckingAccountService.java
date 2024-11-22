@@ -5,7 +5,6 @@ import com.bankingsystem.exception.OverdraftLimitExceededException;
 import com.bankingsystem.model.CheckingAccount;
 import com.bankingsystem.model.Transaction;
 import com.bankingsystem.persistence.CheckingAccountPersistenceService;
-import com.bankingsystem.persistence.impl.UserPersistenceServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,7 @@ import java.util.stream.IntStream;
 @Service
 public class CheckingAccountService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserPersistenceServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(CheckingAccountService.class);
 
     private final CheckingAccountPersistenceService checkingAccountPersistenceService;
     private final TransactionService transactionService;
