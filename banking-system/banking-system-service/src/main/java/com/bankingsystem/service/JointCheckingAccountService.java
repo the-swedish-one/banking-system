@@ -63,6 +63,10 @@ public class JointCheckingAccountService {
     // Update joint checking account
     public JointCheckingAccount updateJointCheckingAccount(JointCheckingAccount jointCheckingAccount) {
         logger.info("Updating joint checking account with ID: {}", jointCheckingAccount.getAccountId());
+        if (jointCheckingAccount.getAccountId() <= 0) {
+            logger.error("Update failed: Invalid Account ID");
+            throw new IllegalArgumentException("Update failed: Invalid Account ID");
+        }
         return jointCheckingAccountPersistenceService.updateAccount(jointCheckingAccount);
     }
 
@@ -129,6 +133,7 @@ public class JointCheckingAccountService {
 
         BigDecimal availableBalance = account.getBalance().add(account.getOverdraftLimit());
         if (availableBalance.compareTo(amount) < 0) {
+            logger.error("Withdrawal failed: Overdraft limit exceeded");
             throw new OverdraftLimitExceededException("Withdrawal failed: Overdraft limit exceeded");
         }
 

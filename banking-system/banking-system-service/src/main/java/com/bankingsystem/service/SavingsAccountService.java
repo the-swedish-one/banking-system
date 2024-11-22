@@ -63,6 +63,10 @@ public class SavingsAccountService {
     // Update savings account
     public SavingsAccount updateSavingsAccount(SavingsAccount savingsAccount) {
         logger.info("Updating savings account with ID: {}", savingsAccount.getAccountId());
+        if (savingsAccount.getAccountId() <= 0) {
+            logger.error("Update failed: Invalid Account ID");
+            throw new IllegalArgumentException("Update failed: Invalid Account ID");
+        }
         return savingsAccountPersistenceService.updateAccount(savingsAccount);
     }
 
