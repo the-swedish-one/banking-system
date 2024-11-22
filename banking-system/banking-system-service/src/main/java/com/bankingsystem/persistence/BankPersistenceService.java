@@ -8,5 +8,4 @@ public interface BankPersistenceService {
 
     Bank getBankByBic(String bic);
 
-    boolean deleteBank(String bic);
 }
