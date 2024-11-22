@@ -1,7 +1,6 @@
 package com.bankingsystem.service;
 
 import com.bankingsystem.model.PersonDetails;
-import com.bankingsystem.exception.PersonDetailsNotFoundException;
 import com.bankingsystem.persistence.PersonDetailsPersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

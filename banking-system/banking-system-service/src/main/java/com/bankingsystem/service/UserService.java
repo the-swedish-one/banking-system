@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.bankingsystem.model.User;
-import com.bankingsystem.exception.UserNotFoundException;
 import com.bankingsystem.persistence.UserPersistenceService;
 
 import java.util.List;
@@ -24,9 +23,7 @@ public class UserService {
     // Create new user
     public User createUser(User user) {
         logger.info("Creating new user");
-        User savedUser = userPersistenceService.save(user);
-        logger.info("Successfully created user with ID: {}", savedUser.getUserId());
-        return savedUser;
+        return userPersistenceService.save(user);
     }
 
     // Get user by ID
@@ -36,25 +33,19 @@ public class UserService {
             logger.error("Invalid user ID: {}", userId);
             throw new IllegalArgumentException("User ID must be greater than zero");
         }
-        User user = userPersistenceService.getUserById(userId);
-        logger.info("Successfully fetched user for ID: {}", userId);
-        return user;
+        return userPersistenceService.getUserById(userId);
     }
 
     // Get all users
     public List<User> getAllUsers() {
         logger.info("Fetching all users");
-        List<User> usersList = userPersistenceService.getAllUsers();
-        logger.info("Successfully fetched {} users", usersList.size());
-        return usersList;
+        return userPersistenceService.getAllUsers();
     }
 
     // Update user
     public User updateUser(User user) {
         logger.info("Updating user with ID: {}", user.getUserId());
-        User updatedUser = userPersistenceService.updateUser(user);
-        logger.info("Successfully updated user with ID: {}", updatedUser.getUserId());
-        return updatedUser;
+        return userPersistenceService.updateUser(user);
     }
 
     // Delete user by ID

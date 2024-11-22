@@ -41,7 +41,6 @@ public class PersonDetailsPersistenceServiceImpl implements PersonDetailsPersist
     // Get a person details by ID
     @Override
     public PersonDetails getPersonDetailsById(int personDetailsId) {
-        logger.info("Fetching person details with ID: {}", personDetailsId);
         PersonDetailsEntity entity = personDetailsRepository.findById(personDetailsId)
                 .orElseThrow(() -> {
                     logger.error("PersonDetails not found for ID: {}", personDetailsId);
@@ -54,7 +53,6 @@ public class PersonDetailsPersistenceServiceImpl implements PersonDetailsPersist
     // Get all Person Details
     @Override
     public List<PersonDetails> getAllPersonDetails() {
-        logger.info("Fetching all person details");
         List<PersonDetails> personDetailsList = personDetailsRepository.findAll().stream()
                 .map(personDetailsMapper::toModel)
                 .collect(Collectors.toList());
@@ -70,7 +68,6 @@ public class PersonDetailsPersistenceServiceImpl implements PersonDetailsPersist
     // Update person details
     @Override
     public PersonDetails updatePersonDetails(PersonDetails personDetails) {
-        logger.info("Updating person details with ID: {}", personDetails.getPersonId());
         PersonDetailsEntity existingEntity = personDetailsRepository.findById(personDetails.getPersonId())
                 .orElseThrow(() -> {
                     logger.error("PersonDetails not found for ID: {}", personDetails.getPersonId());
@@ -95,7 +92,6 @@ public class PersonDetailsPersistenceServiceImpl implements PersonDetailsPersist
     // Delete person
     @Override
     public boolean deletePersonDetails(int personDetailsId) {
-        logger.info("Deleting person details with ID: {}", personDetailsId);
         if (!personDetailsRepository.existsById(personDetailsId)) {
             logger.error("PersonDetails not found for ID: {}", personDetailsId);
             throw new PersonDetailsNotFoundException("PersonDetails not found");

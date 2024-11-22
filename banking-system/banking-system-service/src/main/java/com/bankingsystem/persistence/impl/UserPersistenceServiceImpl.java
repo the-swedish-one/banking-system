@@ -10,6 +10,7 @@ import com.bankingsystem.model.UserEntity;
 import com.bankingsystem.exception.UserNotFoundException;
 import com.bankingsystem.persistence.UserPersistenceService;
 import com.bankingsystem.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class UserPersistenceServiceImpl implements UserPersistenceService {
     private final UserMapper userMapper;
     private final PersonDetailsMapper personDetailsMapper;
 
+    @Autowired
     public UserPersistenceServiceImpl(UserRepository userRepository, UserMapper userMapper, PersonDetailsMapper personDetailsMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
@@ -43,7 +45,6 @@ public class UserPersistenceServiceImpl implements UserPersistenceService {
     // Get a user by ID
     @Override
     public User getUserById(int userId) {
-        logger.info("Fetching user by ID: {}", userId);
         UserEntity entity = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     logger.error("User not found for ID: {}", userId);
@@ -56,7 +57,6 @@ public class UserPersistenceServiceImpl implements UserPersistenceService {
     // Get all users
     @Override
     public List<User> getAllUsers() {
-        logger.info("Fetching all users");
         List<UserEntity> entities = userRepository.findAll();
         if (entities.isEmpty()) {
             logger.warn("No users found in the database");
@@ -72,7 +72,6 @@ public class UserPersistenceServiceImpl implements UserPersistenceService {
     // Update user
     @Override
     public User updateUser(User user) {
-        logger.info("Updating user with ID: {}", user.getUserId());
         UserEntity existingEntity = userRepository.findById(user.getUserId())
                 .orElseThrow(() -> {
                     logger.error("User not found for ID: {}", user.getUserId());
@@ -90,14 +89,11 @@ public class UserPersistenceServiceImpl implements UserPersistenceService {
     // Delete a user by ID
     @Override
     public boolean deleteUser(int userId) {
-        logger.info("Deleting user with ID: {}", userId);
         if (!userRepository.existsById(userId)) {
             logger.error("User not found for ID: {}", userId);
             throw new UserNotFoundException("User not found");
         }
-
         userRepository.deleteById(userId);
-        logger.info("Successfully deleted user with ID: {}", userId);
         return true;
     }
 }
