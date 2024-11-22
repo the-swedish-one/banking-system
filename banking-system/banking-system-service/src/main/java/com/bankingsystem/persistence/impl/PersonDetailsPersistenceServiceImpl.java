@@ -1,5 +1,7 @@
 package com.bankingsystem.persistence.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.bankingsystem.exception.PersonDetailsNotFoundException;
 import com.bankingsystem.mapper.PersonDetailsMapper;
 import com.bankingsystem.model.PersonDetails;
@@ -15,6 +17,8 @@ import java.util.stream.Collectors;
 @Service
 public class PersonDetailsPersistenceServiceImpl implements PersonDetailsPersistenceService {
 
+    private static final Logger logger = LoggerFactory.getLogger(PersonDetailsPersistenceServiceImpl.class);
+
     private final PersonDetailsRepository personDetailsRepository;
     private final PersonDetailsMapper personDetailsMapper;
 
@@ -27,32 +31,51 @@ public class PersonDetailsPersistenceServiceImpl implements PersonDetailsPersist
     // Create or save PersonDetails
     @Override
     public PersonDetails save(PersonDetails personDetails) {
+        logger.info("Saving person details: {}", personDetails);
         PersonDetailsEntity entity = personDetailsMapper.toEntity(personDetails);
         PersonDetailsEntity savedEntity = personDetailsRepository.save(entity);
+        logger.info("Successfully saved person details with ID: {}", savedEntity.getPersonId());
         return personDetailsMapper.toModel(savedEntity);
     }
 
     // Get a person details by ID
     @Override
     public PersonDetails getPersonDetailsById(int personDetailsId) {
+        logger.info("Fetching person details with ID: {}", personDetailsId);
         PersonDetailsEntity entity = personDetailsRepository.findById(personDetailsId)
-                .orElseThrow(() -> new PersonDetailsNotFoundException("PersonDetails not found"));
+                .orElseThrow(() -> {
+                    logger.error("PersonDetails not found for ID: {}", personDetailsId);
+                    return new PersonDetailsNotFoundException("PersonDetails not found");
+                });
+        logger.info("Successfully fetched person details with ID: {}", personDetailsId);
         return personDetailsMapper.toModel(entity);
     }
 
     // Get all Person Details
     @Override
     public List<PersonDetails> getAllPersonDetails() {
-        return personDetailsRepository.findAll().stream()
+        logger.info("Fetching all person details");
+        List<PersonDetails> personDetailsList = personDetailsRepository.findAll().stream()
                 .map(personDetailsMapper::toModel)
                 .collect(Collectors.toList());
+        if (personDetailsList.isEmpty()) {
+            logger.warn("No person details found");
+            throw new PersonDetailsNotFoundException("No person details found");
+        } else {
+            logger.info("Successfully fetched {} person details", personDetailsList.size());
+        }
+        return personDetailsList;
     }
 
     // Update person details
     @Override
     public PersonDetails updatePersonDetails(PersonDetails personDetails) {
+        logger.info("Updating person details with ID: {}", personDetails.getPersonId());
         PersonDetailsEntity existingEntity = personDetailsRepository.findById(personDetails.getPersonId())
-                .orElseThrow(() -> new PersonDetailsNotFoundException("PersonDetails not found"));
+                .orElseThrow(() -> {
+                    logger.error("PersonDetails not found for ID: {}", personDetails.getPersonId());
+                    return new PersonDetailsNotFoundException("PersonDetails not found");
+                });
 
         // Update fields of the existing entity
         existingEntity.setFirstName(personDetails.getFirstName());
@@ -65,16 +88,16 @@ public class PersonDetailsPersistenceServiceImpl implements PersonDetailsPersist
 
         // Save and map the updated entity back to the model
         PersonDetailsEntity updatedEntity = personDetailsRepository.save(existingEntity);
+        logger.info("Successfully updated person details with ID: {}", personDetails.getPersonId());
         return personDetailsMapper.toModel(updatedEntity);
     }
 
     // Delete person
     @Override
     public boolean deletePersonDetails(int personDetailsId) {
-        if (personDetailsId <= 0) {
-            throw new IllegalArgumentException("PersonDetails ID must be greater than zero");
-        }
+        logger.info("Deleting person details with ID: {}", personDetailsId);
         if (!personDetailsRepository.existsById(personDetailsId)) {
+            logger.error("PersonDetails not found for ID: {}", personDetailsId);
             throw new PersonDetailsNotFoundException("PersonDetails not found");
         }
         personDetailsRepository.deleteById(personDetailsId);

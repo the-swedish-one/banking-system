@@ -23,9 +23,7 @@ public class PersonDetailsService {
     // Create new person
     public PersonDetails createPersonDetails(PersonDetails personDetails) {
         logger.info("Creating new PersonDetails for {}", personDetails.getFirstName());
-        PersonDetails savedPersonDetails = personDetailsPersistenceService.save(personDetails);
-        logger.info("Successfully created PersonDetails with ID: {}", savedPersonDetails.getPersonId());
-        return savedPersonDetails;
+        return personDetailsPersistenceService.save(personDetails);
     }
 
     // Get person by ID
@@ -35,29 +33,19 @@ public class PersonDetailsService {
             logger.error("Invalid PersonDetails ID: {}", personDetailsId);
             throw new IllegalArgumentException("PersonDetails ID must be greater than zero");
         }
-        PersonDetails personDetails = personDetailsPersistenceService.getPersonDetailsById(personDetailsId);
-        logger.info("Successfully fetched PersonDetails for ID: {}", personDetailsId);
-        return personDetails;
+        return personDetailsPersistenceService.getPersonDetailsById(personDetailsId);
     }
 
     // Get all persons
     public List<PersonDetails> getAllPersonsDetails() {
         logger.info("Fetching all PersonDetails");
-        List<PersonDetails> personDetailsList = personDetailsPersistenceService.getAllPersonDetails();
-        if (personDetailsList.isEmpty()) {
-            logger.warn("No PersonDetails found in the database");
-            throw new PersonDetailsNotFoundException("No person details found");
-        }
-        logger.info("Successfully fetched {} PersonDetails records", personDetailsList.size());
-        return personDetailsList;
+        return personDetailsPersistenceService.getAllPersonDetails();
     }
 
     // Update person details
     public PersonDetails updatePersonDetails(PersonDetails personDetails) {
         logger.info("Updating PersonDetails for ID: {}", personDetails.getPersonId());
-        PersonDetails updatedPersonDetails = personDetailsPersistenceService.updatePersonDetails(personDetails);
-        logger.info("Successfully updated PersonDetails for ID: {}", updatedPersonDetails.getPersonId());
-        return updatedPersonDetails;
+        return personDetailsPersistenceService.updatePersonDetails(personDetails);
     }
 
     // Delete person by ID
