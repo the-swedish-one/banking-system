@@ -7,6 +7,8 @@ import com.bankingsystem.model.SavingsAccount;
 import com.bankingsystem.model.SavingsAccountEntity;
 import com.bankingsystem.persistence.SavingsAccountPersistenceService;
 import com.bankingsystem.repository.SavingsAccountRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class SavingsAccountPersistenceServiceImpl implements SavingsAccountPersistenceService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserPersistenceServiceImpl.class);
 
     private final SavingsAccountRepository savingsAccountRepository;
     private final SavingsAccountMapper savingsAccountMapper;
@@ -30,29 +34,45 @@ public class SavingsAccountPersistenceServiceImpl implements SavingsAccountPersi
     // Create or save a new savings account
     @Override
     public SavingsAccount save(SavingsAccount account) {
+        logger.info("Saving new savings account");
         SavingsAccountEntity entity = savingsAccountMapper.toEntity(account);
         SavingsAccountEntity savedEntity = savingsAccountRepository.save(entity);
+        logger.info("Successfully saved savings account with ID: {}", savedEntity.getAccountId());
         return savingsAccountMapper.toModel(savedEntity);
     }
 
     @Override
     public SavingsAccount getAccountById(int accountId) {
         SavingsAccountEntity entity = savingsAccountRepository.findById(accountId)
-                .orElseThrow(() -> new AccountNotFoundException("Savings Account not found"));
+                .orElseThrow(() -> {
+                    logger.error("Savings Account not found for ID: {}", accountId);
+                    return new AccountNotFoundException("Savings Account not found");
+                });
+        logger.info("Successfully fetched savings account with ID: {}", accountId);
         return savingsAccountMapper.toModel(entity);
     }
 
     @Override
     public List<SavingsAccount> getAllAccounts() {
-        return savingsAccountRepository.findAll().stream()
+        List<SavingsAccountEntity> entities = savingsAccountRepository.findAll();
+        if (entities.isEmpty()) {
+            logger.error("No savings accounts found");
+            throw new AccountNotFoundException("No savings accounts found");
+        }
+        List<SavingsAccount> accounts = entities.stream()
                 .map(savingsAccountMapper::toModel)
                 .collect(Collectors.toList());
+        logger.info("Successfully fetched {} savings accounts", accounts.size());
+        return accounts;
     }
 
     @Override
     public SavingsAccount updateAccount(SavingsAccount account) {
         SavingsAccountEntity existingEntity = savingsAccountRepository.findById(account.getAccountId())
-                .orElseThrow(() -> new AccountNotFoundException("Savings Account not found"));
+                .orElseThrow(() -> {
+                    logger.error("Savings Account not found for ID: {}", account.getAccountId());
+                    return new AccountNotFoundException("Savings Account not found");
+                });
 
         // update fields of existing entity
         existingEntity.setAccountId(account.getAccountId());
@@ -64,15 +84,14 @@ public class SavingsAccountPersistenceServiceImpl implements SavingsAccountPersi
         existingEntity.setInterestRatePercentage(account.getInterestRatePercentage());
 
         SavingsAccountEntity updatedEntity = savingsAccountRepository.save(existingEntity);
+        logger.info("Successfully updated savings account with ID: {}", updatedEntity.getAccountId());
         return savingsAccountMapper.toModel(updatedEntity);
     }
 
     @Override
     public boolean deleteAccount(int accountId) {
-        if (accountId <= 0) {
-            throw new IllegalArgumentException("Account ID must be greater than zero");
-        }
         if (!savingsAccountRepository.existsById(accountId)) {
+            logger.error("Savings Account not found for ID: {}", accountId);
             throw new AccountNotFoundException("Savings Account not found");
         }
         savingsAccountRepository.deleteById(accountId);

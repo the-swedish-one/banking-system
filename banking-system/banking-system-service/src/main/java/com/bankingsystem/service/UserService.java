@@ -55,12 +55,13 @@ public class UserService {
             logger.error("Invalid user ID: {}", userId);
             throw new IllegalArgumentException("User ID must be greater than zero");
         }
-        boolean isDeleted = userPersistenceService.deleteUser(userId);
-        if (isDeleted) {
+        try {
+            boolean isDeleted = userPersistenceService.deleteUser(userId);
             logger.info("Successfully deleted user with ID: {}", userId);
-        } else {
-            logger.warn("Failed to delete user with ID: {}", userId);
+            return isDeleted;
+        } catch (Exception ex) {
+            logger.error("Failed to delete user with ID: {}", userId);
+            throw ex;
         }
-        return isDeleted;
     }
 }

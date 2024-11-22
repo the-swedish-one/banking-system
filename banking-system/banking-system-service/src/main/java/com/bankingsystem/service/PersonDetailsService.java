@@ -54,12 +54,13 @@ public class PersonDetailsService {
             logger.error("Invalid PersonDetails ID: {}", personDetailsId);
             throw new IllegalArgumentException("PersonDetails ID must be greater than zero");
         }
-        boolean isDeleted = personDetailsPersistenceService.deletePersonDetails(personDetailsId);
-        if (isDeleted) {
+        try {
+            boolean isDeleted = personDetailsPersistenceService.deletePersonDetails(personDetailsId);
             logger.info("Successfully deleted PersonDetails for ID: {}", personDetailsId);
-        } else {
-            logger.warn("Failed to delete PersonDetails for ID: {}", personDetailsId);
+            return isDeleted;
+        } catch (Exception ex) {
+            logger.error("Failed to delete PersonDetails for ID: {}", personDetailsId);
+            throw ex;
         }
-        return isDeleted;
     }
 }

@@ -3,12 +3,17 @@ package com.bankingsystem.service;
 import com.bankingsystem.model.Transaction;
 import com.bankingsystem.exception.TransactionNotFoundException;
 import com.bankingsystem.persistence.TransactionPersistenceService;
+import com.bankingsystem.persistence.impl.UserPersistenceServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class TransactionService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserPersistenceServiceImpl.class);
 
     private final TransactionPersistenceService transactionPersistenceService;
 
@@ -18,12 +23,15 @@ public class TransactionService {
 
     // Create new transaction
     public Transaction createTransaction(Transaction transaction) {
+        logger.info("Creating new transaction");
         return transactionPersistenceService.save(transaction);
     }
 
     // Get transaction by ID
     public Transaction getTransactionById(int transactionId) {
+        logger.info("Fetching transaction by ID: {}", transactionId);
         if (transactionId <= 0) {
+            logger.error("Invalid transaction ID: {}", transactionId);
             throw new IllegalArgumentException("Transaction ID must be greater than zero");
         }
         return transactionPersistenceService.getTransactionById(transactionId);
@@ -31,18 +39,26 @@ public class TransactionService {
 
     // Get all transactions
     public List<Transaction> getAllTransactions() {
-        List<Transaction> transactions = transactionPersistenceService.getAllTransactions();
-        if (transactions.isEmpty()) {
-            throw new TransactionNotFoundException("No transactions found");
-        }
-        return transactions;
+        logger.info("Fetching all transactions");
+        return transactionPersistenceService.getAllTransactions();
     }
 
     // Delete transaction by ID
     public boolean deleteTransaction(int transactionId) {
+        logger.info("Deleting transaction by ID: {}", transactionId);
         if (transactionId <= 0) {
+            logger.error("Invalid transaction ID: {}", transactionId);
             throw new IllegalArgumentException("Transaction ID must be greater than zero");
         }
-        return transactionPersistenceService.deleteTransaction(transactionId);
+
+        try {
+            boolean isDeleted = transactionPersistenceService.deleteTransaction(transactionId);
+            logger.info("Successfully deleted transaction for ID: {}", transactionId);
+            return isDeleted;
+        } catch (TransactionNotFoundException ex) {
+            logger.error("Transaction not found for ID: {}", transactionId);
+            throw ex;
+        }
     }
+
 }
