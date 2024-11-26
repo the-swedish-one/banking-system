@@ -6,6 +6,7 @@ import com.bankingsystem.model.User;
 import com.bankingsystem.exception.UserNotFoundException;
 import com.bankingsystem.persistence.UserPersistenceService;
 import com.bankingsystem.testutils.TestDataFactory;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,122 +28,131 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-//    Test Create User
-    @Test
-    void testCreateUser() {
-        // Arrange
-        User u = TestDataFactory.createUser();
+    @Nested
+    class CreateUserTests {
 
-        // Act
-        User user = userService.createUser(u);
+        @Test
+        void testCreateUser() {
+            // Arrange
+            User u = TestDataFactory.createUser();
 
-        // Assert
-        assertNotNull(user);
-        assertEquals("John", user.getPerson().getFirstName());
-        verify(userPersistenceService, times(1)).save(user);
+            // Act
+            User user = userService.createUser(u);
+
+            // Assert
+            assertNotNull(user);
+            assertEquals("John", user.getPerson().getFirstName());
+            verify(userPersistenceService, times(1)).save(user);
+        }
+
+        @Test
+        void testCreateUser_NullPerson() {
+            // Act & Assert
+            assertThrows(IllegalArgumentException.class, () -> userService.createUser(null));
+        }
     }
 
-    @Test
-    void testCreateUser_NullPerson() {
-        // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> userService.createUser(null));
+    @Nested
+    class GetUserByIdTests {
+        @Test
+        void testGetUserById() {
+            // Arrange
+            User user = TestDataFactory.createUser();
+            int userId = user.getUserId();
+            when(userPersistenceService.getUserById(userId)).thenReturn(user);
+
+            // Act
+            User retrievedUser = userService.getUserById(userId);
+
+            // Assert
+            assertNotNull(retrievedUser);
+            assertEquals(userId, retrievedUser.getUserId());
+            verify(userPersistenceService, times(1)).getUserById(userId);
+        }
+
+        @Test
+        void testGetUserById_UserNotFound() {
+            // Arrange
+            int userId = 123;
+            when(userPersistenceService.getUserById(userId)).thenReturn(null);
+
+            // Act & Assert
+            UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
+                userService.getUserById(userId);
+            });
+
+            assertEquals("User not found for ID: 123", exception.getMessage());
+            verify(userPersistenceService, times(1)).getUserById(userId);
+        }
     }
 
-//    Test Get User By ID
-    @Test
-    void testGetUserById() {
-        // Arrange
-        User user = TestDataFactory.createUser();
-        int userId = user.getUserId();
-        when(userPersistenceService.getUserById(userId)).thenReturn(user);
+    @Nested
+    class GetAllUsersTests {
+        @Test
+        void testGetAllUsers() {
+            // Arrange
+            User u = TestDataFactory.createUser();
+            User user = userService.createUser(u);
 
-        // Act
-        User retrievedUser = userService.getUserById(userId);
+            List<User> users = new ArrayList<>();
+            users.add(user);
+            when(userPersistenceService.getAllUsers()).thenReturn(users);
 
-        // Assert
-        assertNotNull(retrievedUser);
-        assertEquals(userId, retrievedUser.getUserId());
-        verify(userPersistenceService, times(1)).getUserById(userId);
+            // Act
+            List<User> retrievedUsers = userService.getAllUsers();
+
+            // Assert
+            assertNotNull(retrievedUsers);
+            assertEquals(1, retrievedUsers.size());
+            assertEquals(user, retrievedUsers.get(0));
+            verify(userPersistenceService, times(1)).getAllUsers();
+        }
+
+        @Test
+        void testGetAllUsers_NoUsersExist() {
+            // Arrange
+            when(userPersistenceService.getAllUsers()).thenReturn(new ArrayList<>());
+
+            // Act
+            List<User> users = userService.getAllUsers();
+
+            // Assert
+            assertNotNull(users);
+            assertTrue(users.isEmpty());
+            verify(userPersistenceService, times(1)).getAllUsers();
+        }
     }
 
-    @Test
-    void testGetUserById_UserNotFound() {
-        // Arrange
-        int userId = 123;
-        when(userPersistenceService.getUserById(userId)).thenReturn(null);
+    @Nested
+    class DeleteUserTests {
+        @Test
+        void testDeleteUser() {
+            // Arrange
+            User u = TestDataFactory.createUser();
+            User user = userService.createUser(u);
 
-        // Act & Assert
-        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
-            userService.getUserById(userId);
-        });
+            int userId = user.getUserId();
+            when(userPersistenceService.deleteUser(userId)).thenReturn(true);
 
-        assertEquals("User not found for ID: 123", exception.getMessage());
-        verify(userPersistenceService, times(1)).getUserById(userId);
-    }
+            // Act
+            boolean isDeleted = userService.deleteUser(userId);
 
-//    Test Get All Users
-    @Test
-    void testGetAllUsers() {
-        // Arrange
-        User u = TestDataFactory.createUser();
-        User user = userService.createUser(u);
+            // Assert
+            assertTrue(isDeleted);
+            verify(userPersistenceService, times(1)).deleteUser(userId);
+            assertNull(userPersistenceService.getUserById(userId), "User should be deleted and no longer present in the repository");
+        }
 
-        List<User> users = new ArrayList<>();
-        users.add(user);
-        when(userPersistenceService.getAllUsers()).thenReturn(users);
+        @Test
+        void testDeleteUser_NotFound() {
+            // Arrange
+            int invalidUserId = 123;
+            when(userPersistenceService.deleteUser(invalidUserId)).thenReturn(false);
+            when(userPersistenceService.getUserById(invalidUserId)).thenReturn(null);
 
-        // Act
-        List<User> retrievedUsers = userService.getAllUsers();
-
-        // Assert
-        assertNotNull(retrievedUsers);
-        assertEquals(1, retrievedUsers.size());
-        assertEquals(user, retrievedUsers.get(0));
-        verify(userPersistenceService, times(1)).getAllUsers();
-    }
-
-    @Test
-    void testGetAllUsers_NoUsersExist() {
-        // Arrange
-        when(userPersistenceService.getAllUsers()).thenReturn(new ArrayList<>());
-
-        // Act
-        List<User> users = userService.getAllUsers();
-
-        // Assert
-        assertNotNull(users);
-        assertTrue(users.isEmpty());
-        verify(userPersistenceService, times(1)).getAllUsers();
-    }
-
-//    Test Delete User
-    @Test
-    void testDeleteUser() {
-        // Arrange
-        User u = TestDataFactory.createUser();
-        User user = userService.createUser(u);
-
-        int userId = user.getUserId();
-        when(userPersistenceService.deleteUser(userId)).thenReturn(true);
-
-        // Act
-        boolean isDeleted = userService.deleteUser(userId);
-
-        // Assert
-        assertTrue(isDeleted);
-        verify(userPersistenceService, times(1)).deleteUser(userId);
-        assertNull(userPersistenceService.getUserById(userId), "User should be deleted and no longer present in the repository");
-    }
-
-    @Test
-    void testDeleteUser_NotFound() {
-        // Arrange
-        int invalidUserId = 123;
-        when(userPersistenceService.deleteUser(invalidUserId)).thenReturn(false);
-        when(userPersistenceService.getUserById(invalidUserId)).thenReturn(null);
-
-        // Act
-        assertThrows(UserNotFoundException.class, () -> {userService.deleteUser(invalidUserId);});
-        verify(userPersistenceService, times(1)).deleteUser(invalidUserId);
+            // Act
+            assertThrows(UserNotFoundException.class, () -> {userService.deleteUser(invalidUserId);});
+            verify(userPersistenceService, times(1)).deleteUser(invalidUserId);
+        }
     }
 }
