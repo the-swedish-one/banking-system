@@ -58,9 +58,9 @@ public class CurrencyConversionService {
     // Retrieve the latest currency conversion data
     public CurrencyConversion getLatestCurrencyConversion() {
         logger.info("Fetching latest currency conversion data");
-        var conversionEntity = currencyConversionPersistenceService.getLatestConversion();
+        var conversion = currencyConversionPersistenceService.getLatestConversion();
         logger.info("Successfully fetched latest currency conversion data");
-        return currencyConversionMapper.toModel(conversionEntity);
+        return conversion;
     }
 
     // Update all exchange rates
@@ -68,7 +68,6 @@ public class CurrencyConversionService {
         logger.info("Updating exchange rates");
         CurrencyConversion conversion = new CurrencyConversion(newRates);
         conversion.setLastUpdated(new Date());
-        var conversionEntity = currencyConversionMapper.toEntity(conversion);
-        currencyConversionPersistenceService.updateConversion(conversionEntity);
+        currencyConversionPersistenceService.updateConversion(conversion);
     }
 }
