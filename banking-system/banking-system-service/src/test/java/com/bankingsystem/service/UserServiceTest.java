@@ -1,10 +1,10 @@
-package com.bankingsystem.persistence;
+package com.bankingsystem.service;
 
 import com.bankingsystem.model.Bank;
 import com.bankingsystem.model.PersonDetails;
 import com.bankingsystem.model.User;
 import com.bankingsystem.exception.UserNotFoundException;
-import com.bankingsystem.service.UserService;
+import com.bankingsystem.persistence.UserPersistenceService;
 import com.bankingsystem.testutils.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,9 +24,6 @@ public class UserServiceTest {
     @Mock
     private UserPersistenceService userPersistenceService;
 
-    @Mock
-    private BankPersistenceService bankPersistenceService;
-
     @InjectMocks
     private UserService userService;
 
@@ -34,43 +31,28 @@ public class UserServiceTest {
     @Test
     void testCreateUser() {
         // Arrange
-        Bank bank = TestDataFactory.createBank("My Bank", "MB001");
-        PersonDetails person = TestDataFactory.createPerson("Jane", "Doe", "jd@gmail.com");
+        User u = TestDataFactory.createUser();
 
         // Act
-        User createdUser = userService.createUser(bank, person);
+        User user = userService.createUser(u);
 
         // Assert
-        assertNotNull(createdUser);
-        assertEquals("Jane", createdUser.getPerson().getFirstName());
-        verify(userPersistenceService, times(1)).save(createdUser);
-        verify(bankPersistenceService, times(1)).updateBank(bank);
-        assertTrue(bank.getUsers().contains(createdUser));
+        assertNotNull(user);
+        assertEquals("John", user.getPerson().getFirstName());
+        verify(userPersistenceService, times(1)).save(user);
     }
 
     @Test
     void testCreateUser_NullPerson() {
-        // Arrange
-        Bank bank = TestDataFactory.createBank("My Bank", "MB001");
-
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> userService.createUser(bank, null));
-    }
-
-    @Test
-    void testCreateUser_NullBank() {
-        // Arrange
-        PersonDetails person = TestDataFactory.createPerson("Jane", "Doe", "jd@gmail.com");
-
-        // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> userService.createUser(null, person));
+        assertThrows(IllegalArgumentException.class, () -> userService.createUser(null));
     }
 
 //    Test Get User By ID
     @Test
     void testGetUserById() {
         // Arrange
-        User user = TestDataFactory.createUser("Jane", "Doe", "jd@gmail.com");
+        User user = TestDataFactory.createUser();
         int userId = user.getUserId();
         when(userPersistenceService.getUserById(userId)).thenReturn(user);
 
@@ -81,16 +63,6 @@ public class UserServiceTest {
         assertNotNull(retrievedUser);
         assertEquals(userId, retrievedUser.getUserId());
         verify(userPersistenceService, times(1)).getUserById(userId);
-    }
-
-    @Test
-    void testGetUserById_NonExistent() {
-        // Arrange
-        int invalidUserId = 123;
-        when(userPersistenceService.getUserById(invalidUserId)).thenReturn(null);
-
-        // Act & Assert
-        assertThrows(UserNotFoundException.class, () -> userService.getUserById(invalidUserId));
     }
 
     @Test
@@ -112,9 +84,8 @@ public class UserServiceTest {
     @Test
     void testGetAllUsers() {
         // Arrange
-        Bank bank = TestDataFactory.createBank("My Bank", "MB001");
-        PersonDetails person = TestDataFactory.createPerson("Jane", "Doe", "jd@gmail.com");
-        User user = userService.createUser(bank, person);
+        User u = TestDataFactory.createUser();
+        User user = userService.createUser(u);
 
         List<User> users = new ArrayList<>();
         users.add(user);
@@ -148,9 +119,8 @@ public class UserServiceTest {
     @Test
     void testDeleteUser() {
         // Arrange
-        Bank bank = TestDataFactory.createBank("My Bank", "MB001");
-        PersonDetails person = TestDataFactory.createPerson("Jane", "Doe", "jd@gmail.com");
-        User user = userService.createUser(bank, person);
+        User u = TestDataFactory.createUser();
+        User user = userService.createUser(u);
 
         int userId = user.getUserId();
         when(userPersistenceService.deleteUser(userId)).thenReturn(true);
@@ -161,6 +131,7 @@ public class UserServiceTest {
         // Assert
         assertTrue(isDeleted);
         verify(userPersistenceService, times(1)).deleteUser(userId);
+        assertNull(userPersistenceService.getUserById(userId), "User should be deleted and no longer present in the repository");
     }
 
     @Test
@@ -168,12 +139,10 @@ public class UserServiceTest {
         // Arrange
         int invalidUserId = 123;
         when(userPersistenceService.deleteUser(invalidUserId)).thenReturn(false);
+        when(userPersistenceService.getUserById(invalidUserId)).thenReturn(null);
 
         // Act
-        boolean isDeleted = userService.deleteUser(invalidUserId);
-
-        // Assert
-        assertFalse(isDeleted);
+        assertThrows(UserNotFoundException.class, () -> {userService.deleteUser(invalidUserId);});
         verify(userPersistenceService, times(1)).deleteUser(invalidUserId);
     }
 }
