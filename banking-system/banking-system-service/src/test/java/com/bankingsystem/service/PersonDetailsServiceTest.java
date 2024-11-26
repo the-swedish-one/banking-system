@@ -1,8 +1,8 @@
-package com.bankingsystem.persistence;
+package com.bankingsystem.service;
 
 import com.bankingsystem.model.PersonDetails;
 import com.bankingsystem.exception.PersonDetailsNotFoundException;
-import com.bankingsystem.service.PersonDetailsService;
+import com.bankingsystem.persistence.PersonDetailsPersistenceService;
 import com.bankingsystem.testutils.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,20 +26,26 @@ public class PersonDetailsServiceTest {
 
     @Test
     void testCreatePersonDetails() {
+        // Arrange
+        PersonDetails personDetails = TestDataFactory.createPerson();
+        when(personDetailsPersistenceService.save(personDetails)).thenReturn(personDetails);
+
         // Act
-        PersonDetails createdPersonDetails = personDetailsService.createPersonDetails("John", "Doe", "jd@gmail.com", "Address Line 1", "Address Line 2", "City", "Country");
+        PersonDetails createdPersonDetails = personDetailsService.createPersonDetails(personDetails);
 
         // Assert
         assertNotNull(createdPersonDetails);
         assertEquals("John", createdPersonDetails.getFirstName());
-        verify(personDetailsPersistenceService, times(1)).save(createdPersonDetails);
+        assertEquals("Doe", createdPersonDetails.getLastName());
+        assertEquals("jd@gmail.com", createdPersonDetails.getEmail());
+        verify(personDetailsPersistenceService, times(1)).save(personDetails);
     }
 
 //    Test Get PersonDetails By ID
     @Test
     void testGetPersonDetailsById() {
         // Arrange
-        PersonDetails personDetails = TestDataFactory.createPerson("John", "Doe", "jd@gmail.com");
+        PersonDetails personDetails = TestDataFactory.createPerson();
         int personId = personDetails.getPersonId();
         when(personDetailsPersistenceService.getPersonDetailsById(personId)).thenReturn(personDetails);
 
@@ -49,6 +55,8 @@ public class PersonDetailsServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals("John", result.getFirstName());
+        assertEquals("Doe", result.getLastName());
+        assertEquals("jd@gmail.com", result.getEmail());
         verify(personDetailsPersistenceService, times(1)).getPersonDetailsById(personId);
     }
 
@@ -74,8 +82,8 @@ public class PersonDetailsServiceTest {
     @Test
     void testGetAllPersonDetails() {
         // Arrange
-        PersonDetails person1 = TestDataFactory.createPerson("John", "Doe", "jd@gmail.com");
-        PersonDetails person2 = TestDataFactory.createPerson("Jane", "Doe", "jd2@gmail.com");
+        PersonDetails person1 = TestDataFactory.createPerson();
+        PersonDetails person2 = TestDataFactory.createPerson("Jane", "Doe");
         when(personDetailsPersistenceService.getAllPersonDetails()).thenReturn(List.of(person1, person2));
 
         // Act
@@ -91,7 +99,7 @@ public class PersonDetailsServiceTest {
     }
 
     @Test
-    void testGetAllPersonsDetails_Empty() {
+    void testGetAllPersonDetails_Empty() {
         // Arrange
         when(personDetailsPersistenceService.getAllPersonDetails()).thenReturn(List.of());
 
