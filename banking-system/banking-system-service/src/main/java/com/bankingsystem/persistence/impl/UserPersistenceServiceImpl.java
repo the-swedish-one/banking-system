@@ -36,6 +36,10 @@ public class UserPersistenceServiceImpl implements UserPersistenceService {
     @Override
     public User save(User user) {
         logger.info("Saving new user");
+        if (user == null) {
+            logger.error("User object is null");
+            throw new IllegalArgumentException("User object cannot be null");
+        }
         UserEntity entity = userMapper.toEntity(user);
         UserEntity savedEntity = userRepository.save(entity);
         logger.info("Successfully saved user with ID: {}", savedEntity.getUserId());
