@@ -1,5 +1,6 @@
 package com.bankingsystem.persistence.impl;
 
+import com.bankingsystem.mapper.CurrencyConversionMapper;
 import com.bankingsystem.model.CurrencyConversion;
 import com.bankingsystem.model.CurrencyConversionEntity;
 import com.bankingsystem.enums.CurrencyCode;
@@ -19,10 +20,13 @@ public class CurrencyConversionPersistenceServiceImpl implements CurrencyConvers
     private static final Logger logger = LoggerFactory.getLogger(CurrencyConversionPersistenceServiceImpl.class);
 
     private final CurrencyConversionRepository currencyConversionRepository;
+    private final CurrencyConversionMapper currencyConversionMapper;
 
     @Autowired
-    public CurrencyConversionPersistenceServiceImpl(CurrencyConversionRepository currencyConversionRepository) {
+    public CurrencyConversionPersistenceServiceImpl(CurrencyConversionRepository currencyConversionRepository, CurrencyConversionMapper currencyConversionMapper) {
+
         this.currencyConversionRepository = currencyConversionRepository;
+        this.currencyConversionMapper = currencyConversionMapper;
 
         // Initialize if no conversion data exists in the repository
         if (currencyConversionRepository.count() == 0) {
@@ -39,8 +43,9 @@ public class CurrencyConversionPersistenceServiceImpl implements CurrencyConvers
     }
 
     @Override
-    public CurrencyConversionEntity getLatestConversion() {
+    public CurrencyConversion getLatestConversion() {
         return currencyConversionRepository.findTopByOrderByTimestampDesc()
+                .map(currencyConversionMapper::toModel)
                 .orElseThrow(() -> {
                     logger.error("No currency conversion data found");
                     return new RuntimeException("No currency conversion data found");
@@ -48,9 +53,10 @@ public class CurrencyConversionPersistenceServiceImpl implements CurrencyConvers
     }
 
     @Override
-    public void updateConversion(CurrencyConversionEntity conversion) {
+    public void updateConversion(CurrencyConversion conversion) {
         logger.info("Updating currency conversion data");
-        currencyConversionRepository.save(conversion);
+        CurrencyConversionEntity entity = currencyConversionMapper.toEntity(conversion);
+        currencyConversionRepository.save(entity);
         logger.info("Successfully updated currency conversion data");
     }
 }
