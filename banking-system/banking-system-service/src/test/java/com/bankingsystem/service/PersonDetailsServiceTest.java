@@ -4,6 +4,7 @@ import com.bankingsystem.model.PersonDetails;
 import com.bankingsystem.exception.PersonDetailsNotFoundException;
 import com.bankingsystem.persistence.PersonDetailsPersistenceService;
 import com.bankingsystem.testutils.TestDataFactory;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -41,106 +42,114 @@ public class PersonDetailsServiceTest {
         verify(personDetailsPersistenceService, times(1)).save(personDetails);
     }
 
-//    Test Get PersonDetails By ID
-    @Test
-    void testGetPersonDetailsById() {
-        // Arrange
-        PersonDetails personDetails = TestDataFactory.createPerson();
-        int personId = personDetails.getPersonId();
-        when(personDetailsPersistenceService.getPersonDetailsById(personId)).thenReturn(personDetails);
+    @Nested
+    class GetPersonDetailsTests {
 
-        // Act
-        PersonDetails result = personDetailsService.getPersonDetailsById(personId);
+        @Test
+        void testGetPersonDetailsById() {
+            // Arrange
+            PersonDetails personDetails = TestDataFactory.createPerson();
+            int personId = personDetails.getPersonId();
+            when(personDetailsPersistenceService.getPersonDetailsById(personId)).thenReturn(personDetails);
 
-        // Assert
-        assertNotNull(result);
-        assertEquals("John", result.getFirstName());
-        assertEquals("Doe", result.getLastName());
-        assertEquals("jd@gmail.com", result.getEmail());
-        verify(personDetailsPersistenceService, times(1)).getPersonDetailsById(personId);
+            // Act
+            PersonDetails result = personDetailsService.getPersonDetailsById(personId);
+
+            // Assert
+            assertNotNull(result);
+            assertEquals("John", result.getFirstName());
+            assertEquals("Doe", result.getLastName());
+            assertEquals("jd@gmail.com", result.getEmail());
+            verify(personDetailsPersistenceService, times(1)).getPersonDetailsById(personId);
+        }
+
+        @Test
+        void testGetPersonDetailsById_NegativeId() {
+            // Act & Assert
+            assertThrows(IllegalArgumentException.class, () -> personDetailsService.getPersonDetailsById(-2));
+        }
+
+        @Test
+        void testGetPersonDetailsById_NotFound() {
+            // Arrange
+            int invalidPersonId = 123;
+            when(personDetailsPersistenceService.getPersonDetailsById(invalidPersonId)).thenReturn(null);
+
+            // Act & Assert
+            assertThrows(PersonDetailsNotFoundException.class, () -> personDetailsService.getPersonDetailsById(invalidPersonId));
+
+            verify(personDetailsPersistenceService, times(1)).getPersonDetailsById(invalidPersonId);
+        }
     }
 
-    @Test
-    void testGetPersonDetailsById_NegativeId() {
-        // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> personDetailsService.getPersonDetailsById(-2));
+    @Nested
+    class GetAllPersonDetailsTests {
+
+        @Test
+        void testGetAllPersonDetails() {
+            // Arrange
+            PersonDetails person1 = TestDataFactory.createPerson();
+            PersonDetails person2 = TestDataFactory.createPerson("Jane", "Doe");
+            when(personDetailsPersistenceService.getAllPersonDetails()).thenReturn(List.of(person1, person2));
+
+            // Act
+            List<PersonDetails> result = personDetailsService.getAllPersonsDetails();
+
+            // Assert
+            assertNotNull(result);
+            assertEquals(2, result.size());
+            assertEquals(person1.getPersonId(), result.get(0).getPersonId());
+            assertEquals(person2.getPersonId(), result.get(1).getPersonId());
+
+            verify(personDetailsPersistenceService, times(1)).getAllPersonDetails();
+        }
+
+        @Test
+        void testGetAllPersonDetails_Empty() {
+            // Arrange
+            when(personDetailsPersistenceService.getAllPersonDetails()).thenReturn(List.of());
+
+            // Act & Assert
+            assertThrows(PersonDetailsNotFoundException.class, () -> personDetailsService.getAllPersonsDetails());
+        }
     }
 
-    @Test
-    void testGetPersonDetailsById_NotFound() {
-        // Arrange
-        int invalidPersonId = 123;
-        when(personDetailsPersistenceService.getPersonDetailsById(invalidPersonId)).thenReturn(null);
+    @Nested
+    class DeletePersonDetailsTests {
+        @Test
+        void testDeletePersonDetails() {
+            // Arrange
+            int personId = 123;
+            when(personDetailsPersistenceService.deletePersonDetails(personId)).thenReturn(true);
 
-        // Act & Assert
-        assertThrows(PersonDetailsNotFoundException.class, () -> personDetailsService.getPersonDetailsById(invalidPersonId));
+            // Act
+            boolean result = personDetailsService.deletePersonDetails(personId);
 
-        verify(personDetailsPersistenceService, times(1)).getPersonDetailsById(invalidPersonId);
-    }
+            // Assert
+            assertTrue(result);
+            verify(personDetailsPersistenceService, times(1)).deletePersonDetails(personId);
+        }
 
-//    Test Get All Persons
-    @Test
-    void testGetAllPersonDetails() {
-        // Arrange
-        PersonDetails person1 = TestDataFactory.createPerson();
-        PersonDetails person2 = TestDataFactory.createPerson("Jane", "Doe");
-        when(personDetailsPersistenceService.getAllPersonDetails()).thenReturn(List.of(person1, person2));
+        @Test
+        void testDeletePersonDetails_NegativeId() {
+            // Act & Assert
+            assertThrows(IllegalArgumentException.class, () -> personDetailsService.deletePersonDetails(-2));
+            verify(personDetailsPersistenceService, never()).deletePersonDetails(anyInt());
+        }
 
-        // Act
-        List<PersonDetails> result = personDetailsService.getAllPersonsDetails();
+        @Test
+        void testDeletePersonDetails_NotFound() {
+            // Arrange
+            int nonExistentPersonId = 456;
+            when(personDetailsPersistenceService.deletePersonDetails(nonExistentPersonId)).thenReturn(false);
 
-        // Assert
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        assertEquals(person1.getPersonId(), result.get(0).getPersonId());
-        assertEquals(person2.getPersonId(), result.get(1).getPersonId());
+            // Act
+            boolean result = personDetailsService.deletePersonDetails(nonExistentPersonId);
 
-        verify(personDetailsPersistenceService, times(1)).getAllPersonDetails();
-    }
-
-    @Test
-    void testGetAllPersonDetails_Empty() {
-        // Arrange
-        when(personDetailsPersistenceService.getAllPersonDetails()).thenReturn(List.of());
-
-        // Act & Assert
-        assertThrows(PersonDetailsNotFoundException.class, () -> personDetailsService.getAllPersonsDetails());
-    }
-
-//    Test Delete PersonDetails
-    @Test
-    void testDeletePersonDetails() {
-        // Arrange
-        int personId = 123;
-        when(personDetailsPersistenceService.deletePersonDetails(personId)).thenReturn(true);
-
-        // Act
-        boolean result = personDetailsService.deletePersonDetails(personId);
-
-        // Assert
-        assertTrue(result);
-        verify(personDetailsPersistenceService, times(1)).deletePersonDetails(personId);
-    }
-
-    @Test
-    void testDeletePersonDetails_NegativeId() {
-        // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> personDetailsService.deletePersonDetails(-2));
-        verify(personDetailsPersistenceService, never()).deletePersonDetails(anyInt());
-    }
-
-    @Test
-    void testDeletePersonDetails_NotFound() {
-        // Arrange
-        int nonExistentPersonId = 456;
-        when(personDetailsPersistenceService.deletePersonDetails(nonExistentPersonId)).thenReturn(false);
-
-        // Act
-        boolean result = personDetailsService.deletePersonDetails(nonExistentPersonId);
-
-        // Assert
-        assertFalse(result);
-        verify(personDetailsPersistenceService, times(1)).deletePersonDetails(nonExistentPersonId);
+            // Assert
+            assertFalse(result);
+            verify(personDetailsPersistenceService, times(1)).deletePersonDetails(nonExistentPersonId);
+        }
     }
 
 }
