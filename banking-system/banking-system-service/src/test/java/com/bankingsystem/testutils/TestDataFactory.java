@@ -1,44 +1,76 @@
 package com.bankingsystem.testutils;
 
-import java.math.BigDecimal;
+import com.bankingsystem.enums.CurrencyCode;
+import com.bankingsystem.model.*;
 
+import java.math.BigDecimal;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestDataFactory {
-    public static Bank createBank(String name, String bic) {
-        return new Bank(name, bic);
+    // Common defaults for reusable test data
+    private static final int DEFAULT_ID = 1;
+    private static final String DEFAULT_FIRST_NAME = "John";
+    private static final String DEFAULT_LAST_NAME = "Doe";
+    private static final String DEFAULT_EMAIL = "john.doe@example.com";
+    private static final BigDecimal DEFAULT_AMOUNT = BigDecimal.valueOf(1000);
+    private static final CurrencyCode DEFAULT_CURRENCY = CurrencyCode.USD;
+    private static final BigDecimal DEFAULT_OVERDRAFT_LIMIT = BigDecimal.valueOf(500);
+    private static final double DEFAULT_INTEREST_RATE = 0.05;
+
+    private static final AtomicInteger idCounter = new AtomicInteger(1);
+
+    // PersonDetails creation
+    public static PersonDetails createPerson() {
+        return createPerson(DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME);
     }
 
-    public static PersonDetails createPerson(String firstName, String lastName, String email) {
-        return new PersonDetails(firstName, lastName, email, "Address Line 1", "Address Line 2", "City", "Country");
+    public static PersonDetails createPerson(String firstName, String lastName) {
+        int uniqueId = idCounter.getAndIncrement();
+        return new PersonDetails(uniqueId, firstName, lastName, DEFAULT_EMAIL, "123 Main St", "Apt 4B", "Springfield", "USA");
     }
 
-    public static User createUser(String firstName, String lastName, String email) {
-        PersonDetails person = createPerson(firstName, lastName, email);
-        return new User(person);
+    // User creation
+    public static User createUser() {
+        return createUser(DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME);
     }
 
-    public static DepositTransaction createDepositTransaction(BigDecimal amount) {
-        return new DepositTransaction(amount);
+    public static User createUser(String firstName, String lastName) {
+        return new User(createPerson(firstName, lastName));
     }
 
-    public static WithdrawTransaction createWithdrawTransaction(BigDecimal amount) {
-        return new WithdrawTransaction(amount);
+    // Transaction creation
+    public static Transaction createTransaction() {
+        return createTransaction(DEFAULT_AMOUNT, 1, 2);
     }
 
-    public static TransferTransaction createTransferTransaction(BigDecimal amount, String fromAccountId, String toAccountId) {
-        return new TransferTransaction(amount, fromAccountId, toAccountId);
+    public static Transaction createTransaction(BigDecimal amount, int fromAccountId, int toAccountId) {
+        return new Transaction(amount, fromAccountId, toAccountId);
+    }
+
+    // CheckingAccount creation
+    public static CheckingAccount createCheckingAccount(User user) {
+        return createCheckingAccount(user, DEFAULT_AMOUNT, DEFAULT_CURRENCY, DEFAULT_OVERDRAFT_LIMIT);
     }
 
     public static CheckingAccount createCheckingAccount(User user, BigDecimal amount, CurrencyCode currency, BigDecimal overdraftLimit) {
         return new CheckingAccount(user, amount, currency, overdraftLimit);
     }
 
+    // SavingsAccount creation
+    public static SavingsAccount createSavingsAccount(User user) {
+        return createSavingsAccount(user, DEFAULT_AMOUNT, DEFAULT_CURRENCY, DEFAULT_INTEREST_RATE);
+    }
+
     public static SavingsAccount createSavingsAccount(User user, BigDecimal amount, CurrencyCode currency, double interestRate) {
         return new SavingsAccount(user, amount, currency, interestRate);
     }
 
-    public static JointCheckingAccount createJointCheckingAccount(User user, User secondOwner, BigDecimal amount, CurrencyCode currency, BigDecimal overdraftLimit) {
-        return new JointCheckingAccount(user, secondOwner, amount, currency, overdraftLimit);
+    // JointCheckingAccount creation
+    public static JointCheckingAccount createJointCheckingAccount(User primaryOwner, User secondaryOwner) {
+        return createJointCheckingAccount(primaryOwner, secondaryOwner, DEFAULT_AMOUNT, DEFAULT_CURRENCY, DEFAULT_OVERDRAFT_LIMIT);
     }
 
+    public static JointCheckingAccount createJointCheckingAccount(User primaryOwner, User secondaryOwner, BigDecimal amount, CurrencyCode currency, BigDecimal overdraftLimit) {
+        return new JointCheckingAccount(primaryOwner, secondaryOwner, amount, currency, overdraftLimit);
+    }
 }
