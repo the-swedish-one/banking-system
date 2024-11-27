@@ -13,9 +13,9 @@ public class TestDataFactory {
     private static final String DEFAULT_LAST_NAME = "Doe";
     private static final String DEFAULT_EMAIL = "john.doe@example.com";
     private static final BigDecimal DEFAULT_AMOUNT = BigDecimal.valueOf(1000);
-    private static final CurrencyCode DEFAULT_CURRENCY = CurrencyCode.USD;
+    private static final CurrencyCode DEFAULT_CURRENCY = CurrencyCode.EUR;
     private static final BigDecimal DEFAULT_OVERDRAFT_LIMIT = BigDecimal.valueOf(500);
-    private static final double DEFAULT_INTEREST_RATE = 0.05;
+    private static final double DEFAULT_INTEREST_RATE = 2;
 
     private static final AtomicInteger idCounter = new AtomicInteger(1);
 
