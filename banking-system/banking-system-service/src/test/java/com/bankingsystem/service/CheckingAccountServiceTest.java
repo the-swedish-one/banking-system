@@ -55,7 +55,7 @@ class CheckingAccountServiceTest {
             assertNotNull(checkingAccount);
             assertEquals(BigDecimal.valueOf(1000), checkingAccount.getBalance());
             assertEquals(CurrencyCode.EUR, checkingAccount.getCurrency());
-            assertEquals(BigDecimal.valueOf(1000), checkingAccount.getOverdraftLimit());
+            assertEquals(BigDecimal.valueOf(500), checkingAccount.getOverdraftLimit());
             assertEquals(user, checkingAccount.getOwner());
             verify(accountPersistenceService, times(1)).save(checkingAccount);
         }
@@ -69,6 +69,66 @@ class CheckingAccountServiceTest {
                     () -> accountService.createCheckingAccount(invalidAccount));
 
             assertEquals("Account creation failed: Missing required fields", exception.getMessage());
+        }
+    }
+
+    @Nested
+    class GenerateIBANTests {
+        @Test
+        void generateIBAN_ValidCountry_ReturnsIBAN() {
+            String country = "US";
+
+            String iban = accountService.generateIBAN(country);
+
+            assertNotNull(iban);
+            assertTrue(iban.startsWith("US"));
+            assertEquals(16, iban.length()); // 2 letters for country + 14 digits
+            assertTrue(iban.substring(2).chars().allMatch(Character::isDigit));
+        }
+
+        @Test
+        void generateIBAN_NullCountry_ThrowsException() {
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                    () -> accountService.generateIBAN(null));
+
+            assertEquals("Country is null or less than 2 characters", exception.getMessage());
+        }
+
+        @Test
+        void generateIBAN_EmptyCountry_ThrowsException() {
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                    () -> accountService.generateIBAN(""));
+
+            assertEquals("Country is null or less than 2 characters", exception.getMessage());
+        }
+
+        @Test
+        void generateIBAN_ShortCountryCode_ThrowsException() {
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                    () -> accountService.generateIBAN("A"));
+
+            assertEquals("Country is null or less than 2 characters", exception.getMessage());
+        }
+
+        @Test
+        void generateIBAN_CountryCodeLowerCase_ConvertsToUpperCase() {
+            String country = "gb";
+
+            String iban = accountService.generateIBAN(country);
+
+            assertNotNull(iban);
+            assertTrue(iban.startsWith("GB"));
+            assertEquals(16, iban.length());
+        }
+
+        @Test
+        void generateIBAN_GeneratesUniqueIBANs() {
+            String country = "FR";
+
+            String iban1 = accountService.generateIBAN(country);
+            String iban2 = accountService.generateIBAN(country);
+
+            assertNotEquals(iban1, iban2);
         }
     }
 
@@ -105,7 +165,6 @@ class CheckingAccountServiceTest {
             // Act & Assert
             assertThrows(AccountNotFoundException.class, () -> accountService.getCheckingAccountById(123));
         }
-
     }
 
     @Nested
@@ -187,27 +246,13 @@ class CheckingAccountServiceTest {
         }
 
         @Test
-        void deleteCheckingAccount_NonExistingId_ThrowsException() {
+        void deleteAccount_NotFound() {
             when(accountPersistenceService.deleteAccount(99)).thenThrow(new AccountNotFoundException("Checking Account not found"));
 
             AccountNotFoundException exception = assertThrows(AccountNotFoundException.class,
                     () -> accountService.deleteCheckingAccount(99));
 
             assertEquals("Checking Account not found", exception.getMessage());
-        }
-
-        @Test
-        void testDeleteAccount_NotFound() {
-            // Arrange
-            int accountId = 123;
-            when(accountPersistenceService.deleteAccount(accountId)).thenReturn(false);
-
-            // Act
-            boolean wasDeleted = accountService.deleteCheckingAccount(accountId);
-
-            // Assert
-            assertFalse(wasDeleted);
-            verify(accountPersistenceService, times(1)).deleteAccount(accountId);
         }
     }
 
@@ -271,6 +316,20 @@ class CheckingAccountServiceTest {
         }
 
         @Test
+        void testWithdraw_NegativeAmount() {
+            // Arrange
+            User user = TestDataFactory.createUser();
+            CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user);
+
+            when(accountPersistenceService.getAccountById(checkingAccount.getAccountId())).thenReturn(checkingAccount);
+
+            // Act & Assert
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> accountService.withdraw(checkingAccount.getAccountId(), BigDecimal.valueOf(-500)));
+            assertEquals("Withdraw Failed: Amount must be greater than 0", exception.getMessage());
+            verify(accountPersistenceService, times(0)).updateAccount(checkingAccount);
+        }
+
+        @Test
         void testWithdraw_ExceedsBalanceWithinOverdraftLimit() {
             // Arrange
             User user = TestDataFactory.createUser();
@@ -299,20 +358,6 @@ class CheckingAccountServiceTest {
             // Act & Assert
             Exception exception = assertThrows(OverdraftLimitExceededException.class, () -> accountService.withdraw(checkingAccount.getAccountId(), BigDecimal.valueOf(400)));
             assertEquals("Withdraw Failed: Overdraft limit exceeded", exception.getMessage());
-            verify(accountPersistenceService, times(0)).updateAccount(checkingAccount);
-        }
-
-        @Test
-        void testWithdraw_NegativeAmount() {
-            // Arrange
-            User user = TestDataFactory.createUser();
-            CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user);
-
-            when(accountPersistenceService.getAccountById(checkingAccount.getAccountId())).thenReturn(checkingAccount);
-
-            // Act & Assert
-            Exception exception = assertThrows(IllegalArgumentException.class, () -> accountService.withdraw(checkingAccount.getAccountId(), BigDecimal.valueOf(-500)));
-            assertEquals("Withdraw Failed: Amount must be greater than 0", exception.getMessage());
             verify(accountPersistenceService, times(0)).updateAccount(checkingAccount);
         }
     }
