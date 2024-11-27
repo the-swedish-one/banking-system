@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -23,6 +24,19 @@ public class TransactionService {
     // Create new transaction
     public Transaction createTransaction(Transaction transaction) {
         logger.info("Creating new transaction");
+        if (transaction.getAmount().compareTo(BigDecimal.valueOf(0)) <= 0) {
+            logger.error("Invalid transaction amount: {}", transaction.getAmount());
+            throw new IllegalArgumentException("Transaction amount must be greater than zero");
+        }
+        if (transaction.getFromAccountId() == null && transaction.getToAccountId() == null) {
+            logger.error("At least one of fromAccountId or toAccountId must be specified");
+            throw new IllegalArgumentException("At least one of fromAccountId or toAccountId must be specified");
+        }
+        // check transactions amount is not null
+        if (transaction.getAmount() == null) {
+            logger.error("Transaction amount is null");
+            throw new IllegalArgumentException("Transaction amount cannot be null");
+        }
         return transactionPersistenceService.save(transaction);
     }
 
