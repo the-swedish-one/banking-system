@@ -41,7 +41,7 @@ class CheckingAccountServiceTest {
     class CreateCheckingAccountTests {
 
         @Test
-        void testCreateCheckingAccount() {
+        void createCheckingAccount() {
             // Arrange
             User user = TestDataFactory.createUser();
             CheckingAccount account = TestDataFactory.createCheckingAccount(user);
@@ -136,7 +136,7 @@ class CheckingAccountServiceTest {
     @Nested
     class GetCheckingAccountByIdTests {
         @Test
-        void testGetAccountById() {
+        void getAccountById() {
             // Arrange
             User user = TestDataFactory.createUser();
             CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user);
@@ -153,7 +153,7 @@ class CheckingAccountServiceTest {
         }
 
         @Test
-        void getCheckingAccountById_InvalidId() {
+        void getAccountById_InvalidId() {
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                     () -> accountService.getCheckingAccountById(0));
 
@@ -161,7 +161,7 @@ class CheckingAccountServiceTest {
         }
 
         @Test
-        void testGetAccountById_AccountNotFound() {
+        void getAccountById_AccountNotFound() {
             // Act & Assert
             assertThrows(AccountNotFoundException.class, () -> accountService.getCheckingAccountById(123));
         }
@@ -171,7 +171,7 @@ class CheckingAccountServiceTest {
     class GetAllCheckingAccounts {
 
         @Test
-        void testGetAllCheckingAccounts() {
+        void getAllCheckingAccounts() {
             // Arrange
             User user = TestDataFactory.createUser();
             CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user);
@@ -190,7 +190,7 @@ class CheckingAccountServiceTest {
         }
 
         @Test
-        void testGetAllCheckingAccounts_EmptyList() {
+        void getAllCheckingAccounts_EmptyList() {
             // Arrange
             when(accountPersistenceService.getAllAccounts()).thenReturn(List.of());
 
@@ -209,7 +209,7 @@ class CheckingAccountServiceTest {
     class UpdateCheckingAccountTests {
 
         @Test
-        void testUpdateCheckingAccount() {
+        void updateCheckingAccount() {
             // Arrange
             User user = TestDataFactory.createUser();
             CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user);
@@ -230,7 +230,7 @@ class CheckingAccountServiceTest {
     class DeleteCheckingAccountTests {
 
         @Test
-        void testDeleteAccount() {
+        void deleteAccount() {
             // Arrange
             User user = TestDataFactory.createUser();
             CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user);
@@ -260,7 +260,7 @@ class CheckingAccountServiceTest {
     class CheckingAccountDepositTests {
 
         @Test
-        void testDeposit() {
+        void deposit() {
             // Arrange
             User user = TestDataFactory.createUser();
             CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user);
@@ -279,7 +279,7 @@ class CheckingAccountServiceTest {
         }
 
         @Test
-        void testDeposit_NegativeAmount() {
+        void deposit_NegativeAmount() {
             // Arrange
             User user = TestDataFactory.createUser();
             CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user);
@@ -297,7 +297,7 @@ class CheckingAccountServiceTest {
     class CheckingAccountWithdrawTests {
 
         @Test
-        void testWithdraw() {
+        void withdraw() {
             // Arrange
             User user = TestDataFactory.createUser();
             CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user);
@@ -316,7 +316,7 @@ class CheckingAccountServiceTest {
         }
 
         @Test
-        void testWithdraw_NegativeAmount() {
+        void withdraw_NegativeAmount() {
             // Arrange
             User user = TestDataFactory.createUser();
             CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user);
@@ -330,7 +330,7 @@ class CheckingAccountServiceTest {
         }
 
         @Test
-        void testWithdraw_ExceedsBalanceWithinOverdraftLimit() {
+        void withdraw_ExceedsBalanceWithinOverdraftLimit() {
             // Arrange
             User user = TestDataFactory.createUser();
             CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user);
@@ -349,7 +349,7 @@ class CheckingAccountServiceTest {
         }
 
         @Test
-        void testWithdraw_ExceedsOverdraftLimit() {
+        void withdraw_ExceedsOverdraftLimit() {
             // Arrange
             User user = TestDataFactory.createUser();
             CheckingAccount checkingAccount = TestDataFactory.createCheckingAccount(user);
@@ -366,7 +366,7 @@ class CheckingAccountServiceTest {
     class CheckingAccountTransferTests {
 
         @Test
-        void testTransfer() {
+        void transfer() {
             // Arrange
             User user = TestDataFactory.createUser();
             CheckingAccount fromAccount = TestDataFactory.createCheckingAccount(user);
@@ -389,7 +389,7 @@ class CheckingAccountServiceTest {
         }
 
         @Test
-        void testTransfer_DifferentCurrencies() {
+        void transfer_DifferentCurrencies() {
             // Arrange
             User user = TestDataFactory.createUser();
             CheckingAccount fromAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
@@ -420,7 +420,7 @@ class CheckingAccountServiceTest {
         }
 
         @Test
-        void testTransfer_NegativeAmount() {
+        void transfer_NegativeAmount() {
             // Arrange
             User user = TestDataFactory.createUser();
             CheckingAccount fromAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
