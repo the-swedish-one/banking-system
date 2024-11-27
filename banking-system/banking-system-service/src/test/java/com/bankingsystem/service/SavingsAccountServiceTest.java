@@ -240,7 +240,7 @@ public class SavingsAccountServiceTest {
 
         @Test
         void deleteAccount_NotFound() {
-            when(accountPersistenceService.deleteAccount(99)).thenThrow(new AccountNotFoundException("Checking Account not found"));
+            when(accountPersistenceService.deleteAccount(99)).thenThrow(new AccountNotFoundException("Savings Account not found"));
 
             AccountNotFoundException exception = assertThrows(AccountNotFoundException.class,
                     () -> accountService.deleteSavingsAccount(99));
