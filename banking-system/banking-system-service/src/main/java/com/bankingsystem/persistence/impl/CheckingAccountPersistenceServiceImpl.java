@@ -90,7 +90,7 @@ public class CheckingAccountPersistenceServiceImpl implements CheckingAccountPer
     public boolean deleteAccount(int accountId) {
         if (!checkingAccountRepository.existsById(accountId)) {
             logger.error("Checking Account not found for ID: {}", accountId);
-            throw new AccountNotFoundException("Savings Account not found");
+            throw new AccountNotFoundException("Checking Account not found");
         }
         checkingAccountRepository.deleteById(accountId);
         return true;
