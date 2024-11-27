@@ -29,6 +29,10 @@ public class TransactionPersistenceServiceImpl implements TransactionPersistence
     @Override
     public Transaction save(Transaction depositTransaction) {
         logger.info("Saving new transaction");
+        if (depositTransaction == null) {
+            logger.error("Transaction object is null");
+            throw new IllegalArgumentException("Transaction object cannot be null");
+        }
         TransactionEntity entity = transactionMapper.toEntity(depositTransaction);
         TransactionEntity savedEntity = transactionRepository.save(entity);
         logger.info("Successfully saved transaction with ID: {}", savedEntity.getTransactionId());
