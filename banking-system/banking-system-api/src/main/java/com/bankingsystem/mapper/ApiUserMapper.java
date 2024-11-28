@@ -1,7 +1,7 @@
 package com.bankingsystem.mapper;
 
 import com.bankingsystem.model.ApiUser;
-import com.bankingsystem.model.User;
+import com.domain.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

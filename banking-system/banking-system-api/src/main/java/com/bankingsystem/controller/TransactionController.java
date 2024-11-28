@@ -2,8 +2,8 @@ package com.bankingsystem.controller;
 
 import com.bankingsystem.mapper.ApiTransactionMapper;
 import com.bankingsystem.model.ApiTransaction;
-import com.bankingsystem.model.Transaction;
-import com.bankingsystem.service.TransactionService;
+import com.domain.model.Transaction;
+import com.domain.service.TransactionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

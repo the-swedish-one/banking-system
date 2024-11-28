@@ -1,7 +1,7 @@
 package com.bankingsystem.mapper;
 
 import com.bankingsystem.model.ApiTransaction;
-import com.bankingsystem.model.Transaction;
+import com.domain.model.Transaction;
 import org.springframework.stereotype.Component;
 
 @Component

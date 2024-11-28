@@ -1,7 +1,7 @@
 package com.bankingsystem.mapper;
 
 import com.bankingsystem.model.ApiPersonDetails;
-import com.bankingsystem.model.PersonDetails;
+import com.domain.model.PersonDetails;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

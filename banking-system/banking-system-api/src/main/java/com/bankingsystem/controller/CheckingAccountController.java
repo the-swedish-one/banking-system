@@ -1,8 +1,7 @@
 package com.bankingsystem.controller;
 
-import com.bankingsystem.exception.OverdraftLimitExceededException;
-import com.bankingsystem.model.CheckingAccount;
-import com.bankingsystem.service.CheckingAccountService;
+import com.domain.model.CheckingAccount;
+import com.domain.service.CheckingAccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

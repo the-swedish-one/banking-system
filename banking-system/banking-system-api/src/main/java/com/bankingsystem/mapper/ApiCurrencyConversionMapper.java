@@ -1,7 +1,7 @@
 package com.bankingsystem.mapper;
 
 import com.bankingsystem.model.ApiCurrencyConversion;
-import com.bankingsystem.model.CurrencyConversion;
+import com.domain.model.CurrencyConversion;
 import org.springframework.stereotype.Component;
 
 @Component

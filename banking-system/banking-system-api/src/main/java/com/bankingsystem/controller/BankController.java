@@ -2,8 +2,8 @@ package com.bankingsystem.controller;
 
 import com.bankingsystem.mapper.ApiBankMapper;
 import com.bankingsystem.model.ApiBank;
-import com.bankingsystem.model.Bank;
-import com.bankingsystem.service.BankService;
+import com.domain.model.Bank;
+import com.domain.service.BankService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -3,8 +3,8 @@ package com.bankingsystem.controller;
 import com.bankingsystem.enums.CurrencyCode;
 import com.bankingsystem.mapper.ApiCurrencyConversionMapper;
 import com.bankingsystem.model.ApiCurrencyConversion;
-import com.bankingsystem.model.CurrencyConversion;
-import com.bankingsystem.service.CurrencyConversionService;
+import com.domain.model.CurrencyConversion;
+import com.domain.service.CurrencyConversionService;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;

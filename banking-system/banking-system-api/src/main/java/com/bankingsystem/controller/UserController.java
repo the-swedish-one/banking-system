@@ -2,8 +2,8 @@ package com.bankingsystem.controller;
 
 import com.bankingsystem.mapper.ApiUserMapper;
 import com.bankingsystem.model.ApiUser;
-import com.bankingsystem.model.User;
-import com.bankingsystem.service.UserService;
+import com.domain.model.User;
+import com.domain.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

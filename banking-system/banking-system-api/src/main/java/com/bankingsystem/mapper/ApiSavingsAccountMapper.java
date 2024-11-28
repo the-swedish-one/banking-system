@@ -1,7 +1,7 @@
 package com.bankingsystem.mapper;
 
 import com.bankingsystem.model.ApiSavingsAccount;
-import com.bankingsystem.model.SavingsAccount;
+import com.domain.model.SavingsAccount;
 import org.springframework.stereotype.Component;
 
 @Component

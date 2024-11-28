@@ -2,6 +2,8 @@ package com.bankingsystem.controller.advice;
 
 import com.bankingsystem.exception.*;
 import com.bankingsystem.model.ErrorResponse;
+import com.domain.exception.InsufficientFundsException;
+import com.domain.exception.OverdraftLimitExceededException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

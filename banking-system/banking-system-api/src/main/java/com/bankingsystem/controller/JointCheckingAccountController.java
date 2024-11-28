@@ -1,9 +1,7 @@
 package com.bankingsystem.controller;
 
-import com.bankingsystem.exception.OverdraftLimitExceededException;
-import com.bankingsystem.model.JointCheckingAccount;
-import com.bankingsystem.service.JointCheckingAccountService;
-import com.bankingsystem.exception.AccountNotFoundException;
+import com.domain.model.JointCheckingAccount;
+import com.domain.service.JointCheckingAccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
