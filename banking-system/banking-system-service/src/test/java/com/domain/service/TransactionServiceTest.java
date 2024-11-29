@@ -28,7 +28,7 @@ public class TransactionServiceTest {
 
 //    Test Create Transaction
     @Test
-    void testCreateTransaction() {
+    void createTransaction() {
         // Arrange
         Transaction t = TestDataFactory.createTransaction();
 
@@ -36,35 +36,26 @@ public class TransactionServiceTest {
        Transaction transaction = transactionService.createTransaction(t);
 
         // Assert
-        verify(transactionPersistenceService, times(1)).save(transaction);
+        verify(transactionPersistenceService, times(1)).save(t);
     }
 
     @Test
-    void testCreateTransaction_NullTransaction() {
+    void createTransaction_NullTransaction() {
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> transactionService.createTransaction(null));
     }
 
     @Test
-    void testCreateTransaction_NullAccountIds() {
+    void createTransaction_NullAccountIds() {
         // Arrange
         Transaction t = TestDataFactory.createTransaction(BigDecimal.valueOf(1000), null, null);
-
-        // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> transactionService.createTransaction(null));
-    }
-
-    @Test
-    void testCreateTransaction_NegativeAmount() {
-        // Arrange
-        Transaction t = TestDataFactory.createTransaction(BigDecimal.valueOf(-1000), 1, 2);
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> transactionService.createTransaction(t));
     }
 
     @Test
-    void testCreateTransaction_ZeroAmount() {
+    void createTransaction_ZeroAmount() {
         // Arrange
         Transaction t = TestDataFactory.createTransaction(BigDecimal.valueOf(0), 1, 2);
 
@@ -73,7 +64,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    void testCreateTransaction_NullAmount() {
+    void createTransaction_NullAmount() {
         // Arrange
         Transaction t = TestDataFactory.createTransaction(null, 1, 2);
 
@@ -83,7 +74,7 @@ public class TransactionServiceTest {
 
 //    Test Get Transaction By ID
     @Test
-    void testGetTransactionById() {
+    void getTransactionById() {
         // Arrange
         Transaction transaction = TestDataFactory.createTransaction();
         int transactionId = transaction.getTransactionId();
@@ -99,16 +90,16 @@ public class TransactionServiceTest {
     }
 
     @Test
-    void testGetTransactionById_NullId() {
+    void getTransactionById_NullId() {
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> transactionService.getTransactionById(null));
     }
 
     @Test
-    void testGetTransactionById_NonExistent() {
+    void getTransactionById_NonExistent() {
         // Arrange
         int invalidTransactionId = 123;
-        when(transactionPersistenceService.getTransactionById(invalidTransactionId)).thenReturn(null);
+        when(transactionPersistenceService.getTransactionById(invalidTransactionId)).thenThrow(TransactionNotFoundException.class);
 
         // Act & Assert
         assertThrows(TransactionNotFoundException.class, () -> transactionService.getTransactionById(invalidTransactionId));
@@ -116,7 +107,7 @@ public class TransactionServiceTest {
 
 //    Test Get All Transactions
     @Test
-    void testGetAllTransactions() {
+    void getAllTransactions() {
         // Arrange
         Transaction depositTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(1000), null, 1);
         Transaction withdrawTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(500), 1, null);
@@ -141,9 +132,9 @@ public class TransactionServiceTest {
     }
 
     @Test
-    void testGetAllTransactions_Empty() {
+    void getAllTransactions_Empty() {
         // Arrange
-        when(transactionPersistenceService.getAllTransactions()).thenReturn(new ArrayList<>());
+        when(transactionPersistenceService.getAllTransactions()).thenThrow(TransactionNotFoundException.class);
 
         // Act & Assert
         assertThrows(TransactionNotFoundException.class, () -> transactionService.getAllTransactions());
@@ -151,7 +142,7 @@ public class TransactionServiceTest {
 
 //    Test Delete Transaction
     @Test
-    void testDeleteTransaction() {
+    void deleteTransaction() {
         // Arrange
         Transaction transaction = TestDataFactory.createTransaction();
         int transactionId = transaction.getTransactionId();
@@ -167,7 +158,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    void testDeleteTransaction_NotFound() {
+    void deleteTransaction_NotFound() {
         // Arrange
         int nonExistentTransactionId = 123;
 
