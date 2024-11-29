@@ -23,6 +23,10 @@ public class BankService {
     // Create and save a new bank
     public Bank createBank(String bankName, String bic) {
         logger.info("Creating new bank");
+        if (bankName == null || bic == null) {
+            logger.error("Bank name and BIC cannot be null");
+            throw new IllegalArgumentException("Bank name and BIC cannot be null");
+        }
         Bank bank = new Bank(bankName, bic);
         logger.info("Successfully created new bank with BIC: {}", bic);
         return bankPersistenceService.save(bank);
