@@ -23,26 +23,33 @@ public class TransactionService {
 
     // Create new transaction
     public Transaction createTransaction(Transaction transaction) {
-        logger.info("Creating new transaction");
+        if (transaction == null) {
+            logger.error("Transaction object is null");
+            throw new IllegalArgumentException("Transaction object cannot be null");
+        }
         if (transaction.getFromAccountId() == null && transaction.getToAccountId() == null) {
             logger.error("At least one of fromAccountId or toAccountId must be specified");
             throw new IllegalArgumentException("At least one of fromAccountId or toAccountId must be specified");
         }
-        // check transactions amount is not null
         if (transaction.getAmount() == null) {
             logger.error("Transaction amount is null");
             throw new IllegalArgumentException("Transaction amount cannot be null");
         }
+        if(transaction.getAmount().equals(BigDecimal.ZERO)) {
+            logger.error("Transaction amount cannot be zero");
+            throw new IllegalArgumentException("Transaction amount cannot be zero");
+        }
+        logger.info("Creating new transaction");
         return transactionPersistenceService.save(transaction);
     }
 
     // Get transaction by ID
     public Transaction getTransactionById(Integer transactionId) {
-        logger.info("Fetching transaction by ID: {}", transactionId);
-        if (transactionId <= 0) {
-            logger.error("Invalid transaction ID: {}", transactionId);
-            throw new IllegalArgumentException("Transaction ID must be greater than zero");
+        if(transactionId == null) {
+            logger.error("Transaction ID is null");
+            throw new IllegalArgumentException("Transaction ID cannot be null");
         }
+        logger.info("Fetching transaction by ID: {}", transactionId);
         return transactionPersistenceService.getTransactionById(transactionId);
     }
 
@@ -55,11 +62,6 @@ public class TransactionService {
     // Delete transaction by ID
     public boolean deleteTransaction(Integer transactionId) {
         logger.info("Deleting transaction by ID: {}", transactionId);
-        if (transactionId <= 0) {
-            logger.error("Invalid transaction ID: {}", transactionId);
-            throw new IllegalArgumentException("Transaction ID must be greater than zero");
-        }
-
         try {
             boolean isDeleted = transactionPersistenceService.deleteTransaction(transactionId);
             logger.info("Successfully deleted transaction for ID: {}", transactionId);
