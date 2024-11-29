@@ -23,6 +23,10 @@ public class UserService {
     // Create new user
     public User createUser(User user) {
         logger.info("Creating new user");
+        if (user == null || user.getPerson() == null) {
+            logger.error("Invalid user or person data");
+            throw new IllegalArgumentException("User or person data cannot be null");
+        }
         return userPersistenceService.save(user);
     }
 
