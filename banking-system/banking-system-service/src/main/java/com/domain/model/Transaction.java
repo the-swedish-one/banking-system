@@ -19,9 +19,6 @@ public class Transaction {
     private Integer toAccountId;
 
     public Transaction(BigDecimal amount, Integer fromAccountId, Integer toAccountId) {
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Amount must be greater than 0");
-        }
         if (fromAccountId == null && toAccountId == null) {
             throw new IllegalArgumentException("At least one of fromAccountId or toAccountId must be specified");
         }
