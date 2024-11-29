@@ -132,8 +132,8 @@ public class SavingsAccountService {
 
         BigDecimal availableBalance = account.getBalance();
         if (availableBalance.compareTo(amount) < 0) {
-            logger.error("Withdrawal failed: Overdraft limit exceeded");
-            throw new InsufficientFundsException("Withdrawal failed: Overdraft limit exceeded");
+            logger.error("Withdrawal failed: Insufficient funds");
+            throw new InsufficientFundsException("Withdrawal failed: Insufficient funds");
         }
 
         account.setBalance(account.getBalance().subtract(amount));
