@@ -30,9 +30,10 @@ public class UserServiceTest {
     class CreateUserTests {
 
         @Test
-        void testCreateUser() {
+        void createUser() {
             // Arrange
             User u = TestDataFactory.createUser();
+            when(userPersistenceService.save(u)).thenReturn(u);
 
             // Act
             User user = userService.createUser(u);
@@ -44,7 +45,7 @@ public class UserServiceTest {
         }
 
         @Test
-        void testCreateUser_NullPerson() {
+        void createUser_NullPerson() {
             // Act & Assert
             assertThrows(IllegalArgumentException.class, () -> userService.createUser(null));
         }
@@ -53,7 +54,7 @@ public class UserServiceTest {
     @Nested
     class GetUserByIdTests {
         @Test
-        void testGetUserById() {
+        void getUserById() {
             // Arrange
             User user = TestDataFactory.createUser();
             int userId = user.getUserId();
@@ -69,17 +70,17 @@ public class UserServiceTest {
         }
 
         @Test
-        void testGetUserById_UserNotFound() {
+        void getUserById_UserNotFound() {
             // Arrange
             int userId = 123;
-            when(userPersistenceService.getUserById(userId)).thenReturn(null);
+            when(userPersistenceService.getUserById(userId)).thenThrow(new UserNotFoundException("User not found"));
 
             // Act & Assert
             UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
                 userService.getUserById(userId);
             });
 
-            assertEquals("User not found for ID: 123", exception.getMessage());
+            assertEquals("User not found", exception.getMessage());
             verify(userPersistenceService, times(1)).getUserById(userId);
         }
     }
@@ -87,7 +88,7 @@ public class UserServiceTest {
     @Nested
     class GetAllUsersTests {
         @Test
-        void testGetAllUsers() {
+        void getAllUsers() {
             // Arrange
             User u = TestDataFactory.createUser();
             User user = userService.createUser(u);
@@ -107,7 +108,7 @@ public class UserServiceTest {
         }
 
         @Test
-        void testGetAllUsers_NoUsersExist() {
+        void getAllUsers_NoUsersExist() {
             // Arrange
             when(userPersistenceService.getAllUsers()).thenReturn(new ArrayList<>());
 
@@ -124,12 +125,11 @@ public class UserServiceTest {
     @Nested
     class DeleteUserTests {
         @Test
-        void testDeleteUser() {
+        void deleteUser() {
             // Arrange
             User u = TestDataFactory.createUser();
-            User user = userService.createUser(u);
 
-            int userId = user.getUserId();
+            int userId = u.getUserId();
             when(userPersistenceService.deleteUser(userId)).thenReturn(true);
 
             // Act
@@ -142,11 +142,11 @@ public class UserServiceTest {
         }
 
         @Test
-        void testDeleteUser_NotFound() {
+        void deleteUser_NotFound() {
             // Arrange
             int invalidUserId = 123;
-            when(userPersistenceService.deleteUser(invalidUserId)).thenReturn(false);
-            when(userPersistenceService.getUserById(invalidUserId)).thenReturn(null);
+            when(userPersistenceService.deleteUser(invalidUserId))
+                    .thenThrow(new UserNotFoundException("User not found with ID: " + invalidUserId));
 
             // Act
             assertThrows(UserNotFoundException.class, () -> {userService.deleteUser(invalidUserId);});
