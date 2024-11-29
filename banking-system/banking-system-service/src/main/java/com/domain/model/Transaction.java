@@ -19,9 +19,6 @@ public class Transaction {
     private Integer toAccountId;
 
     public Transaction(BigDecimal amount, Integer fromAccountId, Integer toAccountId) {
-        if (fromAccountId == null && toAccountId == null) {
-            throw new IllegalArgumentException("At least one of fromAccountId or toAccountId must be specified");
-        }
         this.amount = amount;
         this.fromAccountId = fromAccountId;
         this.toAccountId = toAccountId;
