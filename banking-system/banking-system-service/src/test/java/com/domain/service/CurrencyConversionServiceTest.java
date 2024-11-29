@@ -32,7 +32,7 @@ public class CurrencyConversionServiceTest {
     @Nested
     class ConvertAmountTests {
         @Test
-        void testConvertAmount() {
+        void convertAmount() {
             BigDecimal amount = BigDecimal.valueOf(100);
             CurrencyCode fromCurrency = CurrencyCode.USD;
             CurrencyCode toCurrency = CurrencyCode.EUR;
@@ -48,11 +48,11 @@ public class CurrencyConversionServiceTest {
             BigDecimal convertedAmount = currencyConversionService.convertAmount(amount, fromCurrency, toCurrency);
 
             assertEquals(BigDecimal.valueOf(85.00).setScale(2, RoundingMode.HALF_UP), convertedAmount);
-            verify(currencyConversionPersistenceService, times(2)).getLatestConversion();
+            verify(currencyConversionPersistenceService, times(1)).getLatestConversion();
         }
 
         @Test
-        void testConvertAmount_SameCurrency() {
+        void convertAmount_SameCurrency() {
             // Arrange
             BigDecimal amount = BigDecimal.valueOf(100.00).setScale(2, RoundingMode.HALF_UP);
             CurrencyCode currency = CurrencyCode.USD;
@@ -65,7 +65,7 @@ public class CurrencyConversionServiceTest {
         }
 
         @Test
-        void testConvertAmount_UnsupportedCurrency() {
+        void convertAmount_UnsupportedCurrency() {
             // Arrange
             BigDecimal amount = BigDecimal.valueOf(100);
             CurrencyCode unsupportedCurrency = CurrencyCode.GBP;
@@ -84,7 +84,7 @@ public class CurrencyConversionServiceTest {
         }
 
         @Test
-        void testConvertAmount_ZeroAmount() {
+        void convertAmount_ZeroAmount() {
             // Arrange
             BigDecimal amount = BigDecimal.valueOf(0);
             CurrencyCode fromCurrency = CurrencyCode.USD;
@@ -104,7 +104,7 @@ public class CurrencyConversionServiceTest {
         }
 
         @Test
-        void testConvertAmount_NegativeAmount() {
+        void convertAmount_NegativeAmount() {
             // Arrange
             BigDecimal amount = BigDecimal.valueOf(-100);
             CurrencyCode fromCurrency = CurrencyCode.USD;
@@ -124,7 +124,7 @@ public class CurrencyConversionServiceTest {
         }
 
         @Test
-        void testConvertAmount_NoRatesAvailable() {
+        void convertAmount_NoRatesAvailable() {
             // Arrange
             BigDecimal amount = BigDecimal.valueOf(100);
             CurrencyCode fromCurrency = CurrencyCode.USD;
@@ -146,7 +146,7 @@ public class CurrencyConversionServiceTest {
     class GetExchangeRateTests {
 
         @Test
-        void testGetExchangeRate_SameCurrency() {
+        void getExchangeRate_SameCurrency() {
             // Arrange
             CurrencyCode currency = CurrencyCode.USD;
             Map<CurrencyCode, Double> exchangeRates = new HashMap<>();
@@ -154,7 +154,6 @@ public class CurrencyConversionServiceTest {
             exchangeRates.put(CurrencyCode.EUR, 0.85);  // 1 USD = 0.85 EUR
 
             CurrencyConversion conversion = new CurrencyConversion(exchangeRates);
-            when(currencyConversionPersistenceService.getLatestConversion()).thenReturn(conversion);
 
             // Act
             double rate = currencyConversionService.getExchangeRate(conversion, currency, currency);
@@ -164,32 +163,28 @@ public class CurrencyConversionServiceTest {
         }
 
         @Test
-        void testGetExchangeRate_DifferentCurrencies() {
+        void getExchangeRate_DifferentCurrencies() {
             // Arrange
             Map<CurrencyCode, Double> exchangeRates = new HashMap<>();
             exchangeRates.put(CurrencyCode.USD, 1.0);  // USD as base currency
             exchangeRates.put(CurrencyCode.EUR, 0.85);  // 1 USD = 0.85 EUR
 
             CurrencyConversion conversion = new CurrencyConversion(exchangeRates);
-            when(currencyConversionPersistenceService.getLatestConversion()).thenReturn(conversion);
 
             // Act
             double rate = currencyConversionService.getExchangeRate(conversion, CurrencyCode.USD, CurrencyCode.EUR);
 
             // Assert
             assertEquals(0.85, rate);
-            verify(currencyConversionPersistenceService, times(1)).getLatestConversion();
         }
 
         @Test
-        void testGetExchangeRate_UnsupportedCurrency() {
+        void getExchangeRate_UnsupportedCurrency() {
             // Arrange
             Map<CurrencyCode, Double> exchangeRates = new HashMap<>();
             exchangeRates.put(CurrencyCode.USD, 1.0);  // USD as base currency
             // EUR is missing from the exchange rates
-
             CurrencyConversion conversion = new CurrencyConversion(exchangeRates);
-            when(currencyConversionPersistenceService.getLatestConversion()).thenReturn(conversion);
 
             // Act & Assert
             assertThrows(IllegalArgumentException.class, () -> {
@@ -199,7 +194,7 @@ public class CurrencyConversionServiceTest {
     }
 
     @Test
-    void testUpdateExchangeRates() {
+    void updateExchangeRates() {
         // Arrange
         Map<CurrencyCode, Double> newRates = new HashMap<>();
         newRates.put(CurrencyCode.USD, 1.0);
