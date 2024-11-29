@@ -24,10 +24,6 @@ public class TransactionService {
     // Create new transaction
     public Transaction createTransaction(Transaction transaction) {
         logger.info("Creating new transaction");
-        if (transaction.getAmount().compareTo(BigDecimal.valueOf(0)) <= 0) {
-            logger.error("Invalid transaction amount: {}", transaction.getAmount());
-            throw new IllegalArgumentException("Transaction amount must be greater than zero");
-        }
         if (transaction.getFromAccountId() == null && transaction.getToAccountId() == null) {
             logger.error("At least one of fromAccountId or toAccountId must be specified");
             throw new IllegalArgumentException("At least one of fromAccountId or toAccountId must be specified");
@@ -41,7 +37,7 @@ public class TransactionService {
     }
 
     // Get transaction by ID
-    public Transaction getTransactionById(int transactionId) {
+    public Transaction getTransactionById(Integer transactionId) {
         logger.info("Fetching transaction by ID: {}", transactionId);
         if (transactionId <= 0) {
             logger.error("Invalid transaction ID: {}", transactionId);
@@ -57,7 +53,7 @@ public class TransactionService {
     }
 
     // Delete transaction by ID
-    public boolean deleteTransaction(int transactionId) {
+    public boolean deleteTransaction(Integer transactionId) {
         logger.info("Deleting transaction by ID: {}", transactionId);
         if (transactionId <= 0) {
             logger.error("Invalid transaction ID: {}", transactionId);
