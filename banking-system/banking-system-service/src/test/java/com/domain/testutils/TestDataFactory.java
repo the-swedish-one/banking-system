@@ -8,7 +8,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestDataFactory {
     // Common defaults for reusable test data
-    private static final int DEFAULT_ID = 1;
     private static final String DEFAULT_FIRST_NAME = "John";
     private static final String DEFAULT_LAST_NAME = "Doe";
     private static final String DEFAULT_EMAIL = "john.doe@example.com";
@@ -31,11 +30,15 @@ public class TestDataFactory {
 
     // User creation
     public static User createUser() {
-        return createUser(DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME);
+        User user = new User(createPerson());
+        user.setUserId(idCounter.getAndIncrement());
+        return user;
     }
 
     public static User createUser(String firstName, String lastName) {
-        return new User(createPerson(firstName, lastName));
+        User user = new User(createPerson(firstName, lastName));
+        user.setUserId(idCounter.getAndIncrement());
+        return user;
     }
 
     // Transaction creation
@@ -53,7 +56,8 @@ public class TestDataFactory {
     }
 
     public static CheckingAccount createCheckingAccount(User user, BigDecimal amount, CurrencyCode currency, BigDecimal overdraftLimit) {
-        return new CheckingAccount(user, amount, currency, overdraftLimit);
+        int accountId = idCounter.getAndIncrement();
+        return new CheckingAccount(accountId, user, amount, currency, overdraftLimit);
     }
 
     // SavingsAccount creation
@@ -62,7 +66,8 @@ public class TestDataFactory {
     }
 
     public static SavingsAccount createSavingsAccount(User user, BigDecimal amount, CurrencyCode currency, double interestRate) {
-        return new SavingsAccount(user, amount, currency, interestRate);
+        int accountId = idCounter.getAndIncrement();
+        return new SavingsAccount(accountId, user, amount, currency, interestRate);
     }
 
     // JointCheckingAccount creation
@@ -71,6 +76,7 @@ public class TestDataFactory {
     }
 
     public static JointCheckingAccount createJointCheckingAccount(User primaryOwner, User secondaryOwner, BigDecimal amount, CurrencyCode currency, BigDecimal overdraftLimit) {
-        return new JointCheckingAccount(primaryOwner, secondaryOwner, amount, currency, overdraftLimit);
+        int accountId = idCounter.getAndIncrement();
+        return new JointCheckingAccount(accountId, primaryOwner, secondaryOwner, amount, currency, overdraftLimit);
     }
 }
