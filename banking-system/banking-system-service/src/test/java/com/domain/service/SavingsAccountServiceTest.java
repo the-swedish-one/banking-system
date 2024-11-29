@@ -37,9 +37,6 @@ public class SavingsAccountServiceTest {
     @InjectMocks
     private SavingsAccountService accountService;
 
-    @Nested
-    class CreateSavingsAccountTests {
-
         @Test
         void createSavingsAccount() {
             // Arrange
@@ -70,10 +67,7 @@ public class SavingsAccountServiceTest {
 
             assertEquals("Account creation failed: Missing required fields", exception.getMessage());
         }
-    }
 
-    @Nested
-    class GenerateIBANTests {
         @Test
         void generateIBAN_ValidCountry() {
             String country = "US";
@@ -130,10 +124,8 @@ public class SavingsAccountServiceTest {
 
             assertNotEquals(iban1, iban2);
         }
-    }
 
-    @Nested
-    class GetSavingsAccountByIdTests {
+        @Test
         void getAccountById() {
             // Arrange
             User user = TestDataFactory.createUser();
@@ -160,15 +152,14 @@ public class SavingsAccountServiceTest {
 
         @Test
         void getAccountById_AccountNotFound() {
+            when(accountPersistenceService.getAccountById(123)).thenThrow(new AccountNotFoundException("Savings Account not found"));
+
             // Act & Assert
             assertThrows(AccountNotFoundException.class, () -> accountService.getSavingsAccountById(123));
         }
-    }
 
-    @Nested
-    class GetAllSavingsAccounts {
         @Test
-        void testGetAllSavingsAccounts() {
+        void getAllSavingsAccounts() {
             // Arrange
             User user = TestDataFactory.createUser();
             SavingsAccount savingsAccount = TestDataFactory.createSavingsAccount(user);
@@ -187,7 +178,7 @@ public class SavingsAccountServiceTest {
         }
 
         @Test
-        void testGetAllSavingsAccounts_EmptyList() {
+        void getAllSavingsAccounts_EmptyList() {
             // Arrange
             when(accountPersistenceService.getAllAccounts()).thenReturn(List.of());
 
@@ -199,10 +190,7 @@ public class SavingsAccountServiceTest {
             assertEquals(0, savingsAccounts.size());
             verify(accountPersistenceService, times(1)).getAllAccounts();
         }
-    }
 
-    @Nested
-    class UpdateSavingsAccountTests {
         @Test
         void updateSavingsAccount() {
             // Arrange
@@ -218,12 +206,9 @@ public class SavingsAccountServiceTest {
             assertEquals(savingsAccount, updatedAccount);
             verify(accountPersistenceService, times(1)).updateAccount(savingsAccount);
         }
-    }
 
-    @Nested
-    class DeleteSavingsAccountTests {
         @Test
-        void testDeleteAccount() {
+        void deleteAccount() {
             // Arrange
             User user = TestDataFactory.createUser();
             SavingsAccount savingsAccount = TestDataFactory.createSavingsAccount(user);
@@ -247,12 +232,9 @@ public class SavingsAccountServiceTest {
 
             assertEquals("Savings Account not found", exception.getMessage());
         }
-    }
 
-    @Nested
-    class SavingsAccountDepositTests {
         @Test
-        void testDeposit() {
+        void deposit() {
             // Arrange
             User user = TestDataFactory.createUser();
             SavingsAccount savingsAccount = TestDataFactory.createSavingsAccount(user);
@@ -271,7 +253,7 @@ public class SavingsAccountServiceTest {
         }
 
         @Test
-        void testDeposit_NegativeAmount() {
+        void deposit_NegativeAmount() {
             // Arrange
             User user = TestDataFactory.createUser();
             SavingsAccount savingsAccount = TestDataFactory.createSavingsAccount(user);
@@ -280,19 +262,16 @@ public class SavingsAccountServiceTest {
 
             // Act & Assert
             Exception exception = assertThrows(IllegalArgumentException.class, () -> accountService.deposit(savingsAccount.getAccountId(), BigDecimal.valueOf(-500)));
-            assertEquals("Deposit failed: Amount must be greater than 0", exception.getMessage());
+            assertEquals("Deposit amount must be greater than zero", exception.getMessage());
             verify(accountPersistenceService, times(0)).updateAccount(savingsAccount);
         }
-    }
 
-    @Nested
-    class SavingsAccountWithdrawTests {
         @Test
-        void testWithdraw() {
+        void withdraw() {
             // Arrange
             User user = TestDataFactory.createUser();
             SavingsAccount savingsAccount = TestDataFactory.createSavingsAccount(user);
-            Transaction withdrawTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(500), savingsAccount.getAccountId(), null);
+            Transaction withdrawTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(-500), savingsAccount.getAccountId(), null);
 
             when(accountPersistenceService.getAccountById(savingsAccount.getAccountId())).thenReturn(savingsAccount);
             when(transactionService.createTransaction(withdrawTransaction)).thenReturn(withdrawTransaction);
@@ -307,7 +286,7 @@ public class SavingsAccountServiceTest {
         }
 
         @Test
-        void testWithdraw_NegativeAmount() {
+        void withdraw_NegativeAmount() {
             // Arrange
             User user = TestDataFactory.createUser();
             SavingsAccount savingsAccount = TestDataFactory.createSavingsAccount(user);
@@ -316,12 +295,12 @@ public class SavingsAccountServiceTest {
 
             // Act & Assert
             Exception exception = assertThrows(IllegalArgumentException.class, () -> accountService.withdraw(savingsAccount.getAccountId(), BigDecimal.valueOf(-500)));
-            assertEquals("Withdraw Failed: Amount must be greater than 0", exception.getMessage());
+            assertEquals("Withdraw amount must be greater than zero", exception.getMessage());
             verify(accountPersistenceService, times(0)).updateAccount(savingsAccount);
         }
 
         @Test
-        void testWithdraw_InsufficientFunds() {
+        void withdraw_InsufficientFunds() {
             // Arrange
             User user = TestDataFactory.createUser();
             SavingsAccount savingsAccount = TestDataFactory.createSavingsAccount(user);
@@ -329,22 +308,18 @@ public class SavingsAccountServiceTest {
             when(accountPersistenceService.getAccountById(savingsAccount.getAccountId())).thenReturn(savingsAccount);
 
             // Act & Assert
-            Exception exception = assertThrows(InsufficientFundsException.class, () -> accountService.withdraw(savingsAccount.getAccountId(), BigDecimal.valueOf(200)));
-            assertEquals("Withdraw Filed: Insufficient funds", exception.getMessage());
+            Exception exception = assertThrows(InsufficientFundsException.class, () -> accountService.withdraw(savingsAccount.getAccountId(), BigDecimal.valueOf(2000)));
+            assertEquals("Withdrawal failed: Insufficient funds", exception.getMessage());
             verify(accountPersistenceService, times(0)).updateAccount(savingsAccount);
         }
-    }
-
-    @Nested
-    class SavingsAccountTransferTests {
 
         @Test
-        void testTransfer() {
+        void transfer() {
             // Arrange
             User user = TestDataFactory.createUser();
             SavingsAccount fromAccount = TestDataFactory.createSavingsAccount(user);
             SavingsAccount toAccount = TestDataFactory.createSavingsAccount(user);
-            Transaction transferTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(500), fromAccount.getAccountId(), toAccount.getAccountId());
+            Transaction transferTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(-500), fromAccount.getAccountId(), toAccount.getAccountId());
 
             when(accountPersistenceService.getAccountById(fromAccount.getAccountId())).thenReturn(fromAccount);
             when(accountPersistenceService.getAccountById(toAccount.getAccountId())).thenReturn(toAccount);
@@ -355,14 +330,14 @@ public class SavingsAccountServiceTest {
 
             // Assert
             assertEquals(BigDecimal.valueOf(500), fromAccount.getBalance());
-            assertEquals(BigDecimal.valueOf(500), toAccount.getBalance());
+            assertEquals(BigDecimal.valueOf(1500), toAccount.getBalance());
             verify(accountPersistenceService, times(1)).updateAccount(fromAccount);
             verify(accountPersistenceService, times(1)).updateAccount(toAccount);
             verify(transactionService, times(1)).createTransaction(transferTransaction);
         }
 
         @Test
-        void testTransfer_DifferentCurrencies() {
+        void transfer_DifferentCurrencies() {
             // Arrange
             User user = TestDataFactory.createUser();
             SavingsAccount fromAccount = TestDataFactory.createSavingsAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, 2);
@@ -371,14 +346,12 @@ public class SavingsAccountServiceTest {
             BigDecimal amount = BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP);
             BigDecimal convertedAmount = BigDecimal.valueOf(530).setScale(2, RoundingMode.HALF_UP);
 
-            Transaction fromTransaction = TestDataFactory.createTransaction(amount, fromAccount.getAccountId(), toAccount.getAccountId());
-            Transaction toTransaction = TestDataFactory.createTransaction(convertedAmount, fromAccount.getAccountId(), toAccount.getAccountId());
+            Transaction transaction = TestDataFactory.createTransaction(amount.negate(), fromAccount.getAccountId(), toAccount.getAccountId());
 
             when(accountPersistenceService.getAccountById(fromAccount.getAccountId())).thenReturn(fromAccount);
             when(accountPersistenceService.getAccountById(toAccount.getAccountId())).thenReturn(toAccount);
             when(currencyConversionService.convertAmount(amount, CurrencyCode.EUR, CurrencyCode.USD)).thenReturn(convertedAmount);
-            when(transactionService.createTransaction(fromTransaction)).thenReturn(fromTransaction);
-            when(transactionService.createTransaction(toTransaction)).thenReturn(toTransaction);
+            when(transactionService.createTransaction(transaction)).thenReturn(transaction);
 
             // Act
             accountService.transfer(amount, fromAccount.getAccountId(), toAccount.getAccountId());
@@ -388,12 +361,11 @@ public class SavingsAccountServiceTest {
             assertEquals(BigDecimal.valueOf(530).setScale(2, RoundingMode.HALF_UP), toAccount.getBalance());  // Converted amount
             verify(accountPersistenceService, times(1)).updateAccount(fromAccount);
             verify(accountPersistenceService, times(1)).updateAccount(toAccount);
-            verify(transactionService, times(1)).createTransaction(fromTransaction);
-            verify(transactionService, times(1)).createTransaction(toTransaction);
+            verify(transactionService, times(1)).createTransaction(transaction);
         }
 
         @Test
-        void testTransfer_NegativeAmount() {
+        void transfer_NegativeAmount() {
             // Arrange
             User user = TestDataFactory.createUser();
             SavingsAccount fromAccount = TestDataFactory.createSavingsAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, 2);
@@ -404,13 +376,13 @@ public class SavingsAccountServiceTest {
 
             // Act & Assert
             Exception exception = assertThrows(IllegalArgumentException.class, () -> accountService.transfer(BigDecimal.valueOf(-500), fromAccount.getAccountId(), toAccount.getAccountId()));
-            assertEquals("Withdraw Failed: Amount must be greater than 0", exception.getMessage());
+            assertEquals("Amount must be greater than 0", exception.getMessage());
             verify(accountPersistenceService, times(0)).updateAccount(fromAccount);
             verify(accountPersistenceService, times(0)).updateAccount(toAccount);
         }
 
         @Test
-        void testTransfer_InsufficientFunds() {
+        void transfer_InsufficientFunds() {
             // Arrange
             User user = TestDataFactory.createUser();
             SavingsAccount fromAccount = TestDataFactory.createSavingsAccount(user);
@@ -421,16 +393,13 @@ public class SavingsAccountServiceTest {
 
             // Act & Assert
             Exception exception = assertThrows(InsufficientFundsException.class, () -> accountService.transfer(BigDecimal.valueOf(2000), fromAccount.getAccountId(), toAccount.getAccountId()));
-            assertEquals("Withdraw Filed: Insufficient funds", exception.getMessage());
+            assertEquals("Transfer failed: Insufficient funds", exception.getMessage());
             verify(accountPersistenceService, times(0)).updateAccount(fromAccount);
             verify(accountPersistenceService, times(0)).updateAccount(toAccount);
         }
-    }
 
-    @Nested
-    class AddInterestTests {
         @Test
-        void testAddInterest() {
+        void addInterest() {
             // Arrange
             User user = TestDataFactory.createUser();
             SavingsAccount savingsAccount = TestDataFactory.createSavingsAccount(user);
@@ -442,5 +411,4 @@ public class SavingsAccountServiceTest {
             assertEquals(BigDecimal.valueOf(1020.00).setScale(2, RoundingMode.HALF_UP), savingsAccount.getBalance());
             verify(accountPersistenceService, times(1)).updateAccount(savingsAccount);
         }
-    }
 }
