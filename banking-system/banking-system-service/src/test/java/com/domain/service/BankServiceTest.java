@@ -26,7 +26,7 @@ public class BankServiceTest {
     class CreateBankTests {
 
         @Test
-        void testCreateBank() {
+        void createBank() {
             // Arrange
             Bank mockBank = new Bank("My Bank", "MB001");
             when(bankPersistenceService.save(any(Bank.class))).thenReturn(mockBank);
@@ -44,7 +44,7 @@ public class BankServiceTest {
         }
 
         @Test
-        void testCreateBank_NullValues() {
+        void createBank_NullValues() {
             // Act & Assert
             assertThrows(IllegalArgumentException.class, () -> bankService.createBank(null, "MB001"));
             assertThrows(IllegalArgumentException.class, () -> bankService.createBank("My Bank", null));
@@ -56,7 +56,7 @@ public class BankServiceTest {
     class GetBankByBicTests {
 
         @Test
-        void testGetBankByBic() {
+        void getBankByBic() {
             // Arrange
             Bank mockBank = new Bank("My Bank", "MB001");
             when(bankPersistenceService.getBankByBic("MB001")).thenReturn(mockBank);
@@ -72,7 +72,7 @@ public class BankServiceTest {
         }
 
         @Test
-        void testGetBankByBic_NotFound() {
+        void getBankByBic_NotFound() {
             // Arrange
             when(bankPersistenceService.getBankByBic("INVALID")).thenThrow(new BankNotFoundException("Bank not found"));
 
@@ -87,7 +87,7 @@ public class BankServiceTest {
     class UpdateBankTests {
 
         @Test
-        void testUpdateBank() {
+        void updateBank() {
             // Arrange
             Bank existingBank = new Bank("Old Bank", "MB001");
             Bank updatedBank = new Bank("Updated Bank", "MB001");
@@ -106,7 +106,7 @@ public class BankServiceTest {
         }
 
         @Test
-        void testUpdateBank_NotFound() {
+        void updateBank_NotFound() {
             // Arrange
             when(bankPersistenceService.getBankByBic("INVALID")).thenThrow(new BankNotFoundException("Bank not found"));
 
