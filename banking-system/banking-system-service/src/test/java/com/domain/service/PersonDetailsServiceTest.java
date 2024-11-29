@@ -26,7 +26,7 @@ public class PersonDetailsServiceTest {
     private PersonDetailsService personDetailsService;
 
     @Test
-    void testCreatePersonDetails() {
+    void createPersonDetails() {
         // Arrange
         PersonDetails personDetails = TestDataFactory.createPerson();
         when(personDetailsPersistenceService.save(personDetails)).thenReturn(personDetails);
@@ -38,7 +38,7 @@ public class PersonDetailsServiceTest {
         assertNotNull(createdPersonDetails);
         assertEquals("John", createdPersonDetails.getFirstName());
         assertEquals("Doe", createdPersonDetails.getLastName());
-        assertEquals("jd@gmail.com", createdPersonDetails.getEmail());
+        assertEquals("john.doe@example.com", createdPersonDetails.getEmail());
         verify(personDetailsPersistenceService, times(1)).save(personDetails);
     }
 
@@ -46,7 +46,7 @@ public class PersonDetailsServiceTest {
     class GetPersonDetailsTests {
 
         @Test
-        void testGetPersonDetailsById() {
+        void getPersonDetailsById() {
             // Arrange
             PersonDetails personDetails = TestDataFactory.createPerson();
             int personId = personDetails.getPersonId();
@@ -59,26 +59,26 @@ public class PersonDetailsServiceTest {
             assertNotNull(result);
             assertEquals("John", result.getFirstName());
             assertEquals("Doe", result.getLastName());
-            assertEquals("jd@gmail.com", result.getEmail());
+            assertEquals("john.doe@example.com", result.getEmail());
             verify(personDetailsPersistenceService, times(1)).getPersonDetailsById(personId);
         }
 
         @Test
-        void testGetPersonDetailsById_NegativeId() {
+        void getPersonDetailsById_NegativeId() {
             // Act & Assert
             assertThrows(IllegalArgumentException.class, () -> personDetailsService.getPersonDetailsById(-2));
         }
 
         @Test
-        void testGetPersonDetailsById_NotFound() {
+        void getPersonDetailsById_NotFound() {
             // Arrange
-            int invalidPersonId = 123;
-            when(personDetailsPersistenceService.getPersonDetailsById(invalidPersonId)).thenReturn(null);
+            int nonExistentPersonId = 123;
+            when(personDetailsPersistenceService.getPersonDetailsById(nonExistentPersonId)).thenThrow(PersonDetailsNotFoundException.class);
 
             // Act & Assert
-            assertThrows(PersonDetailsNotFoundException.class, () -> personDetailsService.getPersonDetailsById(invalidPersonId));
+            assertThrows(PersonDetailsNotFoundException.class, () -> personDetailsService.getPersonDetailsById(nonExistentPersonId));
 
-            verify(personDetailsPersistenceService, times(1)).getPersonDetailsById(invalidPersonId);
+            verify(personDetailsPersistenceService, times(1)).getPersonDetailsById(nonExistentPersonId);
         }
     }
 
@@ -86,7 +86,7 @@ public class PersonDetailsServiceTest {
     class GetAllPersonDetailsTests {
 
         @Test
-        void testGetAllPersonDetails() {
+        void getAllPersonDetails() {
             // Arrange
             PersonDetails person1 = TestDataFactory.createPerson();
             PersonDetails person2 = TestDataFactory.createPerson("Jane", "Doe");
@@ -105,9 +105,9 @@ public class PersonDetailsServiceTest {
         }
 
         @Test
-        void testGetAllPersonDetails_Empty() {
+        void getAllPersonDetails_Empty() {
             // Arrange
-            when(personDetailsPersistenceService.getAllPersonDetails()).thenReturn(List.of());
+            when(personDetailsPersistenceService.getAllPersonDetails()).thenThrow(PersonDetailsNotFoundException.class);
 
             // Act & Assert
             assertThrows(PersonDetailsNotFoundException.class, () -> personDetailsService.getAllPersonsDetails());
@@ -117,7 +117,7 @@ public class PersonDetailsServiceTest {
     @Nested
     class DeletePersonDetailsTests {
         @Test
-        void testDeletePersonDetails() {
+        void deletePersonDetails() {
             // Arrange
             int personId = 123;
             when(personDetailsPersistenceService.deletePersonDetails(personId)).thenReturn(true);
@@ -131,14 +131,14 @@ public class PersonDetailsServiceTest {
         }
 
         @Test
-        void testDeletePersonDetails_NegativeId() {
+        void deletePersonDetails_NegativeId() {
             // Act & Assert
             assertThrows(IllegalArgumentException.class, () -> personDetailsService.deletePersonDetails(-2));
             verify(personDetailsPersistenceService, never()).deletePersonDetails(anyInt());
         }
 
         @Test
-        void testDeletePersonDetails_NotFound() {
+        void deletePersonDetails_NotFound() {
             // Arrange
             int nonExistentPersonId = 456;
             when(personDetailsPersistenceService.deletePersonDetails(nonExistentPersonId)).thenReturn(false);
