@@ -27,6 +27,7 @@ public class JointCheckingAccount implements Withdrawable, Depositable {
         this.balance = balance;
         this.currency = currency;
         this.secondOwner = secondOwner;
+        this.overdraftLimit = overdraftLimit;
     }
 
     public JointCheckingAccount(int Id, User owner, User secondOwner, BigDecimal balance, CurrencyCode currency, BigDecimal overdraftLimit) {
@@ -35,6 +36,7 @@ public class JointCheckingAccount implements Withdrawable, Depositable {
         this.balance = balance;
         this.currency = currency;
         this.secondOwner = secondOwner;
+        this.overdraftLimit = overdraftLimit;
     }
 
     @Override
