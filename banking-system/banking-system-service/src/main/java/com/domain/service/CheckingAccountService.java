@@ -108,7 +108,7 @@ public class CheckingAccountService {
         logger.info("Depositing {} {} to account with ID: {}", amount, getCheckingAccountById(accountId).getCurrency(), accountId);
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             logger.error("Deposit failed: Amount must be greater than zero");
-            throw new IllegalArgumentException("Deposit amount must be greater than zero");
+            throw new IllegalArgumentException("Deposit failed: Amount must be greater than zero");
         }
         CheckingAccount checkingAccount = checkingAccountPersistenceService.getAccountById(accountId);
         checkingAccount.setBalance(checkingAccount.getBalance().add(amount));
@@ -125,13 +125,13 @@ public class CheckingAccountService {
         logger.info("Withdrawing {} {} from account with ID: {}", amount, getCheckingAccountById(accountId).getCurrency(), accountId);
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             logger.error("Withdraw failed: Amount must be greater than zero");
-            throw new IllegalArgumentException("Withdraw amount must be greater than zero");
+            throw new IllegalArgumentException("Withdraw failed: Amount must be greater than zero");
         }
 
         CheckingAccount account = checkingAccountPersistenceService.getAccountById(accountId);
 
         BigDecimal availableBalance = account.getBalance().add(account.getOverdraftLimit());
-        if (availableBalance.compareTo(amount) < 0) {
+        if (availableBalance.compareTo(amount) <= 0) {
             logger.error("Withdrawal failed: Amount must be greater than zero");
             throw new OverdraftLimitExceededException("Withdrawal failed: Overdraft limit exceeded");
         }
