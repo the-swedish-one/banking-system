@@ -161,6 +161,7 @@ public class JointCheckingAccountServiceTest {
 
         @Test
         void getAccountById_AccountNotFound() {
+            when(accountPersistenceService.getAccountById(123)).thenThrow(new AccountNotFoundException("Account not found"));
             // Act & Assert
             assertThrows(AccountNotFoundException.class, () -> accountService.getJointCheckingAccountById(123));
         }
@@ -291,7 +292,7 @@ public class JointCheckingAccountServiceTest {
 
             // Act & Assert
             Exception exception = assertThrows(IllegalArgumentException.class, () -> accountService.deposit(jointCheckingAccount.getAccountId(), BigDecimal.valueOf(-500)));
-            assertEquals("Deposit failed: Amount must be greater than 0", exception.getMessage());
+            assertEquals("Deposit amount must be greater than zero", exception.getMessage());
             verify(accountPersistenceService, times(0)).updateAccount(jointCheckingAccount);
         }
     }
@@ -305,7 +306,7 @@ public class JointCheckingAccountServiceTest {
             User user1 = TestDataFactory.createUser();
             User user2 = TestDataFactory.createUser();
             JointCheckingAccount jointCheckingAccount = TestDataFactory.createJointCheckingAccount(user1, user2);
-            Transaction withdrawTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(500), jointCheckingAccount.getAccountId(), null);
+            Transaction withdrawTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(-500), jointCheckingAccount.getAccountId(), null);
 
             when(accountPersistenceService.getAccountById(jointCheckingAccount.getAccountId())).thenReturn(jointCheckingAccount);
             when(transactionService.createTransaction(withdrawTransaction)).thenReturn(withdrawTransaction);
@@ -330,7 +331,7 @@ public class JointCheckingAccountServiceTest {
 
             // Act & Assert
             Exception exception = assertThrows(IllegalArgumentException.class, () -> accountService.withdraw(jointCheckingAccount.getAccountId(), BigDecimal.valueOf(-500)));
-            assertEquals("Withdraw Failed: Amount must be greater than 0", exception.getMessage());
+            assertEquals("Withdrawal failed: Amount must be greater than zero", exception.getMessage());
             verify(accountPersistenceService, times(0)).updateAccount(jointCheckingAccount);
         }
 
@@ -340,16 +341,16 @@ public class JointCheckingAccountServiceTest {
             User user1 = TestDataFactory.createUser();
             User user2 = TestDataFactory.createUser();
             JointCheckingAccount jointCheckingAccount = TestDataFactory.createJointCheckingAccount(user1, user2);
-            Transaction withdrawTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(300), jointCheckingAccount.getAccountId(), null);
+            Transaction withdrawTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(-1400), jointCheckingAccount.getAccountId(), null);
 
             when(accountPersistenceService.getAccountById(jointCheckingAccount.getAccountId())).thenReturn(jointCheckingAccount);
             when(transactionService.createTransaction(withdrawTransaction)).thenReturn(withdrawTransaction);
 
             // Act
-            accountService.withdraw(jointCheckingAccount.getAccountId(), BigDecimal.valueOf(300));
+            accountService.withdraw(jointCheckingAccount.getAccountId(), BigDecimal.valueOf(1400));
 
             // Assert
-            assertEquals(BigDecimal.valueOf(-200), jointCheckingAccount.getBalance());
+            assertEquals(BigDecimal.valueOf(-400), jointCheckingAccount.getBalance());
             verify(accountPersistenceService, times(1)).updateAccount(jointCheckingAccount);
             verify(transactionService, times(1)).createTransaction(withdrawTransaction);
         }
@@ -364,13 +365,13 @@ public class JointCheckingAccountServiceTest {
 
             // Act & Assert
             Exception exception = assertThrows(OverdraftLimitExceededException.class, () -> accountService.withdraw(jointCheckingAccount.getAccountId(), BigDecimal.valueOf(4000)));
-            assertEquals("Withdraw Failed: Overdraft limit exceeded", exception.getMessage());
+            assertEquals("Withdrawal failed: Overdraft limit exceeded", exception.getMessage());
             verify(accountPersistenceService, times(0)).updateAccount(jointCheckingAccount);
         }
     }
 
     @Nested
-    class CheckingAccountTransferTests {
+    class JointCheckingAccountTransferTests {
 
         @Test
         void transfer() {
@@ -379,7 +380,7 @@ public class JointCheckingAccountServiceTest {
             User user2 = TestDataFactory.createUser();
             JointCheckingAccount fromAccount = TestDataFactory.createJointCheckingAccount(user1, user2);
             JointCheckingAccount toAccount = TestDataFactory.createJointCheckingAccount(user1, user2);
-            Transaction transferTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(500), fromAccount.getAccountId(), toAccount.getAccountId());
+            Transaction transferTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(-500), fromAccount.getAccountId(), toAccount.getAccountId());
 
             when(accountPersistenceService.getAccountById(fromAccount.getAccountId())).thenReturn(fromAccount);
             when(accountPersistenceService.getAccountById(toAccount.getAccountId())).thenReturn(toAccount);
@@ -390,7 +391,7 @@ public class JointCheckingAccountServiceTest {
 
             // Assert
             assertEquals(BigDecimal.valueOf(500), fromAccount.getBalance());
-            assertEquals(BigDecimal.valueOf(500), toAccount.getBalance());
+            assertEquals(BigDecimal.valueOf(1500), toAccount.getBalance());
             verify(accountPersistenceService, times(1)).updateAccount(fromAccount);
             verify(accountPersistenceService, times(1)).updateAccount(toAccount);
             verify(transactionService, times(1)).createTransaction(transferTransaction);
@@ -401,20 +402,18 @@ public class JointCheckingAccountServiceTest {
             // Arrange
             User user1 = TestDataFactory.createUser();
             User user2 = TestDataFactory.createUser();
-            JointCheckingAccount fromAccount = TestDataFactory.createJointCheckingAccount(user1, user2);
-            JointCheckingAccount toAccount = TestDataFactory.createJointCheckingAccount(user1, user2);
+            JointCheckingAccount fromAccount = TestDataFactory.createJointCheckingAccount(user1, user2, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
+            JointCheckingAccount toAccount = TestDataFactory.createJointCheckingAccount(user2, user2, BigDecimal.valueOf(0), CurrencyCode.USD, BigDecimal.valueOf(2000));
 
             BigDecimal amount = BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP);
             BigDecimal convertedAmount = BigDecimal.valueOf(530).setScale(2, RoundingMode.HALF_UP);
 
-            Transaction fromTransaction = TestDataFactory.createTransaction(amount, fromAccount.getAccountId(), toAccount.getAccountId());
-            Transaction toTransaction = TestDataFactory.createTransaction(convertedAmount, fromAccount.getAccountId(), toAccount.getAccountId());
+            Transaction transaction = TestDataFactory.createTransaction(amount.negate(), fromAccount.getAccountId(), toAccount.getAccountId());
 
             when(accountPersistenceService.getAccountById(fromAccount.getAccountId())).thenReturn(fromAccount);
             when(accountPersistenceService.getAccountById(toAccount.getAccountId())).thenReturn(toAccount);
             when(currencyConversionService.convertAmount(amount, CurrencyCode.EUR, CurrencyCode.USD)).thenReturn(convertedAmount);
-            when(transactionService.createTransaction(fromTransaction)).thenReturn(fromTransaction);
-            when(transactionService.createTransaction(toTransaction)).thenReturn(toTransaction);
+            when(transactionService.createTransaction(transaction)).thenReturn(transaction);
 
             // Act
             accountService.transfer(amount, fromAccount.getAccountId(), toAccount.getAccountId());
@@ -424,8 +423,7 @@ public class JointCheckingAccountServiceTest {
             assertEquals(BigDecimal.valueOf(530).setScale(2, RoundingMode.HALF_UP), toAccount.getBalance());  // Converted amount
             verify(accountPersistenceService, times(1)).updateAccount(fromAccount);
             verify(accountPersistenceService, times(1)).updateAccount(toAccount);
-            verify(transactionService, times(1)).createTransaction(fromTransaction);
-            verify(transactionService, times(1)).createTransaction(toTransaction);
+            verify(transactionService, times(1)).createTransaction(transaction);
         }
 
         @Test
@@ -441,7 +439,7 @@ public class JointCheckingAccountServiceTest {
 
             // Act & Assert
             Exception exception = assertThrows(IllegalArgumentException.class, () -> accountService.transfer(BigDecimal.valueOf(-500), fromAccount.getAccountId(), toAccount.getAccountId()));
-            assertEquals("Withdraw Failed: Amount must be greater than 0", exception.getMessage());
+            assertEquals("Amount must be greater than 0", exception.getMessage());
             verify(accountPersistenceService, times(0)).updateAccount(fromAccount);
             verify(accountPersistenceService, times(0)).updateAccount(toAccount);
         }
