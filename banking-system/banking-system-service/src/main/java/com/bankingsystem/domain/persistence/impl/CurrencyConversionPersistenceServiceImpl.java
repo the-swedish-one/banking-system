@@ -44,7 +44,7 @@ public class CurrencyConversionPersistenceServiceImpl implements CurrencyConvers
 
     @Override
     public CurrencyConversion getLatestConversion() {
-        return currencyConversionRepository.findTopByOrderByTimestampDesc()
+        return currencyConversionRepository.findTopByOrderByLastUpdatedDesc()
                 .map(currencyConversionMapper::toModel)
                 .orElseThrow(() -> {
                     logger.error("No currency conversion data found");

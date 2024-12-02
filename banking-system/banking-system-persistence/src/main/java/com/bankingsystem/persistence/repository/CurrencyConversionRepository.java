@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface CurrencyConversionRepository extends JpaRepository<CurrencyConversionEntity, Integer> {
-    Optional<CurrencyConversionEntity> findTopByOrderByTimestampDesc();
+    Optional<CurrencyConversionEntity> findTopByOrderByLastUpdatedDesc();
 }
