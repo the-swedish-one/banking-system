@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-@Table(name = "joint-checking-account")
+@Table(name = "joint_checking_account")
 @Entity
 @Data
 @NoArgsConstructor
@@ -28,11 +28,11 @@ public class JointCheckingAccountEntity {
     protected String accountName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
+    @JoinColumn(name = "owner_id", referencedColumnName = "userId")
     protected UserEntity owner;
 
     @ManyToOne
-    @JoinColumn(name = "second_owner_user_id", nullable = false)
+    @JoinColumn(name = "second_owner_id", referencedColumnName = "userId", nullable = false)
     private UserEntity secondOwner;
 
     @Column(nullable = false, precision = 19, scale = 4)
