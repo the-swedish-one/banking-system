@@ -12,7 +12,7 @@ import com.bankingsystem.domain.persistence.BankPersistenceService;
 @Service
 public class BankService {
 
-    private static final Logger logger = LoggerFactory.getLogger(JointCheckingAccountService.class);
+    private static final Logger logger = LoggerFactory.getLogger(BankService.class);
 
     private final BankPersistenceService bankPersistenceService;
 
