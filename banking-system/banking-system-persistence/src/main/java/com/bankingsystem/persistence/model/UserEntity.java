@@ -13,9 +13,9 @@ public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
+    private Integer userId;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.MERGE})
     @JoinColumn(name = "person_id", referencedColumnName = "personId")
     private PersonDetailsEntity person;
 

@@ -6,7 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiUser {
-    private int userId;
+    private Integer userId;
     private ApiPersonDetails person;
 
     public ApiUser(ApiPersonDetails person) {
