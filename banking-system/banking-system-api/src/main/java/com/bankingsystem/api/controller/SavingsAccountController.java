@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/savings-accounts")
+@RequestMapping("/api/savings-account")
 public class SavingsAccountController {
 
     private final SavingsAccountService savingsAccountService;
