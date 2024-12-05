@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Table(name = "savings_account")
 @Entity
@@ -31,7 +32,7 @@ public class SavingsAccountEntity {
     @JoinColumn(name = "owner_id", referencedColumnName = "userId", nullable = false)
     protected UserEntity owner;
 
-    @Column(nullable = false, precision = 19, scale = 4)
+    @Column(nullable = false, precision = 19, scale = 2)
     protected BigDecimal balance;
 
     @Enumerated(EnumType.STRING)
@@ -40,4 +41,12 @@ public class SavingsAccountEntity {
 
     @Column(name = "interest_rate_percentage")
     private double interestRatePercentage;
+
+    public void setBalance(BigDecimal balance) {
+        if (balance != null) {
+            this.balance = balance.setScale(2, RoundingMode.HALF_UP); // Always round to 2 decimal places
+        } else {
+            this.balance = null;
+        }
+    }
 }
