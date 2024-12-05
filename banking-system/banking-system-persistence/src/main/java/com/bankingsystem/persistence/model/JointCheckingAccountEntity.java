@@ -24,7 +24,7 @@ public class JointCheckingAccountEntity {
     @Column(unique = true, nullable = false)
     protected String iban;
 
-    @Column(name = "account_name", nullable = false)
+    @Column(name = "account_name", nullable = true)
     protected String accountName;
 
     @ManyToOne(fetch = FetchType.LAZY)
