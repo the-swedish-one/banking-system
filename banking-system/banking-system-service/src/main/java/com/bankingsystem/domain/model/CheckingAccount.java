@@ -16,10 +16,10 @@ public class CheckingAccount implements Withdrawable, Depositable  {
     private int accountId;
     private String iban;
     private String accountName;
-    private User owner;
     private BigDecimal balance;
     private CurrencyCode currency;
     private BigDecimal overdraftLimit;
+    private User owner;
 
     public CheckingAccount(User owner, BigDecimal balance, CurrencyCode currency, BigDecimal overdraftLimit) {
         this.owner = owner;

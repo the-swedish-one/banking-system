@@ -16,10 +16,10 @@ public class SavingsAccount implements Withdrawable, Depositable {
     private int accountId;
     private String iban;
     private String accountName;
-    private User owner;
     private BigDecimal balance;
     private CurrencyCode currency;
     private double interestRatePercentage;
+    private User owner;
 
     public SavingsAccount(User owner, BigDecimal balance, CurrencyCode currency, double interestRate) {
         this.owner = owner;
