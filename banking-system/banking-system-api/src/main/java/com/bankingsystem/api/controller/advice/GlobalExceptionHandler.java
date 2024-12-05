@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
         logger.error("Insufficient Funds Exception: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 String.valueOf(HttpStatus.BAD_REQUEST.value()),
-                "Insufficient funds: " + ex.getMessage(),
+                ex.getMessage(),
                 request.getRequestURI());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
         logger.error("Overdraft Limit Exceeded Exception: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 String.valueOf(HttpStatus.BAD_REQUEST.value()),
-                "Overdraft limit exceeded: " + ex.getMessage(),
+                ex.getMessage(),
                 request.getRequestURI());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
         logger.error("Account Not Found Exception: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 String.valueOf(HttpStatus.NOT_FOUND.value()),
-                "Account not found: " + ex.getMessage(),
+                ex.getMessage(),
                 request.getRequestURI());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
         logger.error("Person Details Not Found Exception: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 String.valueOf(HttpStatus.NOT_FOUND.value()),
-                "Person Details not found: " + ex.getMessage(),
+                ex.getMessage(),
                 request.getRequestURI());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
@@ -64,7 +64,7 @@ public class GlobalExceptionHandler {
         logger.error("Transaction Not Found Exception: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 String.valueOf(HttpStatus.NOT_FOUND.value()),
-                "Transaction not found: " + ex.getMessage(),
+                ex.getMessage(),
                 request.getRequestURI());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
         logger.error("User Not Found Exception: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 String.valueOf(HttpStatus.NOT_FOUND.value()),
-                "User not found: " + ex.getMessage(),
+                ex.getMessage(),
                 request.getRequestURI());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
@@ -84,7 +84,7 @@ public class GlobalExceptionHandler {
         logger.error("Bank Not Found Exception: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 String.valueOf(HttpStatus.NOT_FOUND.value()),
-                "Bank not found: " + ex.getMessage(),
+                ex.getMessage(),
                 request.getRequestURI());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
