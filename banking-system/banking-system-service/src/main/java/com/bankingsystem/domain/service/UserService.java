@@ -1,5 +1,7 @@
 package com.bankingsystem.domain.service;
 
+import com.bankingsystem.domain.model.PersonDetails;
+import com.bankingsystem.domain.persistence.PersonDetailsPersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,9 +17,11 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserPersistenceService userPersistenceService;
+    private final PersonDetailsPersistenceService personDetailsPersistenceService;
 
-    public UserService(UserPersistenceService userPersistenceService) {
+    public UserService(UserPersistenceService userPersistenceService, PersonDetailsPersistenceService personDetailsPersistenceService) {
         this.userPersistenceService = userPersistenceService;
+        this.personDetailsPersistenceService = personDetailsPersistenceService;
     }
 
     // Create new user
@@ -27,6 +31,20 @@ public class UserService {
             logger.error("Invalid user or person data");
             throw new IllegalArgumentException("User or person data cannot be null");
         }
+        PersonDetails person = user.getPerson();
+        if (person.getPersonId() != null) {
+            logger.info("Person ID found, fetching person details by ID: {}", person.getPersonId());
+            person = personDetailsPersistenceService.getPersonDetailsById(person.getPersonId());
+        } else {
+            // Check for duplicate email and save new PersonDetails via Persistence Service
+            if (personDetailsPersistenceService.existsByEmail(person.getEmail())) {
+                logger.error("PersonDetails with email {} already exists", person.getEmail());
+                throw new IllegalArgumentException("PersonDetails with email " + person.getEmail() + " already exists.");
+            }
+            logger.info("Saving new person details");
+            person = personDetailsPersistenceService.save(person);
+        }
+        user.setPerson(person);
         return userPersistenceService.save(user);
     }
 
