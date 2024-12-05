@@ -24,6 +24,9 @@ public class UserMapper {
     public UserEntity toEntity(User model) {
         if (model == null) return null;
         UserEntity entity = new UserEntity();
+        if (model.getUserId() != null && model.getUserId() != 0) {
+            entity.setUserId(model.getUserId());
+        }
         entity.setPerson(personDetailsMapper.toEntity(model.getPerson()));
         return entity;
     }
