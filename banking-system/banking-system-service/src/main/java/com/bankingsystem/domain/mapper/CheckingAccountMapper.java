@@ -29,6 +29,7 @@ public class CheckingAccountMapper {
     public CheckingAccountEntity toEntity (CheckingAccount model) {
         if (model == null) return null;
         CheckingAccountEntity entity = new CheckingAccountEntity();
+        entity.setIban(model.getIban());
         entity.setAccountName(model.getAccountName());
         entity.setOwner(userMapper.toEntity(model.getOwner()));
         entity.setBalance(model.getBalance());
