@@ -1,5 +1,7 @@
 package com.bankingsystem.domain.service;
 
+import com.bankingsystem.domain.model.User;
+import com.bankingsystem.domain.persistence.UserPersistenceService;
 import com.bankingsystem.persistence.exception.AccountNotFoundException;
 import com.bankingsystem.domain.exception.OverdraftLimitExceededException;
 import com.bankingsystem.domain.model.JointCheckingAccount;
@@ -22,11 +24,13 @@ public class JointCheckingAccountService {
     private static final Logger logger = LoggerFactory.getLogger(JointCheckingAccountService.class);
 
     private final JointCheckingAccountPersistenceService jointCheckingAccountPersistenceService;
+    private final UserPersistenceService userPersistenceService;
     private final TransactionService transactionService;
     private final CurrencyConversionService currencyConversionService;
 
-    public JointCheckingAccountService(JointCheckingAccountPersistenceService jointCheckingAccountPersistenceService, TransactionService transactionService, CurrencyConversionService currencyConversionService) {
+    public JointCheckingAccountService(JointCheckingAccountPersistenceService jointCheckingAccountPersistenceService, UserPersistenceService userPersistenceService, TransactionService transactionService, CurrencyConversionService currencyConversionService) {
         this.jointCheckingAccountPersistenceService = jointCheckingAccountPersistenceService;
+        this.userPersistenceService = userPersistenceService;
         this.transactionService = transactionService;
         this.currencyConversionService = currencyConversionService;
     }
@@ -38,6 +42,20 @@ public class JointCheckingAccountService {
             logger.error("Account creation failed: Missing required fields");
             throw new IllegalArgumentException("Account creation failed: Missing required fields");
         }
+
+        User user = account.getOwner();
+        User secondUser = account.getSecondOwner();
+        if (user.getUserId() != null && secondUser.getUserId() != null) {
+            logger.info("User IDs found, fetching users with IDs: {} and {}", user.getUserId(), secondUser.getUserId());
+            user = userPersistenceService.getUserById(user.getUserId());
+            secondUser = userPersistenceService.getUserById(secondUser.getUserId());
+        } else {
+            logger.error("User ID is required to create an account");
+            throw new IllegalArgumentException("User ID is required to create an account.");
+        }
+        account.setOwner(user);
+        account.setSecondOwner(secondUser);
+
         account.setIban(generateIBAN(account.getOwner().getPerson().getCountry()));
         logger.info("Successfully created new Joint Checking Account with IBAN {}", account.getIban());
         return jointCheckingAccountPersistenceService.save(account);

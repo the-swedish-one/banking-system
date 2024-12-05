@@ -1,9 +1,11 @@
 package com.bankingsystem.domain.service;
 
+import com.bankingsystem.domain.persistence.UserPersistenceService;
 import com.bankingsystem.persistence.exception.AccountNotFoundException;
 import com.bankingsystem.domain.exception.OverdraftLimitExceededException;
 import com.bankingsystem.domain.model.CheckingAccount;
 import com.bankingsystem.domain.model.Transaction;
+import com.bankingsystem.domain.model.User;
 import com.bankingsystem.domain.persistence.CheckingAccountPersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +24,13 @@ public class CheckingAccountService {
     private static final Logger logger = LoggerFactory.getLogger(CheckingAccountService.class);
 
     private final CheckingAccountPersistenceService checkingAccountPersistenceService;
+    private final UserPersistenceService userPersistenceService;
     private final TransactionService transactionService;
     private final CurrencyConversionService currencyConversionService;
 
-    public CheckingAccountService(CheckingAccountPersistenceService checkingAccountPersistenceService, TransactionService transactionService, CurrencyConversionService currencyConversionService) {
+    public CheckingAccountService(CheckingAccountPersistenceService checkingAccountPersistenceService, UserPersistenceService userPersistenceService, TransactionService transactionService, CurrencyConversionService currencyConversionService) {
         this.checkingAccountPersistenceService = checkingAccountPersistenceService;
+        this.userPersistenceService = userPersistenceService;
         this.transactionService = transactionService;
         this.currencyConversionService = currencyConversionService;
     }
@@ -38,6 +42,17 @@ public class CheckingAccountService {
             logger.error("Account creation failed: Missing required fields");
             throw new IllegalArgumentException("Account creation failed: Missing required fields");
         }
+
+        User user = account.getOwner();
+        if (user.getUserId() != null) {
+            logger.info("User ID found, fetching user with ID: {}", user.getUserId());
+            user = userPersistenceService.getUserById(user.getUserId());
+        } else {
+            logger.error("User ID is required to create an account");
+            throw new IllegalArgumentException("User ID is required to create an account.");
+        }
+        account.setOwner(user);
+
         account.setIban(generateIBAN(account.getOwner().getPerson().getCountry()));
         logger.info("Successfully created new CheckingAccount with IBAN {}", account.getIban());
         return checkingAccountPersistenceService.save(account);

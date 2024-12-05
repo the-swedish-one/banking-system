@@ -1,5 +1,6 @@
 package com.bankingsystem.domain.service;
 
+import com.bankingsystem.domain.persistence.UserPersistenceService;
 import com.bankingsystem.persistence.enums.CurrencyCode;
 import com.bankingsystem.persistence.exception.AccountNotFoundException;
 import com.bankingsystem.domain.exception.InsufficientFundsException;
@@ -28,6 +29,9 @@ public class SavingsAccountServiceTest {
     private SavingsAccountPersistenceService accountPersistenceService;
 
     @Mock
+    private UserPersistenceService userPersistenceService;
+
+    @Mock
     private CurrencyConversionService currencyConversionService;
 
     @Mock
@@ -40,6 +44,8 @@ public class SavingsAccountServiceTest {
         void createSavingsAccount() {
             // Arrange
             User user = TestDataFactory.createUser();
+            int userId = user.getUserId();
+            when(userPersistenceService.getUserById(userId)).thenReturn(user);
             SavingsAccount account = TestDataFactory.createSavingsAccount(user);
 
             when(accountPersistenceService.save(account)).thenReturn(account);

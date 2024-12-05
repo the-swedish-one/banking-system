@@ -1,5 +1,7 @@
 package com.bankingsystem.domain.service;
 
+import com.bankingsystem.domain.model.User;
+import com.bankingsystem.domain.persistence.UserPersistenceService;
 import com.bankingsystem.persistence.exception.AccountNotFoundException;
 import com.bankingsystem.domain.exception.InsufficientFundsException;
 import com.bankingsystem.domain.model.SavingsAccount;
@@ -22,11 +24,13 @@ public class SavingsAccountService {
     private static final Logger logger = LoggerFactory.getLogger(SavingsAccountService.class);
 
     private final SavingsAccountPersistenceService savingsAccountPersistenceService;
+    private final UserPersistenceService userPersistenceService;
     private final TransactionService transactionService;
     private final CurrencyConversionService currencyConversionService;
 
-    public SavingsAccountService(SavingsAccountPersistenceService savingsAccountPersistenceService, TransactionService transactionService, CurrencyConversionService currencyConversionService) {
+    public SavingsAccountService(SavingsAccountPersistenceService savingsAccountPersistenceService, UserPersistenceService userPersistenceService, TransactionService transactionService, CurrencyConversionService currencyConversionService) {
         this.savingsAccountPersistenceService = savingsAccountPersistenceService;
+        this.userPersistenceService = userPersistenceService;
         this.transactionService = transactionService;
         this.currencyConversionService = currencyConversionService;
     }
@@ -38,6 +42,17 @@ public class SavingsAccountService {
             logger.error("Account creation failed: Missing required fields");
             throw new IllegalArgumentException("Account creation failed: Missing required fields");
         }
+
+        User user = account.getOwner();
+        if (user.getUserId() != null) {
+            logger.info("User ID found, fetching user with ID: {}", user.getUserId());
+            user = userPersistenceService.getUserById(user.getUserId());
+        } else {
+            logger.error("User ID is required to create an account");
+            throw new IllegalArgumentException("User ID is required to create an account.");
+        }
+        account.setOwner(user);
+
         account.setIban(generateIBAN(account.getOwner().getPerson().getCountry()));
         logger.info("Successfully created new Savings Account with IBAN {}", account.getIban());
         return savingsAccountPersistenceService.save(account);

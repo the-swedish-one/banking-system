@@ -1,5 +1,6 @@
 package com.bankingsystem.domain.service;
 
+import com.bankingsystem.domain.persistence.UserPersistenceService;
 import com.bankingsystem.persistence.enums.CurrencyCode;
 import com.bankingsystem.persistence.exception.AccountNotFoundException;
 import com.bankingsystem.domain.exception.OverdraftLimitExceededException;
@@ -29,6 +30,9 @@ class CheckingAccountServiceTest {
     private CheckingAccountPersistenceService accountPersistenceService;
 
     @Mock
+    private UserPersistenceService userPersistenceService;
+
+    @Mock
     private CurrencyConversionService currencyConversionService;
 
     @Mock
@@ -44,6 +48,8 @@ class CheckingAccountServiceTest {
         void createCheckingAccount() {
             // Arrange
             User user = TestDataFactory.createUser();
+            int userId = user.getUserId();
+            when(userPersistenceService.getUserById(userId)).thenReturn(user);
             CheckingAccount account = TestDataFactory.createCheckingAccount(user);
 
             when(accountPersistenceService.save(account)).thenReturn(account);
