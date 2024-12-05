@@ -5,7 +5,7 @@ import com.bankingsystem.domain.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {ApiPersonDetailsMapper.class})
 public interface ApiUserMapper {
 
     // Map from service model User to API model ApiUser
