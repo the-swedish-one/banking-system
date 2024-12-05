@@ -17,7 +17,7 @@ import lombok.*;
 public class PersonDetailsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int personId;
+    private Integer personId;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;

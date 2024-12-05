@@ -6,7 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PersonDetails {
-    private int personId;
+    private Integer personId;
     private String firstName;
     private String lastName;
     private String email;
