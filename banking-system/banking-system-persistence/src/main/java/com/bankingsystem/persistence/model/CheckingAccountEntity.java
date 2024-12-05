@@ -28,7 +28,7 @@ public class CheckingAccountEntity {
     protected String accountName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", referencedColumnName = "userId")
+    @JoinColumn(name = "owner_id", referencedColumnName = "userId", nullable = false)
     protected UserEntity owner;
 
     @Column(nullable = false, precision = 19, scale = 4)
