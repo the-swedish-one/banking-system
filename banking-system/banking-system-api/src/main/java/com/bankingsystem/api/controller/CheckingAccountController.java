@@ -61,15 +61,15 @@ public class CheckingAccountController {
     }
 
     // Deposit money into checking account
-    @PostMapping("/{accountId}/deposit")
-    public ResponseEntity<CheckingAccount> deposit(@PathVariable int accountId, @RequestBody BigDecimal amount) {
+    @PostMapping("/deposit")
+    public ResponseEntity<CheckingAccount> deposit(@RequestParam int accountId, @RequestParam BigDecimal amount) {
             CheckingAccount updatedAccount = checkingAccountService.deposit(accountId, amount);
             return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
     }
 
     // Withdraw money from checking account
-    @PostMapping("/{accountId}/withdraw")
-    public ResponseEntity<CheckingAccount> withdraw(@PathVariable int accountId, @RequestBody BigDecimal amount) {
+    @PostMapping("/withdraw")
+    public ResponseEntity<CheckingAccount> withdraw(@RequestParam int accountId, @RequestParam BigDecimal amount) {
             CheckingAccount updatedAccount = checkingAccountService.withdraw(accountId, amount);
             return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
     }

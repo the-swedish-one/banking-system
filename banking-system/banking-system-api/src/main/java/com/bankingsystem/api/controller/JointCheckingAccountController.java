@@ -52,21 +52,21 @@ public class JointCheckingAccountController {
             return isDeleted ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/{accountId}/deposit")
-    public ResponseEntity<JointCheckingAccount> deposit(@PathVariable int accountId, @RequestParam BigDecimal amount) {
+    @PostMapping("/deposit")
+    public ResponseEntity<JointCheckingAccount> deposit(@RequestParam int accountId, @RequestParam BigDecimal amount) {
             JointCheckingAccount updatedAccount = jointCheckingAccountService.deposit(accountId, amount);
             return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
     }
 
-    @PostMapping("/{accountId}/withdraw")
-    public ResponseEntity<JointCheckingAccount> withdraw(@PathVariable int accountId, @RequestParam BigDecimal amount) {
+    @PostMapping("/withdraw")
+    public ResponseEntity<JointCheckingAccount> withdraw(@RequestParam int accountId, @RequestParam BigDecimal amount) {
             JointCheckingAccount updatedAccount = jointCheckingAccountService.withdraw(accountId, amount);
             return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
     }
 
-    @PostMapping("/{fromAccountId}/transfer/{toAccountId}")
-    public ResponseEntity<Void> transfer(@PathVariable int fromAccountId, @PathVariable int toAccountId, @RequestParam BigDecimal amount) {
+    @PostMapping("/transfer")
+    public ResponseEntity<Void> transfer(@RequestParam int fromAccountId, @RequestParam int toAccountId, @RequestParam BigDecimal amount) {
             jointCheckingAccountService.transfer(amount, fromAccountId, toAccountId);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.OK);
     }
 }

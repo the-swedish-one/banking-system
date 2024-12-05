@@ -62,32 +62,32 @@ public class SavingsAccountController {
     }
 
     // Deposit into savings account
-    @PostMapping("/{accountId}/deposit")
-    public ResponseEntity<SavingsAccount> deposit(@PathVariable int accountId, @RequestParam BigDecimal amount) {
+    @PostMapping("/deposit")
+    public ResponseEntity<SavingsAccount> deposit(@RequestParam int accountId, @RequestParam BigDecimal amount) {
             SavingsAccount updatedAccount = savingsAccountService.deposit(accountId, amount);
             return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
     }
 
     // Withdraw from savings account
-    @PostMapping("/{accountId}/withdraw")
-    public ResponseEntity<SavingsAccount> withdraw(@PathVariable int accountId, @RequestParam BigDecimal amount) {
+    @PostMapping("/withdraw")
+    public ResponseEntity<SavingsAccount> withdraw(@RequestParam int accountId, @RequestParam BigDecimal amount) {
             SavingsAccount updatedAccount = savingsAccountService.withdraw(accountId, amount);
             return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
     }
 
     // Transfer money between savings accounts
-    @PostMapping("/{fromAccountId}/transfer/{toAccountId}")
+    @PostMapping("/transfer")
     public ResponseEntity<Void> transfer(
-            @PathVariable int fromAccountId,
-            @PathVariable int toAccountId,
+            @RequestParam int fromAccountId,
+            @RequestParam int toAccountId,
             @RequestParam BigDecimal amount) {
             savingsAccountService.transfer(amount, fromAccountId, toAccountId);
             return new ResponseEntity<>(HttpStatus.OK);
     }
 
     // Apply interest to a savings account
-    @PostMapping("/{accountId}/interest")
-    public ResponseEntity<SavingsAccount> applyInterest(@PathVariable int accountId) {
+    @PostMapping("/interest")
+    public ResponseEntity<SavingsAccount> applyInterest(@RequestParam int accountId) {
             SavingsAccount account = savingsAccountService.getSavingsAccountById(accountId);
             SavingsAccount updatedAccount = savingsAccountService.addInterest(account);
             return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
