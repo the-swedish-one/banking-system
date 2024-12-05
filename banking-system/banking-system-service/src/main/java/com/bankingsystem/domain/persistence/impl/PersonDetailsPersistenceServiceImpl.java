@@ -65,6 +65,16 @@ public class PersonDetailsPersistenceServiceImpl implements PersonDetailsPersist
         return personDetailsList;
     }
 
+    // Check if person exists by email
+    @Override
+    public boolean existsByEmail(String email) {
+        if (email == null) {
+            logger.error("Email is null");
+            throw new IllegalArgumentException("Email cannot be null");
+        }
+        return personDetailsRepository.existsByEmail(email);
+    }
+
     // Update person details
     @Override
     public PersonDetails updatePersonDetails(PersonDetails personDetails) {
