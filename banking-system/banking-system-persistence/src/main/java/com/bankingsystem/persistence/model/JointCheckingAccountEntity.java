@@ -28,7 +28,7 @@ public class JointCheckingAccountEntity {
     protected String accountName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", referencedColumnName = "userId")
+    @JoinColumn(name = "owner_id", referencedColumnName = "userId", nullable = false)
     protected UserEntity owner;
 
     @ManyToOne
