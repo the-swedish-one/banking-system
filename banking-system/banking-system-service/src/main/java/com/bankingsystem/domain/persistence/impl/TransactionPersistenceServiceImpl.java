@@ -67,6 +67,21 @@ public class TransactionPersistenceServiceImpl implements TransactionPersistence
         return transactions;
     }
 
+    // Get all transactions for an IBAN
+    @Override
+    public List<Transaction> getTransactionsByIban(String iban) {
+        List<TransactionEntity> entities = transactionRepository.findByFromAccountIbanOrToAccountIban(iban, iban);
+        if (entities.isEmpty()) {
+            logger.error("No transactions found for IBAN: {}", iban);
+            throw new TransactionNotFoundException("No transactions found for IBAN: " + iban);
+        }
+        List<Transaction> transactions = entities.stream()
+                .map(transactionMapper::toModel)
+                .collect(Collectors.toList());
+        logger.info("Successfully fetched {} transactions for IBAN: {}", transactions.size(), iban);
+        return transactions;
+    }
+
     // Update transaction
     public Transaction updateTransaction(Transaction transaction) {
         TransactionEntity existingEntity = transactionRepository.findById(transaction.getTransactionId())

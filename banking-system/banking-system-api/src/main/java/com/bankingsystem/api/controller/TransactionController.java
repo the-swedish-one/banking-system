@@ -32,6 +32,16 @@ public class TransactionController {
         return new ResponseEntity<>(apiTransaction, HttpStatus.OK);
     }
 
+    // Get all transactions for an IBAN
+    @GetMapping("/iban/{iban}")
+    public ResponseEntity<List<ApiTransaction>> getTransactionsByIban(@PathVariable String iban) {
+        List<Transaction> transactions = transactionService.getTransactionsByIban(iban);
+        List<ApiTransaction> apiTransactions = transactions.stream()
+                .map(apiTransactionMapper::toApiModel)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(apiTransactions, HttpStatus.OK);
+    }
+
     @GetMapping
     public ResponseEntity<List<ApiTransaction>> getAllTransactions() {
         List<Transaction> transactions = transactionService.getAllTransactions();

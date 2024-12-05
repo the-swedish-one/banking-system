@@ -53,10 +53,21 @@ public class TransactionService {
         return transactionPersistenceService.getTransactionById(transactionId);
     }
 
+
     // Get all transactions
     public List<Transaction> getAllTransactions() {
         logger.info("Fetching all transactions");
         return transactionPersistenceService.getAllTransactions();
+    }
+
+    // Get all transactions for an IBAN
+    public List<Transaction> getTransactionsByIban(String iban) {
+        if(iban == null) {
+            logger.error("IBAN is null");
+            throw new IllegalArgumentException("IBAN cannot be null");
+        }
+        logger.info("Fetching all transactions for IBAN: {}", iban);
+        return transactionPersistenceService.getTransactionsByIban(iban);
     }
 
     // Delete transaction by ID

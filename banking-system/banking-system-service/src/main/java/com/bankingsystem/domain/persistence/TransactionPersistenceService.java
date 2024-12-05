@@ -16,6 +16,9 @@ public interface TransactionPersistenceService {
     // Get all transactions
     List<Transaction> getAllTransactions();
 
+    // Get all transactions for an IBAN
+    List<Transaction> getTransactionsByIban(String iban);
+
     // Update transaction
     Transaction updateTransaction(Transaction transaction);
 
