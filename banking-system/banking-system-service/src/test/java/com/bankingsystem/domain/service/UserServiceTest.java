@@ -1,6 +1,8 @@
 package com.bankingsystem.domain.service;
 
+import com.bankingsystem.domain.model.PersonDetails;
 import com.bankingsystem.domain.model.User;
+import com.bankingsystem.domain.persistence.PersonDetailsPersistenceService;
 import com.bankingsystem.persistence.exception.UserNotFoundException;
 import com.bankingsystem.domain.persistence.UserPersistenceService;
 import com.bankingsystem.domain.testutils.TestDataFactory;
@@ -23,6 +25,9 @@ public class UserServiceTest {
     @Mock
     private UserPersistenceService userPersistenceService;
 
+    @Mock
+    private PersonDetailsPersistenceService personDetailsPersistenceService;
+
     @InjectMocks
     private UserService userService;
 
@@ -33,7 +38,11 @@ public class UserServiceTest {
         void createUser() {
             // Arrange
             User u = TestDataFactory.createUser();
-            when(userPersistenceService.save(u)).thenReturn(u);
+            PersonDetails mockPerson = u.getPerson();
+            int personId = mockPerson.getPersonId();
+            when(personDetailsPersistenceService.getPersonDetailsById(personId))
+                    .thenReturn(mockPerson);
+            when(userPersistenceService.save(any(User.class))).thenReturn(u);
 
             // Act
             User user = userService.createUser(u);
