@@ -25,14 +25,6 @@ public class TransactionController {
         this.apiTransactionMapper = apiTransactionMapper;
     }
 
-    @PostMapping
-    public ResponseEntity<ApiTransaction> createTransaction(@RequestBody ApiTransaction apiTransaction) {
-        Transaction serviceModel = apiTransactionMapper.toServiceModel(apiTransaction);
-        Transaction transaction = transactionService.createTransaction(serviceModel);
-        ApiTransaction apiResponse = apiTransactionMapper.toApiModel(transaction);
-        return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<ApiTransaction> getTransactionById(@PathVariable int id) {
         Transaction transaction = transactionService.getTransactionById(id);
