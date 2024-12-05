@@ -42,7 +42,7 @@ public class UserServiceTest {
             int personId = mockPerson.getPersonId();
             when(personDetailsPersistenceService.getPersonDetailsById(personId))
                     .thenReturn(mockPerson);
-            when(userPersistenceService.save(any(User.class))).thenReturn(u);
+            when(userPersistenceService.save(u)).thenReturn(u);
 
             // Act
             User user = userService.createUser(u);
