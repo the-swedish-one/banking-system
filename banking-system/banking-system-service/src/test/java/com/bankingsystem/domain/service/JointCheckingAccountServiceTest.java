@@ -276,7 +276,7 @@ public class JointCheckingAccountServiceTest {
             User user1 = TestDataFactory.createUser();
             User user2 = TestDataFactory.createUser();
             JointCheckingAccount jointCheckingAccount = TestDataFactory.createJointCheckingAccount(user1, user2);
-            Transaction transaction = TestDataFactory.createTransaction(BigDecimal.valueOf(500), null, jointCheckingAccount.getAccountId());
+            Transaction transaction = TestDataFactory.createTransaction(BigDecimal.valueOf(500), null, jointCheckingAccount.getIban());
 
             when(accountPersistenceService.getAccountById(jointCheckingAccount.getAccountId())).thenReturn(jointCheckingAccount);
             when(transactionService.createTransaction(transaction)).thenReturn(transaction);
@@ -314,7 +314,7 @@ public class JointCheckingAccountServiceTest {
             User user1 = TestDataFactory.createUser();
             User user2 = TestDataFactory.createUser();
             JointCheckingAccount jointCheckingAccount = TestDataFactory.createJointCheckingAccount(user1, user2);
-            Transaction withdrawTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(-500), jointCheckingAccount.getAccountId(), null);
+            Transaction withdrawTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(-500).setScale(2, RoundingMode.HALF_UP), jointCheckingAccount.getIban(), null);
 
             when(accountPersistenceService.getAccountById(jointCheckingAccount.getAccountId())).thenReturn(jointCheckingAccount);
             when(transactionService.createTransaction(withdrawTransaction)).thenReturn(withdrawTransaction);
@@ -323,7 +323,7 @@ public class JointCheckingAccountServiceTest {
             accountService.withdraw(jointCheckingAccount.getAccountId(), BigDecimal.valueOf(500));
 
             // Assert
-            assertEquals(BigDecimal.valueOf(500), jointCheckingAccount.getBalance());
+            assertEquals(BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP), jointCheckingAccount.getBalance());
             verify(accountPersistenceService, times(1)).updateAccount(jointCheckingAccount);
             verify(transactionService, times(1)).createTransaction(withdrawTransaction);
         }
@@ -349,7 +349,7 @@ public class JointCheckingAccountServiceTest {
             User user1 = TestDataFactory.createUser();
             User user2 = TestDataFactory.createUser();
             JointCheckingAccount jointCheckingAccount = TestDataFactory.createJointCheckingAccount(user1, user2);
-            Transaction withdrawTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(-1400), jointCheckingAccount.getAccountId(), null);
+            Transaction withdrawTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(-1400).setScale(2, RoundingMode.HALF_UP), jointCheckingAccount.getIban(), null);
 
             when(accountPersistenceService.getAccountById(jointCheckingAccount.getAccountId())).thenReturn(jointCheckingAccount);
             when(transactionService.createTransaction(withdrawTransaction)).thenReturn(withdrawTransaction);
@@ -358,7 +358,7 @@ public class JointCheckingAccountServiceTest {
             accountService.withdraw(jointCheckingAccount.getAccountId(), BigDecimal.valueOf(1400));
 
             // Assert
-            assertEquals(BigDecimal.valueOf(-400), jointCheckingAccount.getBalance());
+            assertEquals(BigDecimal.valueOf(-400).setScale(2, RoundingMode.HALF_UP), jointCheckingAccount.getBalance());
             verify(accountPersistenceService, times(1)).updateAccount(jointCheckingAccount);
             verify(transactionService, times(1)).createTransaction(withdrawTransaction);
         }
@@ -388,25 +388,25 @@ public class JointCheckingAccountServiceTest {
             User user2 = TestDataFactory.createUser();
             JointCheckingAccount fromAccount = TestDataFactory.createJointCheckingAccount(user1, user2);
             JointCheckingAccount toAccount = TestDataFactory.createJointCheckingAccount(user1, user2);
-            fromAccount.setAccountId(1);
-            toAccount.setAccountId(2);
+            String fromIban = "IBAN12345";
+            String toIban = "IBAN67890";
+            fromAccount.setIban(fromIban);
+            toAccount.setIban(toIban);
 
             BigDecimal transferAmount = BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP);
-            Transaction transferTransactionFrom = TestDataFactory.createTransaction(
-                    transferAmount.negate(), fromAccount.getAccountId(), toAccount.getAccountId());
-            Transaction transferTransactionTo = TestDataFactory.createTransaction(
-                    transferAmount, fromAccount.getAccountId(), toAccount.getAccountId());
+            Transaction fromTransaction = new Transaction(transferAmount.negate(), fromIban, toIban);
+            Transaction toTransaction = new Transaction(transferAmount, fromIban, toIban);
 
-            when(accountPersistenceService.getAccountById(fromAccount.getAccountId())).thenReturn(fromAccount);
-            when(accountPersistenceService.getAccountById(toAccount.getAccountId())).thenReturn(toAccount);
-            when(transactionService.createTransaction(transferTransactionFrom)).thenReturn(transferTransactionFrom);
-            when(transactionService.createTransaction(transferTransactionTo)).thenReturn(transferTransactionTo);
+            when(accountPersistenceService.getAccountByIban(fromIban)).thenReturn(fromAccount);
+            when(accountPersistenceService.getAccountByIban(toIban)).thenReturn(toAccount);
+            when(transactionService.createTransaction(fromTransaction)).thenReturn(fromTransaction);
+            when(transactionService.createTransaction(toTransaction)).thenReturn(toTransaction);
             when(accountPersistenceService.updateAccount(fromAccount)).thenReturn(fromAccount);
             when(accountPersistenceService.updateAccount(toAccount)).thenReturn(toAccount);
 
             // Act
             List<JointCheckingAccount> updatedAccounts = accountService.transfer(
-                    transferAmount, fromAccount.getAccountId(), toAccount.getAccountId());
+                    transferAmount, fromIban, toIban);
 
             // Assert
             assertEquals(2, updatedAccounts.size());
@@ -414,8 +414,8 @@ public class JointCheckingAccountServiceTest {
             assertEquals(BigDecimal.valueOf(1500).setScale(2, RoundingMode.HALF_UP), updatedAccounts.get(1).getBalance());
             verify(accountPersistenceService, times(1)).updateAccount(fromAccount);
             verify(accountPersistenceService, times(1)).updateAccount(toAccount);
-            verify(transactionService, times(1)).createTransaction(transferTransactionFrom);
-            verify(transactionService, times(1)).createTransaction(transferTransactionTo);
+            verify(transactionService, times(1)).createTransaction(fromTransaction);
+            verify(transactionService, times(1)).createTransaction(toTransaction);
         }
 
         @Test
@@ -423,28 +423,30 @@ public class JointCheckingAccountServiceTest {
             // Arrange
             User user1 = TestDataFactory.createUser();
             User user2 = TestDataFactory.createUser();
+            String fromIban = "IBAN12345";
+            String toIban = "IBAN67890";
             JointCheckingAccount fromAccount = TestDataFactory.createJointCheckingAccount(user1, user2, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
             JointCheckingAccount toAccount = TestDataFactory.createJointCheckingAccount(user2, user2, BigDecimal.valueOf(0), CurrencyCode.USD, BigDecimal.valueOf(2000));
+
+            fromAccount.setIban(fromIban);
+            toAccount.setIban(toIban);
 
             BigDecimal transferAmount = BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP);
             BigDecimal convertedAmount = BigDecimal.valueOf(530).setScale(2, RoundingMode.HALF_UP);
 
-            Transaction transferTransactionFrom = TestDataFactory.createTransaction(
-                    transferAmount.negate(), fromAccount.getAccountId(), toAccount.getAccountId());
-            Transaction transferTransactionTo = TestDataFactory.createTransaction(
-                    convertedAmount, fromAccount.getAccountId(), toAccount.getAccountId());
+            Transaction fromTransaction = new Transaction(transferAmount.negate(), fromIban, toIban);
+            Transaction toTransaction = new Transaction(convertedAmount, fromIban, toIban);
 
-            when(accountPersistenceService.getAccountById(fromAccount.getAccountId())).thenReturn(fromAccount);
-            when(accountPersistenceService.getAccountById(toAccount.getAccountId())).thenReturn(toAccount);
+            when(accountPersistenceService.getAccountByIban(fromIban)).thenReturn(fromAccount);
+            when(accountPersistenceService.getAccountByIban(toIban)).thenReturn(toAccount);
             when(currencyConversionService.convertAmount(transferAmount, CurrencyCode.EUR, CurrencyCode.USD)).thenReturn(convertedAmount);
-            when(transactionService.createTransaction(transferTransactionFrom)).thenReturn(transferTransactionFrom);
-            when(transactionService.createTransaction(transferTransactionTo)).thenReturn(transferTransactionTo);
+            when(transactionService.createTransaction(fromTransaction)).thenReturn(fromTransaction);
+            when(transactionService.createTransaction(toTransaction)).thenReturn(toTransaction);
             when(accountPersistenceService.updateAccount(fromAccount)).thenReturn(fromAccount);
             when(accountPersistenceService.updateAccount(toAccount)).thenReturn(toAccount);
 
             // Act
-            List<JointCheckingAccount> updatedAccounts = accountService.transfer(
-                    transferAmount, fromAccount.getAccountId(), toAccount.getAccountId());
+            List<JointCheckingAccount> updatedAccounts = accountService.transfer(transferAmount, fromIban, toIban);
 
             // Assert
             assertEquals(2, updatedAccounts.size());
@@ -452,8 +454,8 @@ public class JointCheckingAccountServiceTest {
             assertEquals(BigDecimal.valueOf(530).setScale(2, RoundingMode.HALF_UP), updatedAccounts.get(1).getBalance()); // Converted amount
             verify(accountPersistenceService, times(1)).updateAccount(fromAccount);
             verify(accountPersistenceService, times(1)).updateAccount(toAccount);
-            verify(transactionService, times(1)).createTransaction(transferTransactionFrom);
-            verify(transactionService, times(1)).createTransaction(transferTransactionTo);
+            verify(transactionService, times(1)).createTransaction(fromTransaction);
+            verify(transactionService, times(1)).createTransaction(toTransaction);
         }
 
 
@@ -462,14 +464,19 @@ public class JointCheckingAccountServiceTest {
             // Arrange
             User user1 = TestDataFactory.createUser();
             User user2 = TestDataFactory.createUser();
+            String fromIban = "IBAN12345";
+            String toIban = "IBAN67890";
             JointCheckingAccount fromAccount = TestDataFactory.createJointCheckingAccount(user1, user2);
             JointCheckingAccount toAccount = TestDataFactory.createJointCheckingAccount(user1, user2);
 
-            when(accountPersistenceService.getAccountById(fromAccount.getAccountId())).thenReturn(fromAccount);
-            when(accountPersistenceService.getAccountById(toAccount.getAccountId())).thenReturn(toAccount);
+            fromAccount.setIban(fromIban);
+            toAccount.setIban(toIban);
+
+            when(accountPersistenceService.getAccountByIban(fromIban)).thenReturn(fromAccount);
+            when(accountPersistenceService.getAccountByIban(toIban)).thenReturn(toAccount);
 
             // Act & Assert
-            Exception exception = assertThrows(IllegalArgumentException.class, () -> accountService.transfer(BigDecimal.valueOf(-500), fromAccount.getAccountId(), toAccount.getAccountId()));
+            Exception exception = assertThrows(IllegalArgumentException.class, () -> accountService.transfer(BigDecimal.valueOf(-500), fromIban, toIban));
             assertEquals("Amount must be greater than 0", exception.getMessage());
             verify(accountPersistenceService, times(0)).updateAccount(fromAccount);
             verify(accountPersistenceService, times(0)).updateAccount(toAccount);

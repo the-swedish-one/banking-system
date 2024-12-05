@@ -15,7 +15,7 @@ public class ApiTransaction {
     private int transactionId;
     private BigDecimal amount;
     private LocalDateTime timestamp;
-    private Integer fromAccountId;
-    private Integer toAccountId;
+    private String fromAccountIban;
+    private String toAccountIban;
 
 }

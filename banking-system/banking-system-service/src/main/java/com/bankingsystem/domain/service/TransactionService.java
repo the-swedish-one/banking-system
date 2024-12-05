@@ -27,9 +27,9 @@ public class TransactionService {
             logger.error("Transaction object is null");
             throw new IllegalArgumentException("Transaction object cannot be null");
         }
-        if (transaction.getFromAccountId() == null && transaction.getToAccountId() == null) {
-            logger.error("At least one of fromAccountId or toAccountId must be specified");
-            throw new IllegalArgumentException("At least one of fromAccountId or toAccountId must be specified");
+        if (transaction.getFromAccountIban() == null && transaction.getToAccountIban() == null) {
+            logger.error("At least one of fromAccountIban or toAccountIban must be specified");
+            throw new IllegalArgumentException("At least one of fromAccountIban or toAccountIban must be specified");
         }
         if (transaction.getAmount() == null) {
             logger.error("Transaction amount is null");

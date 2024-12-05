@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -129,7 +130,7 @@ public class SavingsAccountService {
         SavingsAccount savingsAccount = savingsAccountPersistenceService.getAccountById(accountId);
         savingsAccount.setBalance(savingsAccount.getBalance().add(amount));
 
-        Transaction transaction = new Transaction(amount, null, accountId);
+        Transaction transaction = new Transaction(amount, null, savingsAccount.getIban());
         transactionService.createTransaction(transaction);
 
         logger.info("Successfully deposited {} {} to account with ID: {}", amount, savingsAccount.getCurrency(), accountId);
@@ -151,10 +152,10 @@ public class SavingsAccountService {
             logger.error("Withdrawal failed: Insufficient funds");
             throw new InsufficientFundsException("Withdrawal failed: Insufficient funds");
         }
-
+        amount = amount.setScale(2, RoundingMode.HALF_UP);
         account.setBalance(account.getBalance().subtract(amount));
 
-        Transaction transaction = new Transaction(amount.negate(), accountId, null);
+        Transaction transaction = new Transaction(amount.negate(), account.getIban(), null);
         transactionService.createTransaction(transaction);
 
         logger.info("Successfully withdrew {} {} from account with ID: {}", amount, account.getCurrency(), accountId);
@@ -162,15 +163,15 @@ public class SavingsAccountService {
     }
 
     // Transfer
-    public List<SavingsAccount> transfer (BigDecimal amount, int fromAccountId, int toAccountId) {
-        logger.info("Transferring {} {} from account with ID: {} to account with ID: {}", amount, getSavingsAccountById(fromAccountId).getCurrency(), fromAccountId, toAccountId);
-        if (fromAccountId == toAccountId) {
+    public List<SavingsAccount> transfer (BigDecimal amount, String fromAccountIban, String toAccountIban) {
+        logger.info("Transferring {} from IBAN: {} to IBAN: {}", amount, fromAccountIban, toAccountIban);
+        if (Objects.equals(fromAccountIban, toAccountIban)) {
             logger.error("Transfer failed: Cannot transfer to the same account");
             throw new IllegalArgumentException("Transfer failed: Cannot transfer to the same account");
         }
 
-        SavingsAccount fromAccount = getSavingsAccountById(fromAccountId);
-        SavingsAccount toAccount = getSavingsAccountById(toAccountId);
+        SavingsAccount fromAccount = savingsAccountPersistenceService.getAccountByIban(fromAccountIban);
+        SavingsAccount toAccount = savingsAccountPersistenceService.getAccountByIban(toAccountIban);
 
         if (fromAccount.getBalance().compareTo(amount) < 0) {
             logger.error("Transfer failed: Insufficient funds");
@@ -183,18 +184,19 @@ public class SavingsAccountService {
                     .setScale(2, RoundingMode.HALF_UP);
             logger.info("Converted amount: {} {} to {} {}", amount, fromAccount.getCurrency(), finalAmount, toAccount.getCurrency());
         }
-
+        amount = amount.setScale(2, RoundingMode.HALF_UP);
         fromAccount.withdraw(amount);
         toAccount.deposit(finalAmount);
+
         SavingsAccount updatedFromAccount = savingsAccountPersistenceService.updateAccount(fromAccount);
         SavingsAccount updatedToAccount = savingsAccountPersistenceService.updateAccount(toAccount);
 
-        Transaction fromTransaction = new Transaction(amount.negate(), fromAccountId, toAccountId);
-        Transaction toTransaction = new Transaction(finalAmount, fromAccountId, toAccountId);
+        Transaction fromTransaction = new Transaction(amount.negate(), fromAccountIban, toAccountIban);
+        Transaction toTransaction = new Transaction(finalAmount, fromAccountIban, toAccountIban);
         transactionService.createTransaction(fromTransaction);
         transactionService.createTransaction(toTransaction);
 
-        logger.info("Successfully transferred {} {} from account with ID: {} to account with ID: {}", amount, fromAccount.getCurrency(), fromAccountId, toAccountId);
+        logger.info("Successfully transferred {} {} from IBAN: {} to IBAN: {}", amount, fromAccount.getCurrency(), fromAccountIban, toAccountIban);
         return List.of(updatedFromAccount, updatedToAccount);
     }
 

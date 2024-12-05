@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -132,7 +133,7 @@ public class JointCheckingAccountService {
         JointCheckingAccount jointCheckingAccount = jointCheckingAccountPersistenceService.getAccountById(accountId);
         jointCheckingAccount.setBalance(jointCheckingAccount.getBalance().add(amount));
 
-        Transaction transaction = new Transaction(amount, null, accountId);
+        Transaction transaction = new Transaction(amount, null, jointCheckingAccount.getIban());
         transactionService.createTransaction(transaction);
 
         logger.info("Successfully deposited {} {} to account with ID: {}", amount, jointCheckingAccount.getCurrency(), accountId);
@@ -154,10 +155,10 @@ public class JointCheckingAccountService {
             logger.error("Withdrawal failed: Overdraft limit exceeded");
             throw new OverdraftLimitExceededException("Withdrawal failed: Overdraft limit exceeded");
         }
-
+        amount = amount.setScale(2, RoundingMode.HALF_UP);
         account.setBalance(account.getBalance().subtract(amount));
 
-        Transaction transaction = new Transaction(amount.negate(), accountId, null);
+        Transaction transaction = new Transaction(amount.negate(), account.getIban(), null);
         transactionService.createTransaction(transaction);
 
         logger.info("Successfully withdrew {} {} from account with ID: {}", amount, account.getCurrency(), accountId);
@@ -165,15 +166,15 @@ public class JointCheckingAccountService {
     }
 
     // Transfer
-    public List<JointCheckingAccount> transfer (BigDecimal amount, int fromAccountId, int toAccountId) {
-        logger.info("Transferring {} {} from account with ID: {} to account with ID: {}", amount, getJointCheckingAccountById(fromAccountId).getCurrency(), fromAccountId, toAccountId);
-        if (fromAccountId == toAccountId) {
+    public List<JointCheckingAccount> transfer (BigDecimal amount, String fromAccountIban, String toAccountIban) {
+        logger.info("Transferring {} from IBAN: {} to IBAN: {}", amount, fromAccountIban, toAccountIban);
+        if (Objects.equals(fromAccountIban, toAccountIban)) {
             logger.error("Transfer failed: Cannot transfer to the same account");
             throw new IllegalArgumentException("Transfer failed: Cannot transfer to the same account");
         }
 
-        JointCheckingAccount fromAccount = getJointCheckingAccountById(fromAccountId);
-        JointCheckingAccount toAccount = getJointCheckingAccountById(toAccountId);
+        JointCheckingAccount fromAccount = jointCheckingAccountPersistenceService.getAccountByIban(fromAccountIban);
+        JointCheckingAccount toAccount = jointCheckingAccountPersistenceService.getAccountByIban(toAccountIban);
 
         BigDecimal availableBalance = fromAccount.getBalance().add(fromAccount.getOverdraftLimit());
         if (availableBalance.compareTo(amount) < 0) {
@@ -187,18 +188,19 @@ public class JointCheckingAccountService {
                     .setScale(2, RoundingMode.HALF_UP);
             logger.info("Converted amount: {} {} to {} {}", amount, fromAccount.getCurrency(), finalAmount, toAccount.getCurrency());
         }
-
+        amount = amount.setScale(2, RoundingMode.HALF_UP);
         fromAccount.withdraw(amount);
         toAccount.deposit(finalAmount);
+
         JointCheckingAccount updatedFromAccount = jointCheckingAccountPersistenceService.updateAccount(fromAccount);
         JointCheckingAccount updatedToAccount = jointCheckingAccountPersistenceService.updateAccount(toAccount);
 
-        Transaction fromTransaction = new Transaction(amount.negate(), fromAccountId, toAccountId);
-        Transaction toTransaction = new Transaction(finalAmount, fromAccountId, toAccountId);
+        Transaction fromTransaction = new Transaction(amount.negate(), fromAccountIban, toAccountIban);
+        Transaction toTransaction = new Transaction(finalAmount, fromAccountIban, toAccountIban);
         transactionService.createTransaction(fromTransaction);
         transactionService.createTransaction(toTransaction);
 
-        logger.info("Successfully transferred {} {} from account with ID: {} to account with ID: {}", amount, fromAccount.getCurrency(), fromAccountId, toAccountId);
+        logger.info("Successfully transferred {} {} from IBAN: {} to IBAN: {}", amount, fromAccount.getCurrency(), fromAccountIban, toAccountIban);
         return List.of(updatedFromAccount, updatedToAccount);
     }
 }

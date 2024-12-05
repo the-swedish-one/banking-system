@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -128,7 +129,7 @@ public class CheckingAccountService {
         CheckingAccount checkingAccount = checkingAccountPersistenceService.getAccountById(accountId);
         checkingAccount.setBalance(checkingAccount.getBalance().add(amount));
 
-        Transaction transaction = new Transaction(amount, null, accountId);
+        Transaction transaction = new Transaction(amount, null, checkingAccount.getIban());
         transactionService.createTransaction(transaction);
 
         logger.info("Successfully deposited {} {} to account with ID: {}", amount, checkingAccount.getCurrency(), accountId);
@@ -151,9 +152,10 @@ public class CheckingAccountService {
             throw new OverdraftLimitExceededException("Withdrawal failed: Overdraft limit exceeded");
         }
 
+        amount = amount.setScale(2, RoundingMode.HALF_UP);
         account.setBalance(account.getBalance().subtract(amount));
 
-        Transaction transaction = new Transaction(amount.negate(), accountId, null);
+        Transaction transaction = new Transaction(amount.negate(), account.getIban(), null);
         transactionService.createTransaction(transaction);
 
         logger.info("Successfully withdrew {} {} from account with ID: {}", amount, account.getCurrency(), accountId);
@@ -161,15 +163,15 @@ public class CheckingAccountService {
     }
 
     // Transfer
-    public List<CheckingAccount> transfer (BigDecimal amount, int fromAccountId, int toAccountId) {
-        logger.info("Transferring {} {} from account with ID: {} to account with ID: {}", amount, getCheckingAccountById(fromAccountId).getCurrency(), fromAccountId, toAccountId);
-        if (fromAccountId == toAccountId) {
+    public List<CheckingAccount> transfer (BigDecimal amount, String fromAccountIban, String toAccountIban) {
+        logger.info("Transferring {} from IBAN: {} to IBAN: {}", amount, fromAccountIban, toAccountIban);
+        if (Objects.equals(fromAccountIban, toAccountIban)) {
             logger.error("Transfer failed: Cannot transfer to the same account");
             throw new IllegalArgumentException("Transfer failed: Cannot transfer to the same account");
         }
 
-        CheckingAccount fromAccount = getCheckingAccountById(fromAccountId);
-        CheckingAccount toAccount = getCheckingAccountById(toAccountId);
+        CheckingAccount fromAccount = checkingAccountPersistenceService.getAccountByIban(fromAccountIban);
+        CheckingAccount toAccount = checkingAccountPersistenceService.getAccountByIban(toAccountIban);
 
         BigDecimal availableBalance = fromAccount.getBalance().add(fromAccount.getOverdraftLimit());
         if (availableBalance.compareTo(amount) < 0) {
@@ -184,18 +186,19 @@ public class CheckingAccountService {
             logger.info("Converted amount: {} {} to {} {}", amount, fromAccount.getCurrency(), finalAmount, toAccount.getCurrency());
         }
 
+        amount = amount.setScale(2, RoundingMode.HALF_UP);
         fromAccount.withdraw(amount);
         toAccount.deposit(finalAmount);
 
         CheckingAccount updatedFromAccount = checkingAccountPersistenceService.updateAccount(fromAccount);
         CheckingAccount updatedToAccount = checkingAccountPersistenceService.updateAccount(toAccount);
 
-        Transaction fromTransaction = new Transaction(amount.negate(), fromAccountId, toAccountId);
-        Transaction toTransaction = new Transaction(finalAmount, fromAccountId, toAccountId);
+        Transaction fromTransaction = new Transaction(amount.negate(), fromAccountIban, toAccountIban);
+        Transaction toTransaction = new Transaction(finalAmount, fromAccountIban, toAccountIban);
         transactionService.createTransaction(fromTransaction);
         transactionService.createTransaction(toTransaction);
 
-        logger.info("Successfully transferred {} {} from account with ID: {} to account with ID: {}", amount, fromAccount.getCurrency(), fromAccountId, toAccountId);
+        logger.info("Successfully transferred {} {} from IBAN: {} to IBAN: {}", amount, fromAccount.getCurrency(), fromAccountIban, toAccountIban);
         return List.of(updatedFromAccount, updatedToAccount);
     }
 }

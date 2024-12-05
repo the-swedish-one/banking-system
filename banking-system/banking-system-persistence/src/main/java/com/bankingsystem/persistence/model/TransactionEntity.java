@@ -28,21 +28,21 @@ public class TransactionEntity {
     private LocalDateTime timestamp;
 
     @Column(nullable = true)
-    private Integer fromAccountId;
+    private String fromAccountIban;
 
     @Column(nullable = true)
-    private Integer toAccountId;
+    private String toAccountIban;
 
-    public TransactionEntity(BigDecimal amount, Integer fromAccountId, Integer toAccountId) {
+    public TransactionEntity(BigDecimal amount, String fromAccountIban, String toAccountIban) {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Amount must be greater than 0");
         }
-        if (fromAccountId == null && toAccountId == null) {
+        if (fromAccountIban == null && toAccountIban == null) {
             throw new IllegalArgumentException("At least one of fromAccountId or toAccountId must be specified");
         }
         this.amount = amount;
-        this.fromAccountId = fromAccountId;
-        this.toAccountId = toAccountId;
+        this.fromAccountIban = fromAccountIban;
+        this.toAccountIban = toAccountIban;
     }
 
     @PrePersist

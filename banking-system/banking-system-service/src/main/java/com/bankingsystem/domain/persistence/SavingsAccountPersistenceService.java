@@ -1,5 +1,4 @@
 package com.bankingsystem.domain.persistence;
-
 import com.bankingsystem.domain.model.SavingsAccount;
 
 import java.util.List;
@@ -11,6 +10,9 @@ public interface SavingsAccountPersistenceService {
 
     // Get one account by ID
     SavingsAccount getAccountById(int accountId);
+
+    // Get one account by IBAN
+    SavingsAccount getAccountByIban(String iban);
 
     // Get all accounts
     List<SavingsAccount> getAllAccounts();

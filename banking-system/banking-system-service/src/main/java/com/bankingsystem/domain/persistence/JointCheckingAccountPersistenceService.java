@@ -12,6 +12,9 @@ public interface JointCheckingAccountPersistenceService {
     // Get one account by ID
     JointCheckingAccount getAccountById(int accountId);
 
+    // Get one account by IBAN
+    JointCheckingAccount getAccountByIban(String iban);
+
     // Get all accounts
     List<JointCheckingAccount> getAllAccounts();
 

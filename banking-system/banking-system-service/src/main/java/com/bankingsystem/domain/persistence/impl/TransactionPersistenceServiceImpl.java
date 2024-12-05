@@ -78,8 +78,8 @@ public class TransactionPersistenceServiceImpl implements TransactionPersistence
         // Update fields of the existing transaction
         existingEntity.setTransactionId(transaction.getTransactionId());
         existingEntity.setAmount(transaction.getAmount());
-        existingEntity.setFromAccountId(transaction.getFromAccountId());
-        existingEntity.setToAccountId(transaction.getToAccountId());
+        existingEntity.setFromAccountIban(transaction.getFromAccountIban());
+        existingEntity.setToAccountIban(transaction.getToAccountIban());
 
         TransactionEntity updatedEntity = transactionRepository.save(existingEntity);
         logger.info("Successfully updated transaction with ID: {}", updatedEntity.getTransactionId());

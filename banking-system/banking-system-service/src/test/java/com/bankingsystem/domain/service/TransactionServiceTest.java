@@ -57,7 +57,7 @@ public class TransactionServiceTest {
     @Test
     void createTransaction_ZeroAmount() {
         // Arrange
-        Transaction t = TestDataFactory.createTransaction(BigDecimal.valueOf(0), 1, 2);
+        Transaction t = TestDataFactory.createTransaction(BigDecimal.valueOf(0), "IBAN1234", "IBAN5678");
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> transactionService.createTransaction(t));
@@ -66,7 +66,7 @@ public class TransactionServiceTest {
     @Test
     void createTransaction_NullAmount() {
         // Arrange
-        Transaction t = TestDataFactory.createTransaction(null, 1, 2);
+        Transaction t = TestDataFactory.createTransaction(null, "IBAN1234", "IBAN5678");
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> transactionService.createTransaction(t));
@@ -109,9 +109,9 @@ public class TransactionServiceTest {
     @Test
     void getAllTransactions() {
         // Arrange
-        Transaction depositTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(1000), null, 1);
-        Transaction withdrawTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(500), 1, null);
-        Transaction transferTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(1000), 1, 2);
+        Transaction depositTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(1000), null, "IBAN5678");
+        Transaction withdrawTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(500), "IBAN1234", null);
+        Transaction transferTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(1000), "IBAN1234", "IBAN5678");
 
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(depositTransaction);

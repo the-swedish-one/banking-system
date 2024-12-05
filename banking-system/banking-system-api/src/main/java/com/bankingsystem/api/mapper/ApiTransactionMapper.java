@@ -13,8 +13,8 @@ public class ApiTransactionMapper {
         model.setTransactionId(apiModel.getTransactionId());
         model.setAmount(apiModel.getAmount());
         model.setTimestamp(apiModel.getTimestamp());
-        model.setToAccountId(apiModel.getToAccountId());
-        model.setFromAccountId(apiModel.getFromAccountId());
+        model.setToAccountIban(apiModel.getToAccountIban());
+        model.setFromAccountIban(apiModel.getFromAccountIban());
         return model;
     }
 
@@ -24,8 +24,8 @@ public class ApiTransactionMapper {
         apiModel.setTransactionId(model.getTransactionId());
         apiModel.setAmount(model.getAmount());
         apiModel.setTimestamp(model.getTimestamp());
-        apiModel.setToAccountId(model.getToAccountId());
-        apiModel.setFromAccountId(model.getFromAccountId());
+        apiModel.setToAccountIban(model.getToAccountIban());
+        apiModel.setFromAccountIban(model.getFromAccountIban());
         return apiModel;
     }
 }

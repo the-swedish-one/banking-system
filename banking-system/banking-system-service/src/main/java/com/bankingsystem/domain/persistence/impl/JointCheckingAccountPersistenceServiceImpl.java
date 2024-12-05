@@ -52,6 +52,16 @@ public class JointCheckingAccountPersistenceServiceImpl implements JointChecking
     }
 
     @Override
+    public JointCheckingAccount getAccountByIban(String iban) {
+        JointCheckingAccountEntity entity = jointCheckingAccountRepository.findByIban(iban)
+                .orElseThrow(() -> {
+                    logger.error("Joint Checking Account not found for IBAN: {}", iban);
+                    return new AccountNotFoundException("Joint Checking Account not found");
+                });
+        return jointCheckingAccountMapper.toModel(entity);
+    }
+
+    @Override
     public List<JointCheckingAccount> getAllAccounts() {
         List<JointCheckingAccountEntity> entities = jointCheckingAccountRepository.findAll();
         if (entities.isEmpty()) {

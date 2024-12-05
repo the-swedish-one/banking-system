@@ -13,6 +13,9 @@ public interface CheckingAccountPersistenceService {
     // Get one account by ID
     CheckingAccount getAccountById(int accountId);
 
+    // Get one account by IBAN
+    CheckingAccount getAccountByIban(String iban);
+
     // Get all accounts
     List<CheckingAccount> getAllAccounts();
 
@@ -21,4 +24,6 @@ public interface CheckingAccountPersistenceService {
 
     // Delete an account
     boolean deleteAccount(int accountId);
+
+
 }

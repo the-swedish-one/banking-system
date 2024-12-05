@@ -14,8 +14,8 @@ public class TransactionMapper {
                 entity.getTransactionId(),
                 entity.getAmount(),
                 entity.getTimestamp(),
-                entity.getFromAccountId(),
-                entity.getToAccountId()
+                entity.getFromAccountIban(),
+                entity.getToAccountIban()
         );
     }
 
@@ -25,8 +25,8 @@ public class TransactionMapper {
         return TransactionEntity.builder()
                 .transactionId(transaction.getTransactionId())
                 .amount(transaction.getAmount())
-                .fromAccountId(transaction.getFromAccountId())
-                .toAccountId(transaction.getToAccountId())
+                .fromAccountIban(transaction.getFromAccountIban())
+                .toAccountIban(transaction.getToAccountIban())
                 .build();
     }
 }

@@ -15,12 +15,12 @@ public class Transaction {
     private int transactionId;
     private BigDecimal amount;
     private LocalDateTime timestamp;
-    private Integer fromAccountId;
-    private Integer toAccountId;
+    private String fromAccountIban;
+    private String toAccountIban;
 
-    public Transaction(BigDecimal amount, Integer fromAccountId, Integer toAccountId) {
+    public Transaction(BigDecimal amount, String fromAccountIban, String toAccountIban) {
         this.amount = amount;
-        this.fromAccountId = fromAccountId;
-        this.toAccountId = toAccountId;
+        this.fromAccountIban = fromAccountIban;
+        this.toAccountIban = toAccountIban;
     }
 }

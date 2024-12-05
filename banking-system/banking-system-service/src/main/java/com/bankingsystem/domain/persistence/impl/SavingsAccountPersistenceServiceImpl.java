@@ -1,9 +1,11 @@
 package com.bankingsystem.domain.persistence.impl;
 
+import com.bankingsystem.domain.model.JointCheckingAccount;
 import com.bankingsystem.persistence.exception.AccountNotFoundException;
 import com.bankingsystem.domain.mapper.SavingsAccountMapper;
 import com.bankingsystem.domain.mapper.UserMapper;
 import com.bankingsystem.domain.model.SavingsAccount;
+import com.bankingsystem.persistence.model.JointCheckingAccountEntity;
 import com.bankingsystem.persistence.model.SavingsAccountEntity;
 import com.bankingsystem.domain.persistence.SavingsAccountPersistenceService;
 import com.bankingsystem.persistence.repository.SavingsAccountRepository;
@@ -49,6 +51,16 @@ public class SavingsAccountPersistenceServiceImpl implements SavingsAccountPersi
                     return new AccountNotFoundException("Savings Account not found");
                 });
         logger.info("Successfully fetched savings account with ID: {}", accountId);
+        return savingsAccountMapper.toModel(entity);
+    }
+
+    @Override
+    public SavingsAccount getAccountByIban(String iban) {
+        SavingsAccountEntity entity = savingsAccountRepository.findByIban(iban)
+                .orElseThrow(() -> {
+                    logger.error("Savings Account not found for IBAN: {}", iban);
+                    return new AccountNotFoundException("Savings Account not found");
+                });
         return savingsAccountMapper.toModel(entity);
     }
 

@@ -51,6 +51,16 @@ public class CheckingAccountPersistenceServiceImpl implements CheckingAccountPer
     }
 
     @Override
+    public CheckingAccount getAccountByIban(String iban) {
+        CheckingAccountEntity entity = checkingAccountRepository.findByIban(iban)
+                .orElseThrow(() -> {
+                    logger.error("Checking Account not found for IBAN: {}", iban);
+                    return new AccountNotFoundException("Checking Account not found");
+                });
+        return checkingAccountMapper.toModel(entity);
+    }
+
+    @Override
     public List<CheckingAccount> getAllAccounts() {
         List<CheckingAccountEntity> entities = checkingAccountRepository.findAll();
         if (entities.isEmpty()) {

@@ -76,8 +76,8 @@ public class CheckingAccountController {
 
     // Transfer between two checking accounts
     @PostMapping("/transfer")
-    public ResponseEntity<List<CheckingAccount>> transfer(@RequestParam int fromAccountId, @RequestParam int toAccountId, @RequestParam BigDecimal amount) {
-        List<CheckingAccount> updatedAccounts = checkingAccountService.transfer(amount, fromAccountId, toAccountId);
+    public ResponseEntity<List<CheckingAccount>> transfer(@RequestParam String fromAccountIban, @RequestParam String toAccountIban, @RequestParam BigDecimal amount) {
+        List<CheckingAccount> updatedAccounts = checkingAccountService.transfer(amount, fromAccountIban, toAccountIban);
             return new ResponseEntity<>(updatedAccounts, HttpStatus.OK);
     }
 }

@@ -43,11 +43,11 @@ public class TestDataFactory {
 
     // Transaction creation
     public static Transaction createTransaction() {
-        return createTransaction(DEFAULT_AMOUNT, 1, 2);
+        return createTransaction(DEFAULT_AMOUNT, "IBAN1234", "IBAN5678");
     }
 
-    public static Transaction createTransaction(BigDecimal amount, Integer fromAccountId, Integer toAccountId) {
-        return new Transaction(amount, fromAccountId, toAccountId);
+    public static Transaction createTransaction(BigDecimal amount, String fromAccountIban, String toAccountIban) {
+        return new Transaction(amount, fromAccountIban, toAccountIban);
     }
 
     // CheckingAccount creation
