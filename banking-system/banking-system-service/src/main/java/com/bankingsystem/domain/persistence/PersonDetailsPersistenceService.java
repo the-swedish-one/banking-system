@@ -15,6 +15,9 @@ public interface PersonDetailsPersistenceService {
     // Get all Persons
     List<PersonDetails> getAllPersonDetails();
 
+    // Check if person exists by email
+    boolean existsByEmail(String email);
+
     // Update person
     PersonDetails updatePersonDetails(PersonDetails personDetails);
 
