@@ -24,6 +24,9 @@ public class PersonDetailsMapper {
     public PersonDetailsEntity toEntity(PersonDetails model) {
         if (model == null) return null;
         PersonDetailsEntity entity = new PersonDetailsEntity();
+        if (model.getPersonId() != null && model.getPersonId() != 0) {
+            entity.setPersonId(model.getPersonId());
+        }
         entity.setFirstName(model.getFirstName());
         entity.setLastName(model.getLastName());
         entity.setEmail(model.getEmail());
