@@ -16,11 +16,12 @@ public class JointCheckingAccount implements Withdrawable, Depositable {
     private int accountId;
     private String iban;
     private String accountName;
-    private User owner;
     private BigDecimal balance;
     private CurrencyCode currency;
     private BigDecimal overdraftLimit;
+    private User owner;
     private User secondOwner;
+
 
     public JointCheckingAccount(User owner, User secondOwner, BigDecimal balance, CurrencyCode currency, BigDecimal overdraftLimit) {
         this.owner = owner;
