@@ -376,24 +376,43 @@ class CheckingAccountServiceTest {
         void transfer() {
             // Arrange
             User user = TestDataFactory.createUser();
-            CheckingAccount fromAccount = TestDataFactory.createCheckingAccount(user);
-            CheckingAccount toAccount = TestDataFactory.createCheckingAccount(user);
-            Transaction transferTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(-500), fromAccount.getAccountId(), toAccount.getAccountId());
+            CheckingAccount fromAccount = TestDataFactory.createCheckingAccount(user); // Initial balance: 1000
+            CheckingAccount toAccount = TestDataFactory.createCheckingAccount(user); // Initial balance: 1000
 
-            when(accountPersistenceService.getAccountById(fromAccount.getAccountId())).thenReturn(fromAccount);
-            when(accountPersistenceService.getAccountById(toAccount.getAccountId())).thenReturn(toAccount);
-            when(transactionService.createTransaction(transferTransaction)).thenReturn(transferTransaction);
+            fromAccount.setAccountId(1);
+            toAccount.setAccountId(2);
+
+            // Create expected updated accounts
+            CheckingAccount updatedFromAccount = TestDataFactory.createCheckingAccount(user);
+            updatedFromAccount.setBalance(BigDecimal.valueOf(500)); // Deducted 500 from the original balance
+            CheckingAccount updatedToAccount = TestDataFactory.createCheckingAccount(user);
+            updatedToAccount.setBalance(BigDecimal.valueOf(1500)); // Added 500 to the original balance
+
+            Transaction fromTransaction = new Transaction(BigDecimal.valueOf(-500), fromAccount.getAccountId(), toAccount.getAccountId());
+            Transaction toTransaction = new Transaction(BigDecimal.valueOf(500), fromAccount.getAccountId(), toAccount.getAccountId());
+
+            when(accountPersistenceService.getAccountById(1)).thenReturn(fromAccount);
+            when(accountPersistenceService.getAccountById(2)).thenReturn(toAccount);
+            when(accountPersistenceService.updateAccount(fromAccount)).thenReturn(updatedFromAccount);
+            when(accountPersistenceService.updateAccount(toAccount)).thenReturn(updatedToAccount);
+            when(transactionService.createTransaction(fromTransaction)).thenReturn(fromTransaction);
+            when(transactionService.createTransaction(toTransaction)).thenReturn(toTransaction);
 
             // Act
-            accountService.transfer(BigDecimal.valueOf(500), fromAccount.getAccountId(), toAccount.getAccountId());
+            List<CheckingAccount> updatedAccounts = accountService.transfer(BigDecimal.valueOf(500), 1, 2);
 
             // Assert
-            assertEquals(BigDecimal.valueOf(500), fromAccount.getBalance());
-            assertEquals(BigDecimal.valueOf(1500), toAccount.getBalance());
+            assertNotNull(updatedAccounts);
+            assertEquals(2, updatedAccounts.size());
+            assertEquals(BigDecimal.valueOf(500), updatedAccounts.get(0).getBalance()); // From Account
+            assertEquals(BigDecimal.valueOf(1500), updatedAccounts.get(1).getBalance()); // To Account
+
             verify(accountPersistenceService, times(1)).updateAccount(fromAccount);
             verify(accountPersistenceService, times(1)).updateAccount(toAccount);
-            verify(transactionService, times(1)).createTransaction(transferTransaction);
+            verify(transactionService, times(1)).createTransaction(fromTransaction);
+            verify(transactionService, times(1)).createTransaction(toTransaction);
         }
+
 
         @Test
         void transfer_DifferentCurrencies() {
@@ -402,26 +421,43 @@ class CheckingAccountServiceTest {
             CheckingAccount fromAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, BigDecimal.valueOf(1000));
             CheckingAccount toAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(0), CurrencyCode.USD, BigDecimal.valueOf(2000));
 
+            fromAccount.setAccountId(1);
+            toAccount.setAccountId(2);
+
             BigDecimal amount = BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP);
             BigDecimal convertedAmount = BigDecimal.valueOf(530).setScale(2, RoundingMode.HALF_UP);
 
-            Transaction transaction = TestDataFactory.createTransaction(amount.negate(), fromAccount.getAccountId(), toAccount.getAccountId());
+            // Create updated accounts to mock the persistence service updates
+            CheckingAccount updatedFromAccount = TestDataFactory.createCheckingAccount(user, BigDecimal.valueOf(500), CurrencyCode.EUR, BigDecimal.valueOf(1000));
+            CheckingAccount updatedToAccount = TestDataFactory.createCheckingAccount(user, convertedAmount, CurrencyCode.USD, BigDecimal.valueOf(2000));
 
-            when(accountPersistenceService.getAccountById(fromAccount.getAccountId())).thenReturn(fromAccount);
-            when(accountPersistenceService.getAccountById(toAccount.getAccountId())).thenReturn(toAccount);
+            // Transactions for from and to accounts
+            Transaction fromTransaction = new Transaction(amount.negate(), fromAccount.getAccountId(), toAccount.getAccountId());
+            Transaction toTransaction = new Transaction(convertedAmount, fromAccount.getAccountId(), toAccount.getAccountId());
+
+            // Mock dependencies
+            when(accountPersistenceService.getAccountById(1)).thenReturn(fromAccount);
+            when(accountPersistenceService.getAccountById(2)).thenReturn(toAccount);
+            when(accountPersistenceService.updateAccount(fromAccount)).thenReturn(updatedFromAccount);
+            when(accountPersistenceService.updateAccount(toAccount)).thenReturn(updatedToAccount);
             when(currencyConversionService.convertAmount(amount, CurrencyCode.EUR, CurrencyCode.USD)).thenReturn(convertedAmount);
-            when(transactionService.createTransaction(transaction)).thenReturn(transaction);
+            when(transactionService.createTransaction(fromTransaction)).thenReturn(fromTransaction);
+            when(transactionService.createTransaction(toTransaction)).thenReturn(toTransaction);
 
             // Act
-            accountService.transfer(amount, fromAccount.getAccountId(), toAccount.getAccountId());
+            List<CheckingAccount> updatedAccounts = accountService.transfer(amount, 1, 2);
 
             // Assert
-            assertEquals(BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP), fromAccount.getBalance());
-            assertEquals(BigDecimal.valueOf(530).setScale(2, RoundingMode.HALF_UP), toAccount.getBalance());  // Converted amount
+            assertNotNull(updatedAccounts);
+            assertEquals(2, updatedAccounts.size());
+            assertEquals(BigDecimal.valueOf(500), updatedAccounts.get(0).getBalance()); // From Account
+            assertEquals(BigDecimal.valueOf(530).setScale(2, RoundingMode.HALF_UP), updatedAccounts.get(1).getBalance()); // To Account with converted amount
             verify(accountPersistenceService, times(1)).updateAccount(fromAccount);
             verify(accountPersistenceService, times(1)).updateAccount(toAccount);
-            verify(transactionService, times(1)).createTransaction(transaction);
+            verify(transactionService, times(1)).createTransaction(fromTransaction);
+            verify(transactionService, times(1)).createTransaction(toTransaction);
         }
+
 
         @Test
         void transfer_NegativeAmount() {

@@ -1,5 +1,6 @@
 package com.bankingsystem.domain.service;
 
+import com.bankingsystem.domain.model.CheckingAccount;
 import com.bankingsystem.domain.model.User;
 import com.bankingsystem.domain.persistence.UserPersistenceService;
 import com.bankingsystem.persistence.exception.AccountNotFoundException;
@@ -164,7 +165,7 @@ public class JointCheckingAccountService {
     }
 
     // Transfer
-    public void transfer (BigDecimal amount, int fromAccountId, int toAccountId) {
+    public List<JointCheckingAccount> transfer (BigDecimal amount, int fromAccountId, int toAccountId) {
         logger.info("Transferring {} {} from account with ID: {} to account with ID: {}", amount, getJointCheckingAccountById(fromAccountId).getCurrency(), fromAccountId, toAccountId);
         if (fromAccountId == toAccountId) {
             logger.error("Transfer failed: Cannot transfer to the same account");
@@ -189,8 +190,8 @@ public class JointCheckingAccountService {
 
         fromAccount.withdraw(amount);
         toAccount.deposit(finalAmount);
-        jointCheckingAccountPersistenceService.updateAccount(fromAccount);
-        jointCheckingAccountPersistenceService.updateAccount(toAccount);
+        JointCheckingAccount updatedFromAccount = jointCheckingAccountPersistenceService.updateAccount(fromAccount);
+        JointCheckingAccount updatedToAccount = jointCheckingAccountPersistenceService.updateAccount(toAccount);
 
         Transaction fromTransaction = new Transaction(amount.negate(), fromAccountId, toAccountId);
         Transaction toTransaction = new Transaction(finalAmount, fromAccountId, toAccountId);
@@ -198,5 +199,6 @@ public class JointCheckingAccountService {
         transactionService.createTransaction(toTransaction);
 
         logger.info("Successfully transferred {} {} from account with ID: {} to account with ID: {}", amount, fromAccount.getCurrency(), fromAccountId, toAccountId);
+        return List.of(updatedFromAccount, updatedToAccount);
     }
 }

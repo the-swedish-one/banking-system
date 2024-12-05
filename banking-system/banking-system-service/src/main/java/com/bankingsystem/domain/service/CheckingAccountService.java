@@ -161,7 +161,7 @@ public class CheckingAccountService {
     }
 
     // Transfer
-    public void transfer (BigDecimal amount, int fromAccountId, int toAccountId) {
+    public List<CheckingAccount> transfer (BigDecimal amount, int fromAccountId, int toAccountId) {
         logger.info("Transferring {} {} from account with ID: {} to account with ID: {}", amount, getCheckingAccountById(fromAccountId).getCurrency(), fromAccountId, toAccountId);
         if (fromAccountId == toAccountId) {
             logger.error("Transfer failed: Cannot transfer to the same account");
@@ -186,8 +186,9 @@ public class CheckingAccountService {
 
         fromAccount.withdraw(amount);
         toAccount.deposit(finalAmount);
-        checkingAccountPersistenceService.updateAccount(fromAccount);
-        checkingAccountPersistenceService.updateAccount(toAccount);
+
+        CheckingAccount updatedFromAccount = checkingAccountPersistenceService.updateAccount(fromAccount);
+        CheckingAccount updatedToAccount = checkingAccountPersistenceService.updateAccount(toAccount);
 
         Transaction fromTransaction = new Transaction(amount.negate(), fromAccountId, toAccountId);
         Transaction toTransaction = new Transaction(finalAmount, fromAccountId, toAccountId);
@@ -195,5 +196,6 @@ public class CheckingAccountService {
         transactionService.createTransaction(toTransaction);
 
         logger.info("Successfully transferred {} {} from account with ID: {} to account with ID: {}", amount, fromAccount.getCurrency(), fromAccountId, toAccountId);
+        return List.of(updatedFromAccount, updatedToAccount);
     }
 }

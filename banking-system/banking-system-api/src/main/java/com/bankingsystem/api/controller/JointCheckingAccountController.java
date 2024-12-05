@@ -65,8 +65,8 @@ public class JointCheckingAccountController {
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<Void> transfer(@RequestParam int fromAccountId, @RequestParam int toAccountId, @RequestParam BigDecimal amount) {
-            jointCheckingAccountService.transfer(amount, fromAccountId, toAccountId);
-            return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<List<JointCheckingAccount>> transfer(@RequestParam int fromAccountId, @RequestParam int toAccountId, @RequestParam BigDecimal amount) {
+        List<JointCheckingAccount> updatedAccounts = jointCheckingAccountService.transfer(amount, fromAccountId, toAccountId);
+            return new ResponseEntity<>(updatedAccounts, HttpStatus.OK);
     }
 }

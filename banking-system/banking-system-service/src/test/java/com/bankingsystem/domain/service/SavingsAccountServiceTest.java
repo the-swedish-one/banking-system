@@ -318,58 +318,81 @@ public class SavingsAccountServiceTest {
             verify(accountPersistenceService, times(0)).updateAccount(savingsAccount);
         }
 
-        @Test
-        void transfer() {
-            // Arrange
-            User user = TestDataFactory.createUser();
-            SavingsAccount fromAccount = TestDataFactory.createSavingsAccount(user);
-            SavingsAccount toAccount = TestDataFactory.createSavingsAccount(user);
-            Transaction transferTransaction = TestDataFactory.createTransaction(BigDecimal.valueOf(-500), fromAccount.getAccountId(), toAccount.getAccountId());
+    @Test
+    void transfer() {
+        // Arrange
+        User user = TestDataFactory.createUser();
+        SavingsAccount fromAccount = TestDataFactory.createSavingsAccount(user);
+        SavingsAccount toAccount = TestDataFactory.createSavingsAccount(user);
+        fromAccount.setAccountId(1);
+        toAccount.setAccountId(2);
 
-            when(accountPersistenceService.getAccountById(fromAccount.getAccountId())).thenReturn(fromAccount);
-            when(accountPersistenceService.getAccountById(toAccount.getAccountId())).thenReturn(toAccount);
-            when(transactionService.createTransaction(transferTransaction)).thenReturn(transferTransaction);
+        BigDecimal transferAmount = BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP);
+        Transaction transferTransactionFrom = TestDataFactory.createTransaction(
+                transferAmount.negate(), fromAccount.getAccountId(), toAccount.getAccountId());
+        Transaction transferTransactionTo = TestDataFactory.createTransaction(
+                transferAmount, fromAccount.getAccountId(), toAccount.getAccountId());
 
-            // Act
-            accountService.transfer(BigDecimal.valueOf(500), fromAccount.getAccountId(), toAccount.getAccountId());
+        when(accountPersistenceService.getAccountById(fromAccount.getAccountId())).thenReturn(fromAccount);
+        when(accountPersistenceService.getAccountById(toAccount.getAccountId())).thenReturn(toAccount);
+        when(transactionService.createTransaction(transferTransactionFrom)).thenReturn(transferTransactionFrom);
+        when(transactionService.createTransaction(transferTransactionTo)).thenReturn(transferTransactionTo);
+        when(accountPersistenceService.updateAccount(fromAccount)).thenReturn(fromAccount);
+        when(accountPersistenceService.updateAccount(toAccount)).thenReturn(toAccount);
 
-            // Assert
-            assertEquals(BigDecimal.valueOf(500), fromAccount.getBalance());
-            assertEquals(BigDecimal.valueOf(1500), toAccount.getBalance());
-            verify(accountPersistenceService, times(1)).updateAccount(fromAccount);
-            verify(accountPersistenceService, times(1)).updateAccount(toAccount);
-            verify(transactionService, times(1)).createTransaction(transferTransaction);
-        }
+        // Act
+        List<SavingsAccount> updatedAccounts = accountService.transfer(
+                transferAmount, fromAccount.getAccountId(), toAccount.getAccountId());
 
-        @Test
-        void transfer_DifferentCurrencies() {
-            // Arrange
-            User user = TestDataFactory.createUser();
-            SavingsAccount fromAccount = TestDataFactory.createSavingsAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, 2);
-            SavingsAccount toAccount = TestDataFactory.createSavingsAccount(user, BigDecimal.valueOf(0), CurrencyCode.USD, 2);
+        // Assert
+        assertEquals(2, updatedAccounts.size());
+        assertEquals(BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP), updatedAccounts.get(0).getBalance());
+        assertEquals(BigDecimal.valueOf(1500).setScale(2, RoundingMode.HALF_UP), updatedAccounts.get(1).getBalance());
+        verify(accountPersistenceService, times(1)).updateAccount(fromAccount);
+        verify(accountPersistenceService, times(1)).updateAccount(toAccount);
+        verify(transactionService, times(1)).createTransaction(transferTransactionFrom);
+        verify(transactionService, times(1)).createTransaction(transferTransactionTo);
+    }
 
-            BigDecimal amount = BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP);
-            BigDecimal convertedAmount = BigDecimal.valueOf(530).setScale(2, RoundingMode.HALF_UP);
+    @Test
+    void transfer_DifferentCurrencies() {
+        // Arrange
+        User user = TestDataFactory.createUser();
+        SavingsAccount fromAccount = TestDataFactory.createSavingsAccount(user, BigDecimal.valueOf(1000), CurrencyCode.EUR, 2);
+        SavingsAccount toAccount = TestDataFactory.createSavingsAccount(user, BigDecimal.valueOf(0), CurrencyCode.USD, 2);
 
-            Transaction transaction = TestDataFactory.createTransaction(amount.negate(), fromAccount.getAccountId(), toAccount.getAccountId());
+        BigDecimal transferAmount = BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal convertedAmount = BigDecimal.valueOf(530).setScale(2, RoundingMode.HALF_UP);
 
-            when(accountPersistenceService.getAccountById(fromAccount.getAccountId())).thenReturn(fromAccount);
-            when(accountPersistenceService.getAccountById(toAccount.getAccountId())).thenReturn(toAccount);
-            when(currencyConversionService.convertAmount(amount, CurrencyCode.EUR, CurrencyCode.USD)).thenReturn(convertedAmount);
-            when(transactionService.createTransaction(transaction)).thenReturn(transaction);
+        Transaction transferTransactionFrom = TestDataFactory.createTransaction(
+                transferAmount.negate(), fromAccount.getAccountId(), toAccount.getAccountId());
+        Transaction transferTransactionTo = TestDataFactory.createTransaction(
+                convertedAmount, fromAccount.getAccountId(), toAccount.getAccountId());
 
-            // Act
-            accountService.transfer(amount, fromAccount.getAccountId(), toAccount.getAccountId());
+        when(accountPersistenceService.getAccountById(fromAccount.getAccountId())).thenReturn(fromAccount);
+        when(accountPersistenceService.getAccountById(toAccount.getAccountId())).thenReturn(toAccount);
+        when(currencyConversionService.convertAmount(transferAmount, CurrencyCode.EUR, CurrencyCode.USD)).thenReturn(convertedAmount);
+        when(transactionService.createTransaction(transferTransactionFrom)).thenReturn(transferTransactionFrom);
+        when(transactionService.createTransaction(transferTransactionTo)).thenReturn(transferTransactionTo);
+        when(accountPersistenceService.updateAccount(fromAccount)).thenReturn(fromAccount);
+        when(accountPersistenceService.updateAccount(toAccount)).thenReturn(toAccount);
 
-            // Assert
-            assertEquals(BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP), fromAccount.getBalance());
-            assertEquals(BigDecimal.valueOf(530).setScale(2, RoundingMode.HALF_UP), toAccount.getBalance());  // Converted amount
-            verify(accountPersistenceService, times(1)).updateAccount(fromAccount);
-            verify(accountPersistenceService, times(1)).updateAccount(toAccount);
-            verify(transactionService, times(1)).createTransaction(transaction);
-        }
+        // Act
+        List<SavingsAccount> updatedAccounts = accountService.transfer(
+                transferAmount, fromAccount.getAccountId(), toAccount.getAccountId());
 
-        @Test
+        // Assert
+        assertEquals(2, updatedAccounts.size());
+        assertEquals(BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP), updatedAccounts.get(0).getBalance());
+        assertEquals(BigDecimal.valueOf(530).setScale(2, RoundingMode.HALF_UP), updatedAccounts.get(1).getBalance()); // Converted amount
+        verify(accountPersistenceService, times(1)).updateAccount(fromAccount);
+        verify(accountPersistenceService, times(1)).updateAccount(toAccount);
+        verify(transactionService, times(1)).createTransaction(transferTransactionFrom);
+        verify(transactionService, times(1)).createTransaction(transferTransactionTo);
+    }
+
+
+    @Test
         void transfer_NegativeAmount() {
             // Arrange
             User user = TestDataFactory.createUser();

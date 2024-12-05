@@ -77,12 +77,12 @@ public class SavingsAccountController {
 
     // Transfer money between savings accounts
     @PostMapping("/transfer")
-    public ResponseEntity<Void> transfer(
+    public ResponseEntity<List<SavingsAccount>> transfer(
             @RequestParam int fromAccountId,
             @RequestParam int toAccountId,
             @RequestParam BigDecimal amount) {
-            savingsAccountService.transfer(amount, fromAccountId, toAccountId);
-            return new ResponseEntity<>(HttpStatus.OK);
+        List<SavingsAccount> updatedAccounts = savingsAccountService.transfer(amount, fromAccountId, toAccountId);
+            return new ResponseEntity<>(updatedAccounts, HttpStatus.OK);
     }
 
     // Apply interest to a savings account
