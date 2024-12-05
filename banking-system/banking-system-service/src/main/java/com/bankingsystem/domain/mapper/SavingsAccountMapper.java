@@ -2,6 +2,7 @@ package com.bankingsystem.domain.mapper;
 
 import com.bankingsystem.domain.model.SavingsAccount;
 import com.bankingsystem.persistence.model.SavingsAccountEntity;
+import com.bankingsystem.persistence.model.UserEntity;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,7 +30,14 @@ public class SavingsAccountMapper {
     public SavingsAccountEntity toEntity (SavingsAccount model) {
         if (model == null) {return null;}
         SavingsAccountEntity entity = new SavingsAccountEntity();
+        entity.setIban(model.getIban());
         entity.setAccountName(model.getAccountName());
+        // Map only the userId to prevent creating a new UserEntity
+        if (model.getOwner() != null && model.getOwner().getUserId() != null) {
+            UserEntity ownerEntity = new UserEntity();
+            ownerEntity.setUserId(model.getOwner().getUserId());
+            entity.setOwner(ownerEntity);
+        }
         entity.setOwner(userMapper.toEntity(model.getOwner()));
         entity.setBalance(model.getBalance());
         entity.setCurrency(model.getCurrency());
