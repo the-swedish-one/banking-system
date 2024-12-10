@@ -18,7 +18,7 @@ public class BankEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id; // Unique identifier for JPA
+    private Integer id; // Unique identifier for JPA
 
     @Column(nullable = false)
     private String bankName;

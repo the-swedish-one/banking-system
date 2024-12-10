@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class Bank {
 
-    private int id;
+    private Integer id;
     private String bankName;
     private String bic;
     private BigDecimal collectedInterest = BigDecimal.ZERO;
