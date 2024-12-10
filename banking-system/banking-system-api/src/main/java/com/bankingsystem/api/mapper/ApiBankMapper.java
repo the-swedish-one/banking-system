@@ -10,6 +10,7 @@ public class ApiBankMapper {
     public Bank toServiceModel(ApiBank apiModel) {
         if (apiModel == null) return null;
         Bank bank = new Bank();
+        bank.setId(apiModel.getId());
         bank.setBankName(apiModel.getBankName());
         bank.setBic(apiModel.getBic());
         bank.setCollectedInterest(apiModel.getCollectedInterest());
@@ -19,6 +20,7 @@ public class ApiBankMapper {
     public ApiBank toApiModel(Bank serviceModel) {
         if (serviceModel == null) return null;
         ApiBank apiBank = new ApiBank();
+        apiBank.setId(serviceModel.getId());
         apiBank.setBankName(serviceModel.getBankName());
         apiBank.setBic(serviceModel.getBic());
         apiBank.setCollectedInterest(serviceModel.getCollectedInterest());
