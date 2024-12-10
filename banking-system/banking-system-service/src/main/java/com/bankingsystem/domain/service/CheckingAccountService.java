@@ -226,7 +226,7 @@ public class CheckingAccountService {
             return;
         }
 
-        logger.info("Applying interest to {} overdrawn accounts", overdrawnAccounts.size());
+        logger.info("Applying interest to {} overdrawn Checking Accounts", overdrawnAccounts.size());
         for (CheckingAccount account : overdrawnAccounts) {
             Duration overdraftTime = Duration.between(account.getOverdraftTimestamp(), Instant.now());
 
@@ -245,7 +245,7 @@ public class CheckingAccountService {
             }
         }
 
-        logger.info("Successfully applied interest to overdrawn accounts");
+        logger.info("Successfully applied interest to overdrawn Checking Accounts");
     }
 
 }
