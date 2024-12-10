@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.bankingsystem.domain.model.Bank;
 import com.bankingsystem.domain.persistence.BankPersistenceService;
 
+import java.math.BigDecimal;
+
 
 @Service
 public class BankService {
@@ -48,6 +50,15 @@ public class BankService {
         logger.info("Updating bank with BIC: {}", bic);
         Bank bank = bankPersistenceService.getBankByBic(bic);
         bank.setBankName(newBankName);
+        bankPersistenceService.save(bank);
+        return bank;
+    }
+
+    // Add collected interest
+    public Bank addCollectedInterest(BigDecimal amount) {
+        logger.info("Adding collected interest to bank");
+        Bank bank = bankPersistenceService.getBankByBic("BIC123");
+        bank.setCollectedInterest(bank.getCollectedInterest().add(amount));
         bankPersistenceService.save(bank);
         return bank;
     }
