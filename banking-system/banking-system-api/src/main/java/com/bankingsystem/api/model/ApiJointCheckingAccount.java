@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 @Data
 @NoArgsConstructor
@@ -20,6 +21,7 @@ public class ApiJointCheckingAccount {
     private BigDecimal balance;
     private CurrencyCode currency;
     private BigDecimal overdraftLimit;
+    private Instant overdraftTimestamp;
 
 
     public ApiJointCheckingAccount(ApiUser owner, ApiUser secondOwner, BigDecimal balance, CurrencyCode currency, BigDecimal overdraftLimit) {

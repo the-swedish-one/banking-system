@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 @Data
 @NoArgsConstructor
@@ -19,6 +20,7 @@ public class ApiCheckingAccount {
     private BigDecimal balance;
     private CurrencyCode currency;
     private BigDecimal overdraftLimit;
+    private Instant overdraftTimestamp;
 
     public ApiCheckingAccount(ApiUser owner, BigDecimal balance, CurrencyCode currency, BigDecimal overdraftLimit) {
         this.owner = owner;

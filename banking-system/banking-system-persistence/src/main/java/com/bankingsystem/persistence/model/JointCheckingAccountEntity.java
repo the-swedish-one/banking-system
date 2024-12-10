@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
 
 @Table(name = "joint_checking_account")
 @Entity
@@ -45,6 +46,9 @@ public class JointCheckingAccountEntity {
 
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal overdraftLimit;
+
+    @Column(name = "overdraft_timestamp")
+    private Instant overdraftTimestamp;
 
     public void setBalance(BigDecimal balance) {
         if (balance != null) {
