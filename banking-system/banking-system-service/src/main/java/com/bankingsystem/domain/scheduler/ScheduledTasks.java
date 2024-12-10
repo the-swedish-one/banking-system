@@ -15,8 +15,8 @@ public class ScheduledTasks {
         this.jointCheckingAccountService = jointCheckingAccountService;
     }
 
-    // Scheduled to run daily at 2 AM
-    @Scheduled(cron = "0 0 2 * * ?")
+//    @Scheduled(cron = "0 0 2 * * ?") // Run daily at 2 AM
+    @Scheduled(fixedRate = 120000) // 120,000 milliseconds = 2 minutes
     public void applyInterestToOverdrawnAccountsTask() {
         checkingAccountService.applyInterestToOverdrawnAccounts();
         jointCheckingAccountService.applyInterestToOverdrawnAccounts();
