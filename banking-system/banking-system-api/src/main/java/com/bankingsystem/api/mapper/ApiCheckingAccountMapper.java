@@ -23,6 +23,7 @@ public class ApiCheckingAccountMapper {
         model.setBalance(apiModel.getBalance());
         model.setCurrency(apiModel.getCurrency());
         model.setOverdraftLimit(apiModel.getOverdraftLimit());
+        model.setOverdraftTimestamp(apiModel.getOverdraftTimestamp());
         return model;
     }
 
@@ -36,6 +37,7 @@ public class ApiCheckingAccountMapper {
         apiModel.setBalance(serviceModel.getBalance());
         apiModel.setCurrency(serviceModel.getCurrency());
         apiModel.setOverdraftLimit(serviceModel.getOverdraftLimit());
+        apiModel.setOverdraftTimestamp(serviceModel.getOverdraftTimestamp());
         return apiModel;
     }
 }

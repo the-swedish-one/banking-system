@@ -24,6 +24,7 @@ public class CheckingAccountMapper {
         model.setBalance(entity.getBalance());
         model.setCurrency(entity.getCurrency());
         model.setOverdraftLimit(entity.getOverdraftLimit());
+        model.setOverdraftTimestamp(entity.getOverdraftTimestamp());
         return model;
     }
 
@@ -42,6 +43,7 @@ public class CheckingAccountMapper {
         entity.setBalance(model.getBalance());
         entity.setCurrency(model.getCurrency());
         entity.setOverdraftLimit(model.getOverdraftLimit());
+        entity.setOverdraftTimestamp(model.getOverdraftTimestamp());
         return entity;
     }
 }

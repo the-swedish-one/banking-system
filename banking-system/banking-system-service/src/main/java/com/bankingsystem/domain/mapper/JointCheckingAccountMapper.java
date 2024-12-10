@@ -24,6 +24,7 @@ public class JointCheckingAccountMapper {
         model.setBalance(entity.getBalance());
         model.setCurrency(entity.getCurrency());
         model.setOverdraftLimit(entity.getOverdraftLimit());
+        model.setOverdraftTimestamp(entity.getOverdraftTimestamp());
         model.setSecondOwner(userMapper.toModel(entity.getSecondOwner()));
         return model;
     }
@@ -43,6 +44,7 @@ public class JointCheckingAccountMapper {
         entity.setBalance(model.getBalance());
         entity.setCurrency(model.getCurrency());
         entity.setOverdraftLimit(model.getOverdraftLimit());
+        entity.setOverdraftTimestamp(model.getOverdraftTimestamp());
         if (model.getSecondOwner() != null && model.getSecondOwner().getUserId() != null) {
             UserEntity secondOwnerEntity = new UserEntity();
             secondOwnerEntity.setUserId(model.getSecondOwner().getUserId());

@@ -23,6 +23,7 @@ public class ApiJointCheckingAccountMapper {
         model.setBalance(apiModel.getBalance());
         model.setCurrency(apiModel.getCurrency());
         model.setOverdraftLimit(apiModel.getOverdraftLimit());
+        model.setOverdraftTimestamp(apiModel.getOverdraftTimestamp());
         model.setSecondOwner(apiUserMapper.toServiceModel(apiModel.getSecondOwner()));
         return model;
     }
@@ -37,6 +38,7 @@ public class ApiJointCheckingAccountMapper {
         apiModel.setBalance(model.getBalance());
         apiModel.setCurrency(model.getCurrency());
         apiModel.setOverdraftLimit(model.getOverdraftLimit());
+        apiModel.setOverdraftTimestamp(model.getOverdraftTimestamp());
         apiModel.setSecondOwner(apiUserMapper.toApiModel(model.getSecondOwner()));
         return apiModel;
     }
