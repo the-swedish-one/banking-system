@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 
 @Data
@@ -68,5 +69,11 @@ public class JointCheckingAccount implements Withdrawable, Depositable {
         if (this.balance.compareTo(BigDecimal.ZERO) >= 0) {
             this.overdraftTimestamp = null;
         }
+    }
+
+    public BigDecimal applyOverdraftInterest(BigDecimal interestRate) {
+        BigDecimal interest = balance.abs().multiply(interestRate).setScale(2, RoundingMode.HALF_UP);
+        balance = balance.subtract(interest);
+        return interest;
     }
 }
