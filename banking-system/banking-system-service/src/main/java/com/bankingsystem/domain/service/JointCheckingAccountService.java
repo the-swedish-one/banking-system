@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -25,16 +27,21 @@ public class JointCheckingAccountService {
 
     private static final Logger logger = LoggerFactory.getLogger(JointCheckingAccountService.class);
 
+    private final BigDecimal INTEREST_RATE = BigDecimal.valueOf(0.05);  // 5% interest rate for overdrawn accounts
+    private final Duration OVERDRAFT_DURATION = Duration.ofDays(7);     // Apply after overdraft interest every 7 days
+
     private final JointCheckingAccountPersistenceService jointCheckingAccountPersistenceService;
     private final UserPersistenceService userPersistenceService;
     private final TransactionService transactionService;
     private final CurrencyConversionService currencyConversionService;
+    private final BankService bankService;
 
-    public JointCheckingAccountService(JointCheckingAccountPersistenceService jointCheckingAccountPersistenceService, UserPersistenceService userPersistenceService, TransactionService transactionService, CurrencyConversionService currencyConversionService) {
+    public JointCheckingAccountService(JointCheckingAccountPersistenceService jointCheckingAccountPersistenceService, UserPersistenceService userPersistenceService, TransactionService transactionService, CurrencyConversionService currencyConversionService, BankService bankService) {
         this.jointCheckingAccountPersistenceService = jointCheckingAccountPersistenceService;
         this.userPersistenceService = userPersistenceService;
         this.transactionService = transactionService;
         this.currencyConversionService = currencyConversionService;
+        this.bankService = bankService;
     }
 
     // Create new joint checking account
@@ -202,5 +209,44 @@ public class JointCheckingAccountService {
 
         logger.info("Successfully transferred {} {} from IBAN: {} to IBAN: {}", amount, fromAccount.getCurrency(), fromAccountIban, toAccountIban);
         return List.of(updatedFromAccount, updatedToAccount);
+    }
+
+    // Apply interest to overdrawn accounts
+    public void applyInterestToOverdrawnAccounts() {
+        List<JointCheckingAccount> accounts = jointCheckingAccountPersistenceService.getAllAccounts();
+
+        if (accounts.isEmpty()) {
+            logger.info("No accounts found");
+            throw new AccountNotFoundException("No accounts found");
+        }
+
+        List<JointCheckingAccount> overdrawnAccounts = accounts.stream()
+                .filter(account -> account.getBalance().compareTo(BigDecimal.ZERO) < 0 && account.getOverdraftTimestamp() != null)
+                .collect(Collectors.toList());
+        if (overdrawnAccounts.isEmpty()) {
+            logger.info("No overdrawn accounts found");
+            return;
+        }
+
+        logger.info("Applying interest to {} overdrawn Joint Checking Accounts", overdrawnAccounts.size());
+        for (JointCheckingAccount account : overdrawnAccounts) {
+            Duration overdraftTime = Duration.between(account.getOverdraftTimestamp(), Instant.now());
+
+            if (overdraftTime.compareTo(OVERDRAFT_DURATION) >= 0) {
+                BigDecimal interest = account.applyOverdraftInterest(INTEREST_RATE);
+                jointCheckingAccountPersistenceService.updateAccount(account);
+
+                bankService.addCollectedInterest(interest);
+
+                Transaction interestTransaction = new Transaction(
+                        interest.negate(),
+                        account.getIban(),
+                        "BANK"
+                );
+                transactionService.createTransaction(interestTransaction);
+            }
+        }
+
+        logger.info("Successfully applied interest to overdrawn Joint Checking Accounts");
     }
 }
