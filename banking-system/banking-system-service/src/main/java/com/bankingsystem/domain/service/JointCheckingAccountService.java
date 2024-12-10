@@ -1,5 +1,6 @@
 package com.bankingsystem.domain.service;
 
+import com.bankingsystem.domain.config.OverdraftConfig;
 import com.bankingsystem.domain.model.CheckingAccount;
 import com.bankingsystem.domain.model.User;
 import com.bankingsystem.domain.persistence.UserPersistenceService;
@@ -27,8 +28,7 @@ public class JointCheckingAccountService {
 
     private static final Logger logger = LoggerFactory.getLogger(JointCheckingAccountService.class);
 
-    private final BigDecimal INTEREST_RATE = BigDecimal.valueOf(0.05);  // 5% interest rate for overdrawn accounts
-    private final Duration OVERDRAFT_DURATION = Duration.ofDays(7);     // Apply after overdraft interest every 7 days
+    private final OverdraftConfig overdraftConfig;
 
     private final JointCheckingAccountPersistenceService jointCheckingAccountPersistenceService;
     private final UserPersistenceService userPersistenceService;
@@ -36,7 +36,8 @@ public class JointCheckingAccountService {
     private final CurrencyConversionService currencyConversionService;
     private final BankService bankService;
 
-    public JointCheckingAccountService(JointCheckingAccountPersistenceService jointCheckingAccountPersistenceService, UserPersistenceService userPersistenceService, TransactionService transactionService, CurrencyConversionService currencyConversionService, BankService bankService) {
+    public JointCheckingAccountService(OverdraftConfig overdraftConfig, JointCheckingAccountPersistenceService jointCheckingAccountPersistenceService, UserPersistenceService userPersistenceService, TransactionService transactionService, CurrencyConversionService currencyConversionService, BankService bankService) {
+        this.overdraftConfig = overdraftConfig;
         this.jointCheckingAccountPersistenceService = jointCheckingAccountPersistenceService;
         this.userPersistenceService = userPersistenceService;
         this.transactionService = transactionService;
@@ -224,16 +225,19 @@ public class JointCheckingAccountService {
                 .filter(account -> account.getBalance().compareTo(BigDecimal.ZERO) < 0 && account.getOverdraftTimestamp() != null)
                 .collect(Collectors.toList());
         if (overdrawnAccounts.isEmpty()) {
-            logger.info("No overdrawn accounts found");
+            logger.info("No overdrawn joint checking accounts found");
             return;
         }
+
+        BigDecimal interestRate = overdraftConfig.getInterestRate();
+        Duration overdraftDuration = overdraftConfig.getOverdraftDuration();
 
         logger.info("Applying interest to {} overdrawn Joint Checking Accounts", overdrawnAccounts.size());
         for (JointCheckingAccount account : overdrawnAccounts) {
             Duration overdraftTime = Duration.between(account.getOverdraftTimestamp(), Instant.now());
 
-            if (overdraftTime.compareTo(OVERDRAFT_DURATION) >= 0) {
-                BigDecimal interest = account.applyOverdraftInterest(INTEREST_RATE);
+            if (overdraftTime.compareTo(overdraftDuration) >= 0) {
+                BigDecimal interest = account.applyOverdraftInterest(interestRate);
                 jointCheckingAccountPersistenceService.updateAccount(account);
 
                 bankService.addCollectedInterest(interest);

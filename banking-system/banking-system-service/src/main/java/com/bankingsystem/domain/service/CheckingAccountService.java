@@ -1,5 +1,6 @@
 package com.bankingsystem.domain.service;
 
+import com.bankingsystem.domain.config.OverdraftConfig;
 import com.bankingsystem.domain.persistence.UserPersistenceService;
 import com.bankingsystem.persistence.exception.AccountNotFoundException;
 import com.bankingsystem.domain.exception.OverdraftLimitExceededException;
@@ -26,9 +27,7 @@ public class CheckingAccountService {
 
     private static final Logger logger = LoggerFactory.getLogger(CheckingAccountService.class);
 
-    private final BigDecimal INTEREST_RATE = BigDecimal.valueOf(0.05);  // 5% interest rate for overdrawn accounts
-//    private final Duration OVERDRAFT_DURATION = Duration.ofDays(7);     // Apply after overdraft interest if they have been overdrawn for 7 days
-    private final Duration OVERDRAFT_DURATION = Duration.ofSeconds(30); // Apply after overdraft interest if they have been overdrawn for 30 seconds
+    private final OverdraftConfig overdraftConfig;
 
     private final CheckingAccountPersistenceService checkingAccountPersistenceService;
     private final UserPersistenceService userPersistenceService;
@@ -36,7 +35,8 @@ public class CheckingAccountService {
     private final CurrencyConversionService currencyConversionService;
     private final BankService bankService;
 
-    public CheckingAccountService(CheckingAccountPersistenceService checkingAccountPersistenceService, UserPersistenceService userPersistenceService, TransactionService transactionService, CurrencyConversionService currencyConversionService, BankService bankService) {
+    public CheckingAccountService(OverdraftConfig overdraftConfig, CheckingAccountPersistenceService checkingAccountPersistenceService, UserPersistenceService userPersistenceService, TransactionService transactionService, CurrencyConversionService currencyConversionService, BankService bankService) {
+        this.overdraftConfig = overdraftConfig;
         this.checkingAccountPersistenceService = checkingAccountPersistenceService;
         this.userPersistenceService = userPersistenceService;
         this.transactionService = transactionService;
@@ -223,16 +223,19 @@ public class CheckingAccountService {
                 .filter(account -> account.getBalance().compareTo(BigDecimal.ZERO) < 0 && account.getOverdraftTimestamp() != null)
                 .collect(Collectors.toList());
         if (overdrawnAccounts.isEmpty()) {
-            logger.info("No overdrawn accounts found");
+            logger.info("No overdrawn checking accounts found");
             return;
         }
+
+        BigDecimal interestRate = overdraftConfig.getInterestRate();
+        Duration overdraftDuration = overdraftConfig.getOverdraftDuration();
 
         logger.info("Applying interest to {} overdrawn Checking Accounts", overdrawnAccounts.size());
         for (CheckingAccount account : overdrawnAccounts) {
             Duration overdraftTime = Duration.between(account.getOverdraftTimestamp(), Instant.now());
 
-            if (overdraftTime.compareTo(OVERDRAFT_DURATION) >= 0) {
-                BigDecimal interest = account.applyOverdraftInterest(INTEREST_RATE);
+            if (overdraftTime.compareTo(overdraftDuration) >= 0) {
+                BigDecimal interest = account.applyOverdraftInterest(interestRate);
                 checkingAccountPersistenceService.updateAccount(account);
 
                 bankService.addCollectedInterest(interest);
