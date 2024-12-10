@@ -92,6 +92,7 @@ public class JointCheckingAccountPersistenceServiceImpl implements JointChecking
         existingEntity.setBalance(account.getBalance());
         existingEntity.setCurrency(account.getCurrency());
         existingEntity.setOverdraftLimit(account.getOverdraftLimit());
+        existingEntity.setOverdraftTimestamp(account.getOverdraftTimestamp());
 
         JointCheckingAccountEntity updatedEntity = jointCheckingAccountRepository.save(existingEntity);
         logger.info("Successfully updated joint checking account with ID: {}", updatedEntity.getAccountId());

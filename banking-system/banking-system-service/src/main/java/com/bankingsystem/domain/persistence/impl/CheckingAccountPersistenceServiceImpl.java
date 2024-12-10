@@ -90,6 +90,7 @@ public class CheckingAccountPersistenceServiceImpl implements CheckingAccountPer
         existingEntity.setBalance(account.getBalance());
         existingEntity.setCurrency(account.getCurrency());
         existingEntity.setOverdraftLimit(account.getOverdraftLimit());
+        existingEntity.setOverdraftTimestamp(account.getOverdraftTimestamp());
 
         CheckingAccountEntity updatedEntity = checkingAccountRepository.save(existingEntity);
         logger.info("Successfully updated checking account with ID: {}", updatedEntity.getAccountId());
