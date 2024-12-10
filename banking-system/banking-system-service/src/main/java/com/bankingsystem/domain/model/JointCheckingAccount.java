@@ -72,8 +72,8 @@ public class JointCheckingAccount implements Withdrawable, Depositable {
     }
 
     public BigDecimal applyOverdraftInterest(BigDecimal interestRate) {
-        BigDecimal interest = balance.abs().multiply(interestRate).setScale(2, RoundingMode.HALF_UP);
-        balance = balance.subtract(interest);
+        BigDecimal interest = this.balance.abs().multiply(interestRate).setScale(2, RoundingMode.HALF_UP);
+        this.balance = this.balance.subtract(interest);
         return interest;
     }
 }

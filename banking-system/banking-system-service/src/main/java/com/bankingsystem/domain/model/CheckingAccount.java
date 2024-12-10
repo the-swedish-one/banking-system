@@ -1,10 +1,13 @@
 package com.bankingsystem.domain.model;
 
 import com.bankingsystem.domain.exception.OverdraftLimitExceededException;
+import com.bankingsystem.domain.service.CheckingAccountService;
 import com.bankingsystem.persistence.enums.CurrencyCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -14,6 +17,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CheckingAccount implements Withdrawable, Depositable  {
+    private static final Logger logger = LoggerFactory.getLogger(CheckingAccount.class);
 
     private int accountId;
     private String iban;
@@ -68,8 +72,8 @@ public class CheckingAccount implements Withdrawable, Depositable  {
     }
 
     public BigDecimal applyOverdraftInterest(BigDecimal interestRate) {
-        BigDecimal interest = balance.abs().multiply(interestRate).setScale(2, RoundingMode.HALF_UP);
-        balance = balance.subtract(interest);
+        BigDecimal interest = this.balance.abs().multiply(interestRate).setScale(2, RoundingMode.HALF_UP);
+        this.balance = this.balance.subtract(interest);
         return interest;
     }
 }
