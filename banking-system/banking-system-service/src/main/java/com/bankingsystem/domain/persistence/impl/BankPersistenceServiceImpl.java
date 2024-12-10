@@ -28,7 +28,7 @@ public class BankPersistenceServiceImpl implements BankPersistenceService {
     // Create or update bank
     @Override
     public Bank save(Bank bank){
-        logger.info("Saving new bank");
+        logger.info("Saving bank");
         BankEntity entity = bankMapper.toEntity(bank);
         BankEntity savedEntity = bankRepository.save(entity);
         logger.info("Successfully saved bank with BIC: {}", savedEntity.getBic());
