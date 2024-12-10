@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "bank")
 @Data
@@ -23,6 +25,9 @@ public class BankEntity {
 
     @Column(unique = true, nullable = false)
     private String bic;
+
+    @Column(nullable = false)
+    private BigDecimal collectedInterest;
 
 }
 
