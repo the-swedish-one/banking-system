@@ -212,16 +212,8 @@ public class CheckingAccountService {
 
     // Apply interest to overdrawn accounts
     public void applyInterestToOverdrawnAccounts() {
-        List<CheckingAccount> accounts = checkingAccountPersistenceService.getAllAccounts();
+        List<CheckingAccount> overdrawnAccounts = checkingAccountPersistenceService.getOverdrawnAccounts();
 
-        if (accounts.isEmpty()) {
-            logger.info("No accounts found");
-            return;
-        }
-
-        List<CheckingAccount> overdrawnAccounts = accounts.stream()
-                .filter(account -> account.getBalance().compareTo(BigDecimal.ZERO) < 0 && account.getOverdraftTimestamp() != null)
-                .collect(Collectors.toList());
         if (overdrawnAccounts.isEmpty()) {
             logger.info("No overdrawn checking accounts found");
             return;
@@ -231,23 +223,21 @@ public class CheckingAccountService {
         Duration overdraftDuration = overdraftConfig.getOverdraftDuration();
 
         logger.info("Applying interest to {} overdrawn Checking Accounts", overdrawnAccounts.size());
-        for (CheckingAccount account : overdrawnAccounts) {
-            Duration overdraftTime = Duration.between(account.getOverdraftTimestamp(), Instant.now());
+        overdrawnAccounts.stream()
+                .filter(account -> Duration.between(account.getOverdraftTimestamp(), Instant.now()).compareTo(overdraftDuration) >= 0)
+                .forEach(account -> {
+                    BigDecimal interest = account.applyOverdraftInterest(interestRate);
+                    checkingAccountPersistenceService.updateAccount(account);
 
-            if (overdraftTime.compareTo(overdraftDuration) >= 0) {
-                BigDecimal interest = account.applyOverdraftInterest(interestRate);
-                checkingAccountPersistenceService.updateAccount(account);
+                    bankService.addCollectedInterest(interest);
 
-                bankService.addCollectedInterest(interest);
-
-                Transaction interestTransaction = new Transaction(
-                        interest.negate(),
-                        account.getIban(),
-                        "BANK"
-                );
-                transactionService.createTransaction(interestTransaction);
-            }
-        }
+                    Transaction interestTransaction = new Transaction(
+                            interest.negate(),
+                            account.getIban(),
+                            "BANK"
+                    );
+                    transactionService.createTransaction(interestTransaction);
+                });
 
         logger.info("Successfully applied interest to overdrawn Checking Accounts");
     }
