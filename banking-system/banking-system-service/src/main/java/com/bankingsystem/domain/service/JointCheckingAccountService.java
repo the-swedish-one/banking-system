@@ -138,7 +138,7 @@ public class JointCheckingAccountService {
             throw new IllegalArgumentException("Deposit amount must be greater than zero");
         }
         JointCheckingAccount jointCheckingAccount = jointCheckingAccountPersistenceService.getAccountById(accountId);
-        jointCheckingAccount.setBalance(jointCheckingAccount.getBalance().add(amount));
+        jointCheckingAccount.deposit(amount);
 
         Transaction transaction = new Transaction(amount, null, jointCheckingAccount.getIban());
         transactionService.createTransaction(transaction);
@@ -163,7 +163,7 @@ public class JointCheckingAccountService {
             throw new OverdraftLimitExceededException("Withdrawal failed: Overdraft limit exceeded");
         }
         amount = amount.setScale(2, RoundingMode.HALF_UP);
-        account.setBalance(account.getBalance().subtract(amount));
+        account.withdraw(amount);
 
         Transaction transaction = new Transaction(amount.negate(), account.getIban(), null);
         transactionService.createTransaction(transaction);
@@ -217,7 +217,7 @@ public class JointCheckingAccountService {
 
         if (accounts.isEmpty()) {
             logger.info("No accounts found");
-            throw new AccountNotFoundException("No accounts found");
+            return;
         }
 
         List<JointCheckingAccount> overdrawnAccounts = accounts.stream()

@@ -27,7 +27,8 @@ public class CheckingAccountService {
     private static final Logger logger = LoggerFactory.getLogger(CheckingAccountService.class);
 
     private final BigDecimal INTEREST_RATE = BigDecimal.valueOf(0.05);  // 5% interest rate for overdrawn accounts
-    private final Duration OVERDRAFT_DURATION = Duration.ofDays(7);     // Apply after overdraft interest every 7 days
+//    private final Duration OVERDRAFT_DURATION = Duration.ofDays(7);     // Apply after overdraft interest if they have been overdrawn for 7 days
+    private final Duration OVERDRAFT_DURATION = Duration.ofSeconds(30); // Apply after overdraft interest if they have been overdrawn for 30 seconds
 
     private final CheckingAccountPersistenceService checkingAccountPersistenceService;
     private final UserPersistenceService userPersistenceService;
@@ -134,7 +135,7 @@ public class CheckingAccountService {
             throw new IllegalArgumentException("Deposit failed: Amount must be greater than zero");
         }
         CheckingAccount checkingAccount = checkingAccountPersistenceService.getAccountById(accountId);
-        checkingAccount.setBalance(checkingAccount.getBalance().add(amount));
+        checkingAccount.deposit(amount);
 
         Transaction transaction = new Transaction(amount, null, checkingAccount.getIban());
         transactionService.createTransaction(transaction);
@@ -155,12 +156,12 @@ public class CheckingAccountService {
 
         BigDecimal availableBalance = account.getBalance().add(account.getOverdraftLimit());
         if (availableBalance.compareTo(amount) <= 0) {
-            logger.error("Withdrawal failed: Amount must be greater than zero");
+            logger.error("Withdrawal failed: Overdraft limit exceeded");
             throw new OverdraftLimitExceededException("Withdrawal failed: Overdraft limit exceeded");
         }
 
         amount = amount.setScale(2, RoundingMode.HALF_UP);
-        account.setBalance(account.getBalance().subtract(amount));
+        account.withdraw(amount);
 
         Transaction transaction = new Transaction(amount.negate(), account.getIban(), null);
         transactionService.createTransaction(transaction);
@@ -215,7 +216,7 @@ public class CheckingAccountService {
 
         if (accounts.isEmpty()) {
             logger.info("No accounts found");
-            throw new AccountNotFoundException("No accounts found");
+            return;
         }
 
         List<CheckingAccount> overdrawnAccounts = accounts.stream()
