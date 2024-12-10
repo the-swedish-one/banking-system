@@ -26,7 +26,7 @@ public class BankEntity {
     @Column(unique = true, nullable = false)
     private String bic;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private BigDecimal collectedInterest;
 
 }
