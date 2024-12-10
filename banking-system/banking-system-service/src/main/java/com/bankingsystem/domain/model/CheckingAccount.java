@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 @Data
 @NoArgsConstructor
@@ -19,6 +20,7 @@ public class CheckingAccount implements Withdrawable, Depositable  {
     private BigDecimal balance;
     private CurrencyCode currency;
     private BigDecimal overdraftLimit;
+    private Instant overdraftTimestamp;
     private User owner;
 
     public CheckingAccount(User owner, BigDecimal balance, CurrencyCode currency, BigDecimal overdraftLimit) {
@@ -45,6 +47,9 @@ public class CheckingAccount implements Withdrawable, Depositable  {
         BigDecimal availableBalance = this.balance.add(this.overdraftLimit);
         if (availableBalance.compareTo(amount) >= 0) {
             this.balance = this.balance.subtract(amount);
+            if (this.balance.compareTo(BigDecimal.ZERO) < 0 && this.overdraftTimestamp == null) {
+                this.overdraftTimestamp = Instant.now();
+            }
         } else {
             throw new OverdraftLimitExceededException("Overdraft limit exceeded");
         }
@@ -56,5 +61,8 @@ public class CheckingAccount implements Withdrawable, Depositable  {
             throw new IllegalArgumentException("Amount must be greater than 0");
         }
         this.balance = this.balance.add(amount);
+        if (this.balance.compareTo(BigDecimal.ZERO) >= 0) {
+            this.overdraftTimestamp = null;
+        }
     }
 }
