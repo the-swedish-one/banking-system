@@ -12,6 +12,7 @@ public class BankMapper {
         Bank bank = new Bank();
         bank.setBankName(entity.getBankName());
         bank.setBic(entity.getBic());
+        bank.setCollectedInterest(entity.getCollectedInterest());
         return bank;
     }
 
@@ -20,6 +21,7 @@ public class BankMapper {
         BankEntity entity = new BankEntity();
         entity.setBankName(model.getBankName());
         entity.setBic(model.getBic());
+        entity.setCollectedInterest(model.getCollectedInterest());
         return entity;
     }
 }

@@ -12,6 +12,7 @@ public class ApiBankMapper {
         Bank bank = new Bank();
         bank.setBankName(apiModel.getBankName());
         bank.setBic(apiModel.getBic());
+        bank.setCollectedInterest(apiModel.getCollectedInterest());
         return bank;
     }
 
@@ -20,6 +21,7 @@ public class ApiBankMapper {
         ApiBank apiBank = new ApiBank();
         apiBank.setBankName(serviceModel.getBankName());
         apiBank.setBic(serviceModel.getBic());
+        apiBank.setCollectedInterest(serviceModel.getCollectedInterest());
         return apiBank;
     }
 }
