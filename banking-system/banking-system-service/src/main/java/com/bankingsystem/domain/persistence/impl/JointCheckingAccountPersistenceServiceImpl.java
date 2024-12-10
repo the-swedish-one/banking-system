@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 @Service
@@ -107,5 +108,13 @@ public class JointCheckingAccountPersistenceServiceImpl implements JointChecking
         }
         jointCheckingAccountRepository.deleteById(accountId);
         return true;
+    }
+
+    @Override
+    public List<JointCheckingAccount> getOverdrawnAccounts() {
+        List<JointCheckingAccountEntity> entities = jointCheckingAccountRepository.findByBalanceLessThanAndOverdraftTimestampIsNotNull(BigDecimal.ZERO);
+        return entities.stream()
+                .map(jointCheckingAccountMapper::toModel)
+                .collect(Collectors.toList());
     }
 }

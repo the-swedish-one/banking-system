@@ -19,11 +19,13 @@ public interface CheckingAccountPersistenceService {
     // Get all accounts
     List<CheckingAccount> getAllAccounts();
 
+    // Get all overdrawn accounts
+    List<CheckingAccount> getOverdrawnAccounts();
+
     // Update account
     CheckingAccount updateAccount(CheckingAccount account);
 
     // Delete an account
     boolean deleteAccount(int accountId);
-
 
 }

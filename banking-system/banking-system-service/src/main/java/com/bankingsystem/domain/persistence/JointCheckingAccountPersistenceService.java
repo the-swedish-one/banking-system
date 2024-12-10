@@ -18,6 +18,9 @@ public interface JointCheckingAccountPersistenceService {
     // Get all accounts
     List<JointCheckingAccount> getAllAccounts();
 
+    // Get all overdrawn accounts
+    List<JointCheckingAccount> getOverdrawnAccounts();
+
     // Update account
     JointCheckingAccount updateAccount(JointCheckingAccount account);
 

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 @Service
@@ -105,5 +106,13 @@ public class CheckingAccountPersistenceServiceImpl implements CheckingAccountPer
         }
         checkingAccountRepository.deleteById(accountId);
         return true;
+    }
+
+    @Override
+    public List<CheckingAccount> getOverdrawnAccounts() {
+        List<CheckingAccountEntity> entities = checkingAccountRepository.findByBalanceLessThanAndOverdraftTimestampIsNotNull(BigDecimal.ZERO);
+        return entities.stream()
+                .map(checkingAccountMapper::toModel)
+                .collect(Collectors.toList());
     }
 }
